@@ -34,6 +34,7 @@ namespace HekaMiniumApi.Controllers{
                     FirmCode = d.Firm != null ? d.Firm.FirmCode : "",
                     FirmId = d.FirmId,
                     FirmName = d.Firm != null ? d.Firm.FirmName : "",
+                    Explanation = d.Explanation,
                     FirmLocation = d.FirmLocation,
                     PlantId = d.PlantId,
                     ProjectCategoryId = d.ProjectCategoryId,
@@ -42,6 +43,8 @@ namespace HekaMiniumApi.Controllers{
                     ProjectPhaseTemplateId = d.ProjectPhaseTemplateId,
                     ResponsibleInfo = d.ResponsibleInfo,
                     ResponsiblePerson = d.ResponsiblePerson,
+                    ProjectCategoryCode = d.ProjectCategory != null ? d.ProjectCategory.ProjectCategoryCode : "",
+                    ProjectCategoryName = d.ProjectCategory != null ? d.ProjectCategory.ProjectCategoryName : "",
                 }).ToArray();
             }
             catch

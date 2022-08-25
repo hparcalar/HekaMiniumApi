@@ -18,6 +18,9 @@ namespace HekaMiniumApi.Models{
         #region VISUAL ELEMENTS
         public string FirmCode { get; set; }
         public string FirmName { get; set; }
+        public string ProjectCategoryCode { get; set; }
+        public string ProjectCategoryName { get; set; }
+        public string ProjectStatusText { get; set; }
         #endregion
     }
 }

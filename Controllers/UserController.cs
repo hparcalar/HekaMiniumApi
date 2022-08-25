@@ -73,6 +73,7 @@ namespace HekaMiniumApi.Controllers
                     if (model.Login == "SysAdmin" && string.Equals("root", model.Password)){
                         result.Token = _authObject.Authenticate(true, "SysAdmin", initUser.Id, HekaAuthType.SysAdmin);
                         result.RecordId = initUser.Id;
+                        result.PlantId = initUser.PlantId ?? 0;
                         result.InfoMessage = initUser.UserName;
                         result.Result = true;
 
@@ -95,6 +96,7 @@ namespace HekaMiniumApi.Controllers
 
                     result.Token = _authObject.Authenticate(true, dbUser.UserCode, dbUser.Id, HekaAuthType.WebUser);
                     result.RecordId = dbUser.Id;
+                    result.PlantId = dbUser.PlantId ?? 0;
                     result.InfoMessage = dbUser.UserName;
                     result.Result = true;
 
