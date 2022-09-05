@@ -1,0 +1,290 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
+using HekaMiniumApi.Context;
+using HekaMiniumApi.Models;
+using HekaMiniumApi.Models.Operational;
+using Microsoft.AspNetCore.Cors;
+using HekaMiniumApi.Helpers;
+
+namespace HekaMiniumApi.Controllers{
+
+    [Authorize]
+    [ApiController] 
+    [Route("[controller]")]
+    [EnableCors()]
+     public class ItemDemandController : HekaControllerBase{
+        public ItemDemandController(HekaMiniumSchema context): base(context){ 
+            ResolveHeaders(Request);
+        }
+
+        [HttpGet]
+        public IEnumerable<ItemDemandModel> Get()
+        {
+            ItemDemandModel[] data = new ItemDemandModel[0];
+            try
+            {
+                data = _context.ItemDemand.Select(d => new ItemDemandModel{
+                    Id = d.Id,
+                    DeadlineDate = d.DeadlineDate,
+                    DemandStatus = d.DemandStatus,
+                    Explanation = d.Explanation,
+                    IsOrdered = d.IsOrdered,
+                    PlantId = d.PlantId,
+                    ProjectId = d.ProjectId,
+                    ReceiptDate = d.ReceiptDate,
+                    ReceiptNo = d.ReceiptNo,
+                    ProjectCode = d.Project != null ? d.Project.ProjectCode : "",
+                    ProjectName = d.Project != null ? d.Project.ProjectName : "",
+                    StatusText = d.DemandStatus == 0 ? "Talep oluşturuldu" : 
+                                    d.DemandStatus == 1 ? "Sipariş verildi" :
+                                    d.DemandStatus == 2 ? "Sipariş teslim alındı" :
+                                    d.DemandStatus == 3 ? "İptal edildi" : "",
+                }).ToArray();
+            }
+            catch
+            {
+                
+            }
+            
+            return data;
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        [Authorize(Policy = "WebUser")]
+        public ItemDemandModel Get(int id)
+        {
+            ItemDemandModel data = new ItemDemandModel();
+            try
+            {
+                data = _context.ItemDemand.Where(d => d.Id == id).Select(d => new ItemDemandModel{
+                        Id = d.Id,
+                        DeadlineDate = d.DeadlineDate,
+                        DemandStatus = d.DemandStatus,
+                        Explanation = d.Explanation,
+                        IsOrdered = d.IsOrdered,
+                        PlantId = d.PlantId,
+                        ProjectId = d.ProjectId,
+                        ReceiptDate = d.ReceiptDate,
+                        ReceiptNo = d.ReceiptNo,
+                        ProjectCode = d.Project != null ? d.Project.ProjectCode : "",
+                        ProjectName = d.Project != null ? d.Project.ProjectName : "",
+                        StatusText = d.DemandStatus == 0 ? "Talep oluşturuldu" : 
+                                    d.DemandStatus == 1 ? "Sipariş verildi" :
+                                    d.DemandStatus == 2 ? "Sipariş teslim alındı" :
+                                    d.DemandStatus == 3 ? "İptal edildi" : "",
+                    }).FirstOrDefault();
+
+                if (data != null && data.Id > 0){
+                    data.Details = _context.ItemDemandDetail.Where(d => d.ItemDemandId == data.Id)
+                        .Select(d => new ItemDemandDetailModel{
+                            Id = d.Id,
+                            DemandStatus = d.DemandStatus,
+                            Explanation = d.Explanation,
+                            ItemDemandId = d.ItemDemandId,
+                            ItemExplanation = d.ItemExplanation,
+                            ItemId = d.ItemId,
+                            LineNumber = d.LineNumber,
+                            NetQuantity = d.NetQuantity,
+                            Quantity = d.Quantity,
+                            UnitId = d.UnitId,
+                            ItemCode = d.Item != null ? d.Item.ItemCode : d.ItemExplanation,
+                            ItemName = d.Item != null ? d.Item.ItemName : d.ItemExplanation,
+                            ItemDemandNo = d.ItemDemand.ReceiptNo,
+                            UnitCode = d.UnitType != null ? d.UnitType.UnitTypeCode : "",
+                            UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
+                            StatusText = d.DemandStatus == 0 ? "Talep oluşturuldu" : 
+                                    d.DemandStatus == 1 ? "Sipariş verildi" :
+                                    d.DemandStatus == 2 ? "Sipariş teslim alındı" :
+                                    d.DemandStatus == 3 ? "İptal edildi" : "",
+                        }).ToArray();
+                }
+                else{
+                    if (data == null)
+                        data = new ItemDemandModel();
+
+                    data.ReceiptNo = GetNextDemandNumber();
+                    data.Details = new ItemDemandDetailModel[0];
+                }
+            }
+            catch
+            {
+                
+            }
+            
+            return data;
+        }
+
+        private string GetNextDemandNumber(){
+            try
+            {
+                int nextNumber = 1;
+                var lastRecord = _context.ItemDemand.OrderByDescending(d => d.ReceiptNo).Select(d => d.ReceiptNo).FirstOrDefault();
+                if (lastRecord != null && !string.IsNullOrEmpty(lastRecord))
+                    nextNumber = Convert.ToInt32(lastRecord) + 1;
+
+                return string.Format("{0:000000}", nextNumber);
+            }
+            catch (System.Exception)
+            {
+                
+            }
+
+            return string.Empty;
+        }
+
+        [HttpGet]
+        [Route("OfProject/{projectId}")]
+        [Authorize(Policy = "WebUser")]
+        public IEnumerable<ItemDemandDetailModel> DetailsOfProject(int projectId){
+            ItemDemandDetailModel[] data = new ItemDemandDetailModel[0];
+            try
+            {
+                data = _context.ItemDemandDetail.Where(d => d.ItemDemand.ProjectId == projectId && d.DemandStatus != 3).Select(d => new ItemDemandDetailModel{
+                    Id = d.Id,
+                    DemandStatus = d.DemandStatus,
+                    Explanation = d.Explanation,
+                    ItemDemandId = d.ItemDemandId,
+                    ItemExplanation = d.ItemExplanation,
+                    ItemId = d.ItemId,
+                    LineNumber = d.LineNumber,
+                    NetQuantity = d.NetQuantity,
+                    Quantity = d.Quantity,
+                    UnitId = d.UnitId,
+                    ItemCode = d.Item != null ? d.Item.ItemCode : d.ItemExplanation,
+                    ItemName = d.Item != null ? d.Item.ItemName : d.ItemExplanation,
+                    ItemDemandNo = d.ItemDemand.ReceiptNo,
+                    UnitCode = d.UnitType != null ? d.UnitType.UnitTypeCode : "",
+                    UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
+                    StatusText = d.DemandStatus == 0 ? "Talep oluşturuldu" : 
+                                    d.DemandStatus == 1 ? "Sipariş verildi" :
+                                    d.DemandStatus == 2 ? "Sipariş teslim alındı" :
+                                    d.DemandStatus == 3 ? "İptal edildi" : "",
+                    DemandDate = d.ItemDemand.ReceiptDate,
+                    DeadlineDate = d.ItemDemand.DeadlineDate,
+                }).ToArray();
+            }
+            catch
+            {
+                
+            }
+            
+            return data;
+        }
+
+        
+        [Authorize(Policy = "WebUser")]
+        [HttpPost]
+        public BusinessResult Post(ItemDemandModel model){
+            BusinessResult result = new BusinessResult();
+
+            try
+            {
+                var dbObj = _context.ItemDemand.FirstOrDefault(d => d.Id == model.Id);
+                if (dbObj == null){
+
+                    int nextRcNo = 1;
+                    string lastRcNo = _context.ItemDemand.Where(d => d.PlantId == model.PlantId)
+                        .OrderByDescending(d => d.ReceiptNo).Select(d => d.ReceiptNo).FirstOrDefault();
+
+                    if (!string.IsNullOrEmpty(lastRcNo)){
+                        nextRcNo = Convert.ToInt32(lastRcNo) + 1;
+                    }
+
+                    model.ReceiptNo = string.Format("{0:000000}", nextRcNo);
+
+                    dbObj = new ItemDemand();
+                    dbObj.ReceiptNo = model.ReceiptNo;
+                    _context.ItemDemand.Add(dbObj);
+                }
+
+                // keep constants
+                var currentRcNo = dbObj.ReceiptNo;
+
+                model.MapTo(dbObj);
+
+                // replace constants after auto mapping
+                dbObj.ReceiptNo = currentRcNo;
+
+                #region SAVE DETAILS
+                var currentDetails = _context.ItemDemandDetail.Where(d => d.ItemDemandId == dbObj.Id).ToArray();
+
+                var removedDetails = currentDetails.Where(d => !model.Details.Any(m => m.Id == d.Id)).ToArray();
+                foreach (var item in removedDetails)
+                {
+                    if (_context.ItemOrderDetail.Any(d => d.ItemDemandDetailId == item.Id))
+                        throw new Exception((item.LineNumber ?? 0).ToString() + ". satırdaki talep siparişe dönüştürüldüğü için silinemez. Bu sipariş kalemini sildikten sonra talebi silebilirsiniz.");
+
+                    _context.ItemDemandDetail.Remove(item);
+                }
+
+                foreach (var item in model.Details)
+                {
+                    var dbDetail = _context.ItemDemandDetail.FirstOrDefault(d => d.Id == item.Id);
+                    if (dbDetail == null){
+                        dbDetail = new ItemDemandDetail();
+                        _context.ItemDemandDetail.Add(dbDetail);
+                    }
+
+                    item.MapTo(dbDetail);
+                    dbDetail.ItemDemand = dbObj;
+                }
+                #endregion
+
+                _context.SaveChanges();
+                result.Result=true;
+                result.RecordId = dbObj.Id;
+            }
+            catch (System.Exception ex)
+            {
+                result.Result=false;
+                result.ErrorMessage = ex.Message;
+            }
+
+            return result;
+        }
+
+        [Authorize(Policy = "WebUser")]
+        [HttpDelete]
+        public BusinessResult Delete(int id){
+            BusinessResult result = new BusinessResult();
+
+            try
+            {
+                var dbObj = _context.ItemDemand.FirstOrDefault(d => d.Id == id);
+                if (dbObj == null)
+                    throw new Exception("Silinmesi istenen talep bilgisi bulunamadı.");
+
+                var details = _context.ItemDemandDetail.Where(d => d.ItemDemandId == id).ToArray();
+                foreach (var item in details)
+                {
+                    if (_context.ItemOrderDetail.Any(d => d.ItemDemandDetailId == item.Id))
+                        throw new Exception((item.LineNumber ?? 0).ToString() + ". satırdaki talep siparişe dönüştürüldüğü için silinemez. Bu sipariş kalemini sildikten sonra talebi silebilirsiniz.");
+
+                    _context.ItemDemandDetail.Remove(item);
+                }
+
+                if (_context.ItemOrder.Any(d => d.ItemDemandId == id))
+                    throw new Exception("Bu talep siparişe dönüştürüldüğü için silinemez. İlgili siparişi sildikten sonra bu talebi silebilirsiiz.");
+
+                _context.ItemDemand.Remove(dbObj);
+
+                _context.SaveChanges();
+                result.Result=true;
+            }
+            catch (System.Exception ex)
+            {
+                result.Result=false;
+                result.ErrorMessage = ex.Message;
+            }
+
+            return result;
+        }
+
+     }
+}

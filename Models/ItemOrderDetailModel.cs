@@ -1,36 +1,15 @@
-using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace HekaMiniumApi.Context{
-    public class ItemOrderDetail{
+namespace HekaMiniumApi.Models{
+    public class ItemOrderDetailModel{
         public int Id { get; set; }
-
-        [ForeignKey("ItemOrder")]
         public int? ItemOrderId { get; set; }
         public int? LineNumber { get; set; }
-
-        [ForeignKey("Item")]
         public int? ItemId { get; set; }
-
-        [ForeignKey("Brand")]
         public int? BrandId { get; set; }
-
-        [ForeignKey("BrandModel")]
         public int? BrandModelId { get; set; }
-
-        [ForeignKey("UnitType")]
         public int? UnitId { get; set; }
         public decimal? UnitPrice { get; set; }
-
-        [ForeignKey("Forex")]
         public int? ForexId { get; set; }
-
-        [ForeignKey("ItemDemandDetail")]
         public int? ItemDemandDetailId { get; set; }
-
-        [ForeignKey("Project")]
         public int? ProjectId { get; set; }
         public decimal? ForexRate { get; set; }
         public decimal? ForexUnitPrice { get; set; }
@@ -54,13 +33,19 @@ namespace HekaMiniumApi.Context{
         public string Explanation { get; set; }
         public int? ReceiptStatus { get; set; }
 
-        public virtual ItemDemandDetail ItemDemandDetail { get; set; }
-        public virtual ItemOrder ItemOrder { get; set; }
-        public virtual Item Item { get; set; }
-        public virtual Brand Brand { get; set; }
-        public virtual Project Project { get; set; }
-        public virtual BrandModel BrandModel { get; set; }
-        public virtual UnitType UnitType { get; set; }
-        public virtual Forex Forex { get; set; }
+        #region VISUAL ELEMENTS
+        public string ItemCode { get; set; }
+        public string ItemName { get; set; }
+        public string BrandCode { get; set; }
+        public string BrandName { get; set; }
+        public string BrandModelCode { get; set; }
+        public string BrandModelName { get; set; }
+        public string UnitCode { get; set; }
+        public string UnitName { get; set; }
+        public string ForexCode { get; set; }
+        public string ProjectCode { get; set; }
+        public string ProjectName { get; set; }
+        public string StatusText { get; set; }
+        #endregion
     }
 }

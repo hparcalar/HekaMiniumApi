@@ -3,6 +3,7 @@ using System;
 using HekaMiniumApi.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HekaMiniumApi.Migrations
 {
     [DbContext(typeof(HekaMiniumSchema))]
-    partial class HekaMiniumSchemaModelSnapshot : ModelSnapshot
+    [Migration("20220829071103_ItemOrder_Extras")]
+    partial class ItemOrder_Extras
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1187,9 +1189,6 @@ namespace HekaMiniumApi.Migrations
                     b.Property<decimal?>("Budget")
                         .HasColumnType("numeric");
 
-                    b.Property<DateTime?>("DeadlineDate")
-                        .HasColumnType("timestamp without time zone");
-
                     b.Property<string>("Explanation")
                         .HasColumnType("text");
 
@@ -1222,9 +1221,6 @@ namespace HekaMiniumApi.Migrations
 
                     b.Property<string>("ResponsiblePerson")
                         .HasColumnType("text");
-
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
 

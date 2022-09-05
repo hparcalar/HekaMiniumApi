@@ -37,6 +37,8 @@ namespace HekaMiniumApi.Controllers{
                     Explanation = d.Explanation,
                     FirmLocation = d.FirmLocation,
                     PlantId = d.PlantId,
+                    StartDate = d.StartDate,
+                    DeadlineDate = d.DeadlineDate,
                     ProjectCategoryId = d.ProjectCategoryId,
                     ProjectCode = d.ProjectCode,
                     ProjectName = d.ProjectName,
@@ -45,6 +47,11 @@ namespace HekaMiniumApi.Controllers{
                     ResponsiblePerson = d.ResponsiblePerson,
                     ProjectCategoryCode = d.ProjectCategory != null ? d.ProjectCategory.ProjectCategoryCode : "",
                     ProjectCategoryName = d.ProjectCategory != null ? d.ProjectCategory.ProjectCategoryName : "",
+                    ProjectStatus = d.ProjectStatus,
+                    ProjectStatusText = (d.ProjectStatus ?? 0) == 0 ? "Bekleniyor" :
+                                        d.ProjectStatus == 1 ? "Çalışılıyor" :
+                                        d.ProjectStatus == 2 ? "Tamamlandı" :
+                                        d.ProjectStatus == 3 ? "İptal edildi" : ""
                 }).ToArray();
             }
             catch
@@ -94,12 +101,19 @@ namespace HekaMiniumApi.Controllers{
                         FirmName = d.Firm != null ? d.Firm.FirmName : "",
                         FirmLocation = d.FirmLocation,
                         PlantId = d.PlantId,
+                        StartDate = d.StartDate,
+                        DeadlineDate = d.DeadlineDate,
                         ProjectCategoryId = d.ProjectCategoryId,
                         ProjectCode = d.ProjectCode,
                         ProjectName = d.ProjectName,
                         ProjectPhaseTemplateId = d.ProjectPhaseTemplateId,
                         ResponsibleInfo = d.ResponsibleInfo,
                         ResponsiblePerson = d.ResponsiblePerson,
+                        ProjectStatus = d.ProjectStatus,
+                        ProjectStatusText = (d.ProjectStatus ?? 0) == 0 ? "Bekleniyor" :
+                                            d.ProjectStatus == 1 ? "Çalışılıyor" :
+                                            d.ProjectStatus == 2 ? "Tamamlandı" :
+                                            d.ProjectStatus == 3 ? "İptal edildi" : ""
                     }).FirstOrDefault();
             }
             catch
@@ -146,6 +160,9 @@ namespace HekaMiniumApi.Controllers{
                     dbObj = new Project();
                     _context.Project.Add(dbObj);
                 }
+
+                if (model.ProjectStatus == null)
+                    model.ProjectStatus = 0;
 
                 if (_context.Project.Any(d => d.ProjectCode == model.ProjectCode && d.PlantId == model.PlantId && d.Id != model.Id))
                     throw new Exception("Bu proje koduna ait bir kayıt zaten bulunmaktadır. Lütfen başka bir kod belirtiniz.");
