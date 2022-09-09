@@ -17,6 +17,9 @@ namespace HekaMiniumApi.Models{
         public int? DemandStatus { get; set; }
 
         #region VISUAL ELEMENTS
+        public int? ProjectId { get; set; }
+        public string ProjectCode { get; set; }
+        public string ProjectName { get; set; }
         public string ItemCode { get; set; }
         public string ItemName { get; set; }
         public string UnitCode { get; set; }
@@ -25,6 +28,7 @@ namespace HekaMiniumApi.Models{
         public DateTime? DeadlineDate { get; set; }
         public string ItemDemandNo { get; set; }
         public string StatusText { get; set; }
+        public bool NewDetail { get; set; } = false;
         #endregion
     }
 }

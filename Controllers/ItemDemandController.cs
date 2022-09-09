@@ -40,11 +40,14 @@ namespace HekaMiniumApi.Controllers{
                     ReceiptNo = d.ReceiptNo,
                     ProjectCode = d.Project != null ? d.Project.ProjectCode : "",
                     ProjectName = d.Project != null ? d.Project.ProjectName : "",
-                    StatusText = d.DemandStatus == 0 ? "Talep oluşturuldu" : 
-                                    d.DemandStatus == 1 ? "Sipariş verildi" :
-                                    d.DemandStatus == 2 ? "Sipariş teslim alındı" :
-                                    d.DemandStatus == 3 ? "İptal edildi" : "",
-                }).ToArray();
+                    StatusText = d.DemandStatus == 0 ? "Onay bekleniyor" : 
+                                    d.DemandStatus == 1 ? "Onaylandı" :
+                                    d.DemandStatus == 2 ? "Sipariş verildi" :
+                                    d.DemandStatus == 3 ? "Sipariş teslim alındı" :
+                                    d.DemandStatus == 4 ? "İptal edildi" : "",
+                })
+                .OrderByDescending(d => d.ReceiptDate) 
+                .ToArray();
             }
             catch
             {
@@ -74,10 +77,11 @@ namespace HekaMiniumApi.Controllers{
                         ReceiptNo = d.ReceiptNo,
                         ProjectCode = d.Project != null ? d.Project.ProjectCode : "",
                         ProjectName = d.Project != null ? d.Project.ProjectName : "",
-                        StatusText = d.DemandStatus == 0 ? "Talep oluşturuldu" : 
-                                    d.DemandStatus == 1 ? "Sipariş verildi" :
-                                    d.DemandStatus == 2 ? "Sipariş teslim alındı" :
-                                    d.DemandStatus == 3 ? "İptal edildi" : "",
+                        StatusText = d.DemandStatus == 0 ? "Onay bekleniyor" : 
+                                    d.DemandStatus == 1 ? "Onaylandı" :
+                                    d.DemandStatus == 2 ? "Sipariş verildi" :
+                                    d.DemandStatus == 3 ? "Sipariş teslim alındı" :
+                                    d.DemandStatus == 4 ? "İptal edildi" : "",
                     }).FirstOrDefault();
 
                 if (data != null && data.Id > 0){
@@ -98,10 +102,11 @@ namespace HekaMiniumApi.Controllers{
                             ItemDemandNo = d.ItemDemand.ReceiptNo,
                             UnitCode = d.UnitType != null ? d.UnitType.UnitTypeCode : "",
                             UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
-                            StatusText = d.DemandStatus == 0 ? "Talep oluşturuldu" : 
-                                    d.DemandStatus == 1 ? "Sipariş verildi" :
-                                    d.DemandStatus == 2 ? "Sipariş teslim alındı" :
-                                    d.DemandStatus == 3 ? "İptal edildi" : "",
+                            StatusText = d.DemandStatus == 0 ? "Onay bekleniyor" : 
+                                    d.DemandStatus == 1 ? "Onaylandı" :
+                                    d.DemandStatus == 2 ? "Sipariş verildi" :
+                                    d.DemandStatus == 3 ? "Sipariş teslim alındı" :
+                                    d.DemandStatus == 4 ? "İptal edildi" : "",
                         }).ToArray();
                 }
                 else{
@@ -145,7 +150,7 @@ namespace HekaMiniumApi.Controllers{
             ItemDemandDetailModel[] data = new ItemDemandDetailModel[0];
             try
             {
-                data = _context.ItemDemandDetail.Where(d => d.ItemDemand.ProjectId == projectId && d.DemandStatus != 3).Select(d => new ItemDemandDetailModel{
+                data = _context.ItemDemandDetail.Where(d => d.ItemDemand.ProjectId == projectId).Select(d => new ItemDemandDetailModel{
                     Id = d.Id,
                     DemandStatus = d.DemandStatus,
                     Explanation = d.Explanation,
@@ -161,13 +166,16 @@ namespace HekaMiniumApi.Controllers{
                     ItemDemandNo = d.ItemDemand.ReceiptNo,
                     UnitCode = d.UnitType != null ? d.UnitType.UnitTypeCode : "",
                     UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
-                    StatusText = d.DemandStatus == 0 ? "Talep oluşturuldu" : 
-                                    d.DemandStatus == 1 ? "Sipariş verildi" :
-                                    d.DemandStatus == 2 ? "Sipariş teslim alındı" :
-                                    d.DemandStatus == 3 ? "İptal edildi" : "",
+                    StatusText = d.DemandStatus == 0 ? "Onay bekleniyor" : 
+                                    d.DemandStatus == 1 ? "Onaylandı" :
+                                    d.DemandStatus == 2 ? "Sipariş verildi" :
+                                    d.DemandStatus == 3 ? "Sipariş teslim alındı" :
+                                    d.DemandStatus == 4 ? "İptal edildi" : "",
                     DemandDate = d.ItemDemand.ReceiptDate,
                     DeadlineDate = d.ItemDemand.DeadlineDate,
-                }).ToArray();
+                })
+                .OrderByDescending(d => d.DemandDate)
+                .ToArray();
             }
             catch
             {
@@ -177,6 +185,72 @@ namespace HekaMiniumApi.Controllers{
             return data;
         }
 
+        [HttpGet]
+        [Route("Detail/{id}")]
+        [Authorize(Policy= "WebUser")]
+        public ItemDemandDetailModel GetDetail(int id){
+            ItemDemandDetailModel model = new ItemDemandDetailModel();
+
+            try
+            {
+                var dbObj = _context.ItemDemandDetail.FirstOrDefault(d => d.Id == id);
+                if (dbObj != null){
+                    dbObj.MapTo(model);
+                }
+            }
+            catch (System.Exception)
+            {
+                
+            }
+
+            return model;
+        }
+
+
+        [HttpGet]
+        [Route("ApprovedDetails")]
+        [Authorize(Policy = "WebUser")]
+        public IEnumerable<ItemDemandDetailModel> ApprovedDetails(int projectId){
+            ItemDemandDetailModel[] data = new ItemDemandDetailModel[0];
+            try
+            {
+                data = _context.ItemDemandDetail.Where(d => d.DemandStatus == 1).Select(d => new ItemDemandDetailModel{
+                    Id = d.Id,
+                    DemandStatus = d.DemandStatus,
+                    Explanation = d.Explanation,
+                    ItemDemandId = d.ItemDemandId,
+                    ItemExplanation = d.ItemExplanation,
+                    ItemId = d.ItemId,
+                    LineNumber = d.LineNumber,
+                    NetQuantity = d.NetQuantity,
+                    Quantity = d.Quantity,
+                    UnitId = d.UnitId,
+                    ItemCode = d.Item != null ? d.Item.ItemCode : d.ItemExplanation,
+                    ItemName = d.Item != null ? d.Item.ItemName : d.ItemExplanation,
+                    ItemDemandNo = d.ItemDemand.ReceiptNo,
+                    UnitCode = d.UnitType != null ? d.UnitType.UnitTypeCode : "",
+                    UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
+                    StatusText = d.DemandStatus == 0 ? "Onay bekleniyor" : 
+                                    d.DemandStatus == 1 ? "Onaylandı" :
+                                    d.DemandStatus == 2 ? "Sipariş verildi" :
+                                    d.DemandStatus == 3 ? "Sipariş teslim alındı" :
+                                    d.DemandStatus == 4 ? "İptal edildi" : "",
+                    DemandDate = d.ItemDemand.ReceiptDate,
+                    DeadlineDate = d.ItemDemand.DeadlineDate,
+                    ProjectId = d.ItemDemand.ProjectId,
+                    ProjectCode = d.ItemDemand.Project != null ? d.ItemDemand.Project.ProjectCode : "",
+                    ProjectName = d.ItemDemand.Project != null ? d.ItemDemand.Project.ProjectName : "",
+                })
+                .OrderByDescending(d => d.DemandDate)
+                .ToArray();
+            }
+            catch
+            {
+                
+            }
+            
+            return data;
+        }
         
         [Authorize(Policy = "WebUser")]
         [HttpPost]
@@ -185,6 +259,12 @@ namespace HekaMiniumApi.Controllers{
 
             try
             {
+                if (model.ReceiptDate == null)
+                    model.ReceiptDate = DateTime.Now;
+                
+                // if (model.DeadlineDate == null)
+                //     throw new Exception("İhtiyaç tarihi belirtilmelidir.");
+
                 var dbObj = _context.ItemDemand.FirstOrDefault(d => d.Id == model.Id);
                 if (dbObj == null){
 
@@ -212,6 +292,12 @@ namespace HekaMiniumApi.Controllers{
                 dbObj.ReceiptNo = currentRcNo;
 
                 #region SAVE DETAILS
+                foreach (var item in model.Details)
+                {
+                    if (item.NewDetail)
+                        item.Id = 0;
+                }
+
                 var currentDetails = _context.ItemDemandDetail.Where(d => d.ItemDemandId == dbObj.Id).ToArray();
 
                 var removedDetails = currentDetails.Where(d => !model.Details.Any(m => m.Id == d.Id)).ToArray();
@@ -248,6 +334,85 @@ namespace HekaMiniumApi.Controllers{
 
             return result;
         }
+
+        [Authorize(Policy = "WebUser")]
+        [Route("ApproveDetails")]
+        [HttpPost]
+        public BusinessResult ApproveDemandDetails(int[] detailId){
+            BusinessResult result = new BusinessResult();
+
+            try
+            {
+                ItemDemand dmnHeader = null;
+
+                foreach (var dId in detailId)
+                {
+                    var dbObj = _context.ItemDemandDetail.FirstOrDefault(d => d.Id == dId);
+                    if (dbObj != null){
+                        dbObj.DemandStatus = 1;
+
+                        if (dmnHeader == null)
+                            dmnHeader = dbObj.ItemDemand;
+                    }
+                }
+
+                if (dmnHeader != null){
+                    if (!_context.ItemDemandDetail.Any(d => d.ItemDemandId == dmnHeader.Id && d.DemandStatus != 1)){
+                        dmnHeader.DemandStatus = 1;
+                    }
+                }
+
+                _context.SaveChanges();
+                result.Result=true;
+            }
+            catch (System.Exception ex)
+            {
+                result.Result = false;
+                result.ErrorMessage = ex.Message;
+            }
+
+            return result;
+        }
+
+        [Authorize(Policy = "WebUser")]
+        [Route("DenyDetails")]
+        [HttpPost]
+        public BusinessResult DenyDemandDetails(int[] detailId){
+            BusinessResult result = new BusinessResult();
+
+            try
+            {
+                ItemDemand dmnHeader = null;
+
+                foreach (var dId in detailId)
+                {
+                    var dbObj = _context.ItemDemandDetail.FirstOrDefault(d => d.Id == dId);
+                    if (dbObj != null){
+                        dbObj.DemandStatus = 4;
+
+                        if (dmnHeader == null)
+                            dmnHeader = dbObj.ItemDemand;
+                    }
+                }
+
+                if (dmnHeader != null){
+                    if (!_context.ItemDemandDetail.Any(d => d.ItemDemandId == dmnHeader.Id && d.DemandStatus != 4)){
+                        dmnHeader.DemandStatus = 4;
+                    }
+                }
+
+                _context.SaveChanges();
+                result.Result=true;
+            }
+            catch (System.Exception ex)
+            {
+                result.Result = false;
+                result.ErrorMessage = ex.Message;
+            }
+
+            return result;
+        }
+
 
         [Authorize(Policy = "WebUser")]
         [HttpDelete]

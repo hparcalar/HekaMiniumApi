@@ -49,7 +49,9 @@ namespace HekaMiniumApi.Controllers{
                                     d.ReceiptStatus == 1 ? "Sipariş onaylandı" :
                                     d.ReceiptStatus == 2 ? "Sipariş tamamlandı" :
                                     d.ReceiptStatus == 3 ? "İptal edildi" : "",
-                }).ToArray();
+                })
+                .OrderByDescending(d => d.ReceiptDate)
+                .ToArray();
             }
             catch
             {
@@ -140,8 +142,13 @@ namespace HekaMiniumApi.Controllers{
                                         d.ReceiptStatus == 3 ? "İptal edildi" : "",
                         }).ToArray();
                 }
-                else
+                else{
+                    if (data == null)
+                        data = new ItemOrderModel();
+
+                    data.ReceiptNo = GetNextOrderNumber();
                     data.Details = new ItemOrderDetailModel[0];
+                }
             }
             catch
             {
@@ -149,6 +156,24 @@ namespace HekaMiniumApi.Controllers{
             }
             
             return data;
+        }
+
+        private string GetNextOrderNumber(){
+            try
+            {
+                int nextNumber = 1;
+                var lastRecord = _context.ItemOrder.OrderByDescending(d => d.ReceiptNo).Select(d => d.ReceiptNo).FirstOrDefault();
+                if (lastRecord != null && !string.IsNullOrEmpty(lastRecord))
+                    nextNumber = Convert.ToInt32(lastRecord) + 1;
+
+                return string.Format("{0:000000}", nextNumber);
+            }
+            catch (System.Exception)
+            {
+                
+            }
+
+            return string.Empty;
         }
 
         [Authorize(Policy = "WebUser")]
@@ -215,8 +240,8 @@ namespace HekaMiniumApi.Controllers{
                     if (dbDetail.ItemDemandDetailId != null){
                         var dbDemandDetail = _context.ItemDemandDetail.FirstOrDefault(d => d.Id == dbDetail.ItemDemandDetailId);
                         if (dbDemandDetail != null){
-                            if (dbDemandDetail.DemandStatus == 0){
-                                dbDemandDetail.DemandStatus = 1;
+                            if (dbDemandDetail.DemandStatus == 1){
+                                dbDemandDetail.DemandStatus = 2;
                             }
                             
                             if (dbDetail.ReceiptStatus == 2){

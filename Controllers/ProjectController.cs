@@ -169,6 +169,9 @@ namespace HekaMiniumApi.Controllers{
 
                 model.MapTo(dbObj);
 
+                if (dbObj.DeadlineDate < dbObj.StartDate)
+                    throw new Exception("Termin tarihi proje başlangıç tarihinden önce olamaz.");
+
                 _context.SaveChanges();
                 result.Result=true;
                 result.RecordId = dbObj.Id;
