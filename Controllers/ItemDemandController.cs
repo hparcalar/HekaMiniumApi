@@ -186,6 +186,51 @@ namespace HekaMiniumApi.Controllers{
         }
 
         [HttpGet]
+        [Route("WaitingForApprove")]
+        [Authorize(Policy = "WebUser")]
+        public IEnumerable<ItemDemandDetailModel> GetWaitingForApprove(){
+            ItemDemandDetailModel[] data = new ItemDemandDetailModel[0];
+            try
+            {
+                data = _context.ItemDemandDetail.Where(d => (d.DemandStatus ?? 0) == 0 || d.DemandStatus == 4).Select(d => new ItemDemandDetailModel{
+                    Id = d.Id,
+                    DemandStatus = d.DemandStatus,
+                    Explanation = d.Explanation,
+                    ItemDemandId = d.ItemDemandId,
+                    ItemExplanation = d.ItemExplanation,
+                    ItemId = d.ItemId,
+                    LineNumber = d.LineNumber,
+                    NetQuantity = d.NetQuantity,
+                    Quantity = d.Quantity,
+                    UnitId = d.UnitId,
+                    ProjectCode = d.ItemDemand.Project != null ? d.ItemDemand.Project.ProjectCode : "",
+                    ProjectName = d.ItemDemand.Project != null ? d.ItemDemand.Project.ProjectName : "",
+                    ItemCode = d.Item != null ? d.Item.ItemCode : d.ItemExplanation,
+                    ItemName = d.Item != null ? d.Item.ItemName : d.ItemExplanation,
+                    ItemDemandNo = d.ItemDemand.ReceiptNo,
+                    UnitCode = d.UnitType != null ? d.UnitType.UnitTypeCode : "",
+                    UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
+                    StatusText = d.DemandStatus == 0 ? "Onay bekleniyor" : 
+                                    d.DemandStatus == 1 ? "Onaylandı" :
+                                    d.DemandStatus == 2 ? "Sipariş verildi" :
+                                    d.DemandStatus == 3 ? "Sipariş teslim alındı" :
+                                    d.DemandStatus == 4 ? "İptal edildi" : "",
+                    DemandDate = d.ItemDemand.ReceiptDate,
+                    DeadlineDate = d.ItemDemand.DeadlineDate,
+                })
+                .OrderByDescending(d => d.DemandDate)
+                .ToArray();
+            }
+            catch
+            {
+                
+            }
+            
+            return data;
+        }
+
+
+        [HttpGet]
         [Route("Detail/{id}")]
         [Authorize(Policy= "WebUser")]
         public ItemDemandDetailModel GetDetail(int id){
@@ -267,16 +312,7 @@ namespace HekaMiniumApi.Controllers{
 
                 var dbObj = _context.ItemDemand.FirstOrDefault(d => d.Id == model.Id);
                 if (dbObj == null){
-
-                    int nextRcNo = 1;
-                    string lastRcNo = _context.ItemDemand.Where(d => d.PlantId == model.PlantId)
-                        .OrderByDescending(d => d.ReceiptNo).Select(d => d.ReceiptNo).FirstOrDefault();
-
-                    if (!string.IsNullOrEmpty(lastRcNo)){
-                        nextRcNo = Convert.ToInt32(lastRcNo) + 1;
-                    }
-
-                    model.ReceiptNo = string.Format("{0:000000}", nextRcNo);
+                    model.ReceiptNo = GetNextDemandNumber();
 
                     dbObj = new ItemDemand();
                     dbObj.ReceiptNo = model.ReceiptNo;
@@ -415,7 +451,7 @@ namespace HekaMiniumApi.Controllers{
 
 
         [Authorize(Policy = "WebUser")]
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public BusinessResult Delete(int id){
             BusinessResult result = new BusinessResult();
 

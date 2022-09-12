@@ -269,7 +269,7 @@ namespace HekaMiniumApi.Controllers{
         }
 
         [Authorize(Policy = "WebUser")]
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public BusinessResult Delete(int id){
             BusinessResult result = new BusinessResult();
 
