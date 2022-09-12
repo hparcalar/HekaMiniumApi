@@ -11,10 +11,10 @@ namespace HekaMiniumApi.Context{
         public int? ItemOrderDetailId { get; set; }
 
         [ForeignKey("ContributerReceiptDetail")]
-        public int? ContributerItemReceiptDetailId { get; set; }
+        public int? ContributerItemReceiptDetailId { get; set; } // any existing item receipts to complete this order is contributer
 
         [ForeignKey("ConsumerReceiptDetail")]
-        public int? ConsumerItemReceiptDetailId { get; set; }
+        public int? ConsumerItemReceiptDetailId { get; set; } // any created item receipts to complete this order is consumer
         public decimal? ContributeNetQuantity { get; set; }
         public decimal? ConsumeNetQuantity { get; set; }
         public DateTime? ContributeDate { get; set; }

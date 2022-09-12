@@ -12,6 +12,8 @@ namespace HekaMiniumApi.Models{
         public string ResponsibleInfo { get; set; }
         public string FirmLocation { get; set; }
         public decimal? Budget { get; set; }
+        public string MeetingExplanation { get; set; }
+        public string CriticalExplanation { get; set; }
         public int? ProjectStatus { get; set; }
         public string Explanation { get; set; }
         public DateTime? StartDate { get; set; }
@@ -23,6 +25,7 @@ namespace HekaMiniumApi.Models{
         public string ProjectCategoryCode { get; set; }
         public string ProjectCategoryName { get; set; }
         public string ProjectStatusText { get; set; }
+        public ProjectCostItemModel[] CostItems { get; set; }
         #endregion
     }
 }

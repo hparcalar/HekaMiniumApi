@@ -12,12 +12,15 @@ namespace HekaMiniumApi.Models{
         public int? PlantId { get; set; }
         public bool? IsWaybilled { get; set; }
         public int? ReceiptStatus { get; set; }
+        public int? SysUserId { get; set; }
 
         #region VISUAL ELEMENTS
         public string FirmCode { get; set; }
         public string FirmName { get; set; }
         public string ItemDemandNo { get; set; }
         public string StatusText { get; set; }
+        public string UserCode { get; set; }
+        public string UserName { get; set; }
 
         public ItemOrderDetailModel[] Details { get; set; }
         #endregion

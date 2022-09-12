@@ -26,6 +26,10 @@ namespace HekaMiniumApi.Context{
         public bool? IsInvoiced { get; set; }
         public int? ReceiptStatus { get; set; }
 
+        [ForeignKey("SysUser")]
+        public int? SysUserId { get; set; }
+
+        public virtual SysUser SysUser { get; set; }
         public virtual Firm Firm { get; set; }
         public virtual Plant Plant { get; set; }
         public virtual Warehouse InWarehouse { get; set; }

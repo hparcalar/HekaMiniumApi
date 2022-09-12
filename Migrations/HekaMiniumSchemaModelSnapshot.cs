@@ -441,11 +441,16 @@ namespace HekaMiniumApi.Migrations
                     b.Property<string>("ReceiptNo")
                         .HasColumnType("text");
 
+                    b.Property<int?>("SysUserId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("PlantId");
 
                     b.HasIndex("ProjectId");
+
+                    b.HasIndex("SysUserId");
 
                     b.ToTable("ItemDemand");
                 });
@@ -573,6 +578,9 @@ namespace HekaMiniumApi.Migrations
                     b.Property<int>("ReceiptType")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("SysUserId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("FirmId");
@@ -580,6 +588,8 @@ namespace HekaMiniumApi.Migrations
                     b.HasIndex("ItemDemandId");
 
                     b.HasIndex("PlantId");
+
+                    b.HasIndex("SysUserId");
 
                     b.ToTable("ItemOrder");
                 });
@@ -784,6 +794,9 @@ namespace HekaMiniumApi.Migrations
                     b.Property<int>("ReceiptType")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("SysUserId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("FirmId");
@@ -793,6 +806,8 @@ namespace HekaMiniumApi.Migrations
                     b.HasIndex("OutWarehouseId");
 
                     b.HasIndex("PlantId");
+
+                    b.HasIndex("SysUserId");
 
                     b.ToTable("ItemReceipt");
                 });
@@ -891,6 +906,9 @@ namespace HekaMiniumApi.Migrations
                     b.Property<decimal?>("OverallTotal")
                         .HasColumnType("numeric");
 
+                    b.Property<int?>("ProjectId")
+                        .HasColumnType("integer");
+
                     b.Property<decimal?>("Quantity")
                         .HasColumnType("numeric");
 
@@ -929,6 +947,8 @@ namespace HekaMiniumApi.Migrations
                     b.HasIndex("ItemId");
 
                     b.HasIndex("ItemReceiptId");
+
+                    b.HasIndex("ProjectId");
 
                     b.HasIndex("UnitId");
 
@@ -1187,6 +1207,9 @@ namespace HekaMiniumApi.Migrations
                     b.Property<decimal?>("Budget")
                         .HasColumnType("numeric");
 
+                    b.Property<string>("CriticalExplanation")
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("DeadlineDate")
                         .HasColumnType("timestamp without time zone");
 
@@ -1197,6 +1220,9 @@ namespace HekaMiniumApi.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("FirmLocation")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MeetingExplanation")
                         .HasColumnType("text");
 
                     b.Property<int?>("PlantId")
@@ -1381,6 +1407,99 @@ namespace HekaMiniumApi.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ProjectCostItem");
+                });
+
+            modelBuilder.Entity("HekaMiniumApi.Context.ProjectFieldService", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DocumentNo")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ProjectId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ServiceDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("ServiceStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ServiceUserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("ServiceUserId");
+
+                    b.ToTable("ProjectFieldService");
+                });
+
+            modelBuilder.Entity("HekaMiniumApi.Context.ProjectFieldServiceAttachment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<byte[]>("FileContent")
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("FileExtension")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FileHeader")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ProjectFieldServiceDetailId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ProjectFieldServiceId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProjectFieldServiceAttachment");
+                });
+
+            modelBuilder.Entity("HekaMiniumApi.Context.ProjectFieldServiceDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("LineNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ProjectFieldServiceId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ServiceStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("WorkExplanation")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectFieldServiceId");
+
+                    b.ToTable("ProjectFieldServiceDetail");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.ProjectPhase", b =>
@@ -1916,9 +2035,15 @@ namespace HekaMiniumApi.Migrations
                         .WithMany()
                         .HasForeignKey("ProjectId");
 
+                    b.HasOne("HekaMiniumApi.Context.SysUser", "SysUser")
+                        .WithMany()
+                        .HasForeignKey("SysUserId");
+
                     b.Navigation("Plant");
 
                     b.Navigation("Project");
+
+                    b.Navigation("SysUser");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.ItemDemandDetail", b =>
@@ -1965,11 +2090,17 @@ namespace HekaMiniumApi.Migrations
                         .WithMany()
                         .HasForeignKey("PlantId");
 
+                    b.HasOne("HekaMiniumApi.Context.SysUser", "SysUser")
+                        .WithMany()
+                        .HasForeignKey("SysUserId");
+
                     b.Navigation("Firm");
 
                     b.Navigation("ItemDemand");
 
                     b.Navigation("Plant");
+
+                    b.Navigation("SysUser");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.ItemOrderConsume", b =>
@@ -2062,6 +2193,10 @@ namespace HekaMiniumApi.Migrations
                         .WithMany()
                         .HasForeignKey("PlantId");
 
+                    b.HasOne("HekaMiniumApi.Context.SysUser", "SysUser")
+                        .WithMany()
+                        .HasForeignKey("SysUserId");
+
                     b.Navigation("Firm");
 
                     b.Navigation("InWarehouse");
@@ -2069,6 +2204,8 @@ namespace HekaMiniumApi.Migrations
                     b.Navigation("OutWarehouse");
 
                     b.Navigation("Plant");
+
+                    b.Navigation("SysUser");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.ItemReceiptConsume", b =>
@@ -2108,6 +2245,10 @@ namespace HekaMiniumApi.Migrations
                         .WithMany()
                         .HasForeignKey("ItemReceiptId");
 
+                    b.HasOne("HekaMiniumApi.Context.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId");
+
                     b.HasOne("HekaMiniumApi.Context.UnitType", "UnitType")
                         .WithMany()
                         .HasForeignKey("UnitId");
@@ -2121,6 +2262,8 @@ namespace HekaMiniumApi.Migrations
                     b.Navigation("Item");
 
                     b.Navigation("ItemReceipt");
+
+                    b.Navigation("Project");
 
                     b.Navigation("UnitType");
                 });
@@ -2267,6 +2410,30 @@ namespace HekaMiniumApi.Migrations
                     b.Navigation("Item");
 
                     b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("HekaMiniumApi.Context.ProjectFieldService", b =>
+                {
+                    b.HasOne("HekaMiniumApi.Context.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId");
+
+                    b.HasOne("HekaMiniumApi.Context.SysUser", "SysUser")
+                        .WithMany()
+                        .HasForeignKey("ServiceUserId");
+
+                    b.Navigation("Project");
+
+                    b.Navigation("SysUser");
+                });
+
+            modelBuilder.Entity("HekaMiniumApi.Context.ProjectFieldServiceDetail", b =>
+                {
+                    b.HasOne("HekaMiniumApi.Context.ProjectFieldService", "ProjectFieldService")
+                        .WithMany()
+                        .HasForeignKey("ProjectFieldServiceId");
+
+                    b.Navigation("ProjectFieldService");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.ProjectPhase", b =>

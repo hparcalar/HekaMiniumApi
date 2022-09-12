@@ -48,10 +48,11 @@ namespace HekaMiniumApi.Controllers{
                     ProjectCategoryCode = d.ProjectCategory != null ? d.ProjectCategory.ProjectCategoryCode : "",
                     ProjectCategoryName = d.ProjectCategory != null ? d.ProjectCategory.ProjectCategoryName : "",
                     ProjectStatus = d.ProjectStatus,
-                    ProjectStatusText = (d.ProjectStatus ?? 0) == 0 ? "Bekleniyor" :
-                                        d.ProjectStatus == 1 ? "Çalışılıyor" :
-                                        d.ProjectStatus == 2 ? "Tamamlandı" :
-                                        d.ProjectStatus == 3 ? "İptal edildi" : ""
+                    ProjectStatusText = (d.ProjectStatus ?? 0) == 0 ? "Teklif verilecek" :
+                                            d.ProjectStatus == 1 ? "Teklif verildi" :
+                                            d.ProjectStatus == 2 ? "Onaylandı" :
+                                            d.ProjectStatus == 3 ? "Tamamlandı" : 
+                                            d.ProjectStatus == 4 ? "İptal edildi" : ""
                 }).ToArray();
             }
             catch
@@ -106,15 +107,72 @@ namespace HekaMiniumApi.Controllers{
                         ProjectCategoryId = d.ProjectCategoryId,
                         ProjectCode = d.ProjectCode,
                         ProjectName = d.ProjectName,
+                        CriticalExplanation = d.CriticalExplanation,
+                        Explanation = d.Explanation,
+                        MeetingExplanation = d.MeetingExplanation,
                         ProjectPhaseTemplateId = d.ProjectPhaseTemplateId,
                         ResponsibleInfo = d.ResponsibleInfo,
                         ResponsiblePerson = d.ResponsiblePerson,
                         ProjectStatus = d.ProjectStatus,
-                        ProjectStatusText = (d.ProjectStatus ?? 0) == 0 ? "Bekleniyor" :
-                                            d.ProjectStatus == 1 ? "Çalışılıyor" :
-                                            d.ProjectStatus == 2 ? "Tamamlandı" :
-                                            d.ProjectStatus == 3 ? "İptal edildi" : ""
+                        ProjectStatusText = (d.ProjectStatus ?? 0) == 0 ? "Teklif verilecek" :
+                                            d.ProjectStatus == 1 ? "Teklif verildi" :
+                                            d.ProjectStatus == 2 ? "Onaylandı" :
+                                            d.ProjectStatus == 3 ? "Tamamlandı" : 
+                                            d.ProjectStatus == 4 ? "İptal edildi" : ""
                     }).FirstOrDefault();
+
+                if (data != null && data.Id > 0){
+                    data.CostItems = _context.ProjectCostItem.Where(d => d.ProjectId == id)
+                        .Select(d => new ProjectCostItemModel{
+                            Id = d.Id,
+                            CostName = d.CostName,
+                            CostStatus = d.CostStatus,
+                            CostType = d.CostType,
+                            CreatedDate = d.CreatedDate,
+                            CreatedUserId = d.CreatedUserId,
+                            DiscountRate = d.DiscountRate,
+                            EstimatedForexOverallTotal = d.EstimatedForexOverallTotal,
+                            EstimatedForexRate = d.EstimatedForexRate,
+                            EstimatedForexSubTotal = d.EstimatedForexSubTotal,
+                            EstimatedForexTaxTotal = d.EstimatedForexTaxTotal,
+                            EstimatedForexUnitPrice = d.EstimatedForexUnitPrice,
+                            EstimatedOverallTotal = d.EstimatedOverallTotal,
+                            EstimatedSubTotal = d.EstimatedSubTotal,
+                            EstimatedTaxTotal = d.EstimatedTaxTotal,
+                            EstimatedUnitPrice = d.EstimatedUnitPrice,
+                            Explanation = d.Explanation,
+                            ForexCode = d.Forex != null ? d.Forex.ForexCode : "",
+                            ForexId = d.ForexId,
+                            ForexName = d.Forex != null ? d.Forex.ForexName : "",
+                            ForexOverallTotal = d.ForexOverallTotal,
+                            ForexRate = d.ForexRate,
+                            ForexSubTotal = d.ForexSubTotal,
+                            ForexTaxTotal = d.ForexTaxTotal,
+                            ForexUnitPrice = d.ForexUnitPrice,
+                            ItemCode = d.Item != null ? d.Item.ItemCode : "",
+                            ItemId = d.ItemId,
+                            ItemName = d.Item != null ? d.Item.ItemName : "",
+                            LineNumber = d.LineNumber,
+                            OverallTotal = d.OverallTotal,
+                            ProjectCode = d.Project != null ? d.Project.ProjectCode : "",
+                            ProjectId = d.ProjectId,
+                            ProjectName = d.Project != null ? d.Project.ProjectName : "",
+                            Quantity = d.Quantity,
+                            RealizedDate = d.RealizedDate,
+                            SubTotal = d.SubTotal,
+                            TaxRate = d.TaxRate,
+                            TaxTotal = d.TaxTotal,
+                            UnitPrice = d.UnitPrice,
+                            CostStatusText = (d.CostStatus) == 0 ? "Bekleniyor" : "Gerçekleşti",
+                            CostTypeText = (d.CostType) == 0 ? "Malzeme" : "İşçilik",
+                        }).ToArray();
+                }
+                else{
+                    if (data == null)
+                        data = new ProjectModel();
+
+                    data.CostItems = new ProjectCostItemModel[0];
+                }
             }
             catch
             {
@@ -171,6 +229,28 @@ namespace HekaMiniumApi.Controllers{
 
                 if (dbObj.DeadlineDate < dbObj.StartDate)
                     throw new Exception("Termin tarihi proje başlangıç tarihinden önce olamaz.");
+
+                #region SAVE COST ITEMS
+                var currentCostItems = _context.ProjectCostItem.Where(d => d.ProjectId == dbObj.Id).ToArray();
+
+                var removedCostItems = currentCostItems.Where(d => !model.CostItems.Any(m => m.Id == d.Id)).ToArray();
+                foreach (var item in removedCostItems)
+                {
+                    _context.ProjectCostItem.Remove(item);
+                }
+
+                foreach (var item in model.CostItems)
+                {
+                    var dbDetail = _context.ProjectCostItem.FirstOrDefault(d => d.Id == item.Id);
+                    if (dbDetail == null){
+                        dbDetail = new ProjectCostItem();
+                        _context.ProjectCostItem.Add(dbDetail);
+                    }
+
+                    item.MapTo(dbDetail);
+                    dbDetail.Project = dbObj;
+                }
+                #endregion
 
                 _context.SaveChanges();
                 result.Result=true;

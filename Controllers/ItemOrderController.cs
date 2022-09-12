@@ -277,11 +277,15 @@ namespace HekaMiniumApi.Controllers{
             {
                 var dbObj = _context.ItemOrder.FirstOrDefault(d => d.Id == id);
                 if (dbObj == null)
-                    throw new Exception("Silinmesi istenen talep bilgisi bulunamadı.");
+                    throw new Exception("Silinmesi istenen sipariş bilgisi bulunamadı.");
 
                 var details = _context.ItemOrderDetail.Where(d => d.ItemOrderId == id).ToArray();
                 foreach (var item in details)
                 {
+                    // check any order consume exists
+                    if (_context.ItemOrderConsume.Any(d => d.ItemOrderDetailId == item.Id))
+                        throw new Exception("Bu sipariş ile eşleşen irsaliyeler mevcut. Önce onları silmelisiniz.");
+
                     _context.ItemOrderDetail.Remove(item);
 
                     // set demand detail status to created

@@ -44,6 +44,9 @@ namespace HekaMiniumApi.Context {
         public DbSet<SysRoleSection> SysRoleSection { get; set; }
         public DbSet<ItemDemand> ItemDemand { get; set; }
         public DbSet<ItemDemandDetail> ItemDemandDetail { get; set; }
+        public DbSet<ProjectFieldService> ProjectFieldService { get; set; }
+        public DbSet<ProjectFieldServiceDetail> ProjectFieldServiceDetail { get; set; }
+        public DbSet<ProjectFieldServiceAttachment> ProjectFieldServiceAttachment { get; set; }
 
         public HekaMiniumSchema() : base(){}
         public HekaMiniumSchema(Microsoft.EntityFrameworkCore.DbContextOptions options) : base(options){}

@@ -27,6 +27,8 @@ namespace HekaMiniumApi.Context{
         public decimal? Budget { get; set; }
         public int? ProjectStatus { get; set; }
         public string Explanation { get; set; }
+        public string MeetingExplanation { get; set; }
+        public string CriticalExplanation { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? DeadlineDate { get; set; }
 

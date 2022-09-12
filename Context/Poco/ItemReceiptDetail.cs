@@ -26,6 +26,9 @@ namespace HekaMiniumApi.Context{
 
         [ForeignKey("Forex")]
         public int? ForexId { get; set; }
+
+        [ForeignKey("Project")]
+        public int? ProjectId { get; set; }
         public decimal? ForexRate { get; set; }
         public decimal? ForexUnitPrice { get; set; }
 
@@ -54,5 +57,6 @@ namespace HekaMiniumApi.Context{
         public virtual BrandModel BrandModel { get; set; }
         public virtual UnitType UnitType { get; set; }
         public virtual Forex Forex { get; set; }
+        public virtual Project Project { get; set; }
     }
 }

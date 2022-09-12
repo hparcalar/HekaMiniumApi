@@ -22,6 +22,11 @@ namespace HekaMiniumApi.Context{
         public bool? IsOrdered { get; set; }
         public int? DemandStatus { get; set; }
 
+        [ForeignKey("SysUser")]
+        public int? SysUserId { get; set; }
+
+        public virtual SysUser SysUser { get; set; }
+
         public virtual Project Project { get; set; }
 
         public virtual Plant Plant { get; set; }

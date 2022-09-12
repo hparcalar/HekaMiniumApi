@@ -12,11 +12,14 @@ namespace HekaMiniumApi.Models{
 
         public bool? IsOrdered { get; set; }
         public int? DemandStatus { get; set; }
+        public int? SysUserId { get; set; }
 
         #region VISUAL ELEMENTS
         public string ProjectCode { get; set; }
         public string ProjectName { get; set; }
         public string StatusText { get; set; }
+        public string UserCode { get; set; }
+        public string UserName { get; set; }
         public ItemDemandDetailModel[] Details { get; set; }
         #endregion
     }
