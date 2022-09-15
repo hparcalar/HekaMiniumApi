@@ -15,6 +15,8 @@ namespace HekaMiniumApi.Models{
         public decimal? NetQuantity { get; set; }
 
         public int? DemandStatus { get; set; }
+        public string PartNo { get; set; }
+        public string PartDimensions { get; set; }
 
         #region VISUAL ELEMENTS
         public int? ProjectId { get; set; }

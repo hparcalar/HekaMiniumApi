@@ -26,6 +26,8 @@ namespace HekaMiniumApi.Context{
         public decimal? NetQuantity { get; set; }
 
         public int? DemandStatus { get; set; }
+        public string PartNo { get; set; }
+        public string PartDimensions { get; set; }
 
         public virtual ItemDemand ItemDemand { get; set; }
         public virtual Item Item { get; set; }

@@ -116,6 +116,8 @@ namespace HekaMiniumApi.Controllers{
                             ForexTaxPrice = d.ForexTaxPrice,
                             ForexUnitPrice = d.ForexUnitPrice,
                             GrossQuantity = d.GrossQuantity,
+                            PartDimensions = d.PartDimensions,
+                            PartNo = d.PartNo,
                             ItemDemandDetailId = d.ItemDemandDetailId,
                             OverallTotal = d.OverallTotal,
                             ProjectId = d.ProjectId,
@@ -183,6 +185,9 @@ namespace HekaMiniumApi.Controllers{
 
             try
             {
+                if (!_context.Plant.Any(d => d.Id == (model.PlantId ?? 0)))
+                    model.PlantId = null;
+
                 var dbObj = _context.ItemOrder.FirstOrDefault(d => d.Id == model.Id);
                 if (dbObj == null){
 

@@ -18,6 +18,14 @@ namespace HekaMiniumApi.Models{
         public string Explanation { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? DeadlineDate { get; set; }
+        public int? ProfitRate { get; set; }
+        public decimal? OfferPrice { get; set; }
+        public decimal? ForexRate { get; set; }
+        public decimal? OfferForexPrice { get; set; }
+
+
+        public int? Quantity { get; set; }
+        public int? ForexId { get; set; }
 
         #region VISUAL ELEMENTS
         public string FirmCode { get; set; }
@@ -25,6 +33,8 @@ namespace HekaMiniumApi.Models{
         public string ProjectCategoryCode { get; set; }
         public string ProjectCategoryName { get; set; }
         public string ProjectStatusText { get; set; }
+        public string ForexCode { get; set; }
+        public string ForexName { get; set; }
         public ProjectCostItemModel[] CostItems { get; set; }
         #endregion
     }

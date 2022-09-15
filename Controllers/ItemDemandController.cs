@@ -95,6 +95,8 @@ namespace HekaMiniumApi.Controllers{
                             ItemId = d.ItemId,
                             LineNumber = d.LineNumber,
                             NetQuantity = d.NetQuantity,
+                            PartDimensions = d.PartDimensions,
+                            PartNo = d.PartNo,
                             Quantity = d.Quantity,
                             UnitId = d.UnitId,
                             ItemCode = d.Item != null ? d.Item.ItemCode : d.ItemExplanation,
@@ -161,6 +163,8 @@ namespace HekaMiniumApi.Controllers{
                     NetQuantity = d.NetQuantity,
                     Quantity = d.Quantity,
                     UnitId = d.UnitId,
+                    PartDimensions = d.PartDimensions,
+                    PartNo = d.PartNo,
                     ItemCode = d.Item != null ? d.Item.ItemCode : d.ItemExplanation,
                     ItemName = d.Item != null ? d.Item.ItemName : d.ItemExplanation,
                     ItemDemandNo = d.ItemDemand.ReceiptNo,
@@ -203,6 +207,8 @@ namespace HekaMiniumApi.Controllers{
                     NetQuantity = d.NetQuantity,
                     Quantity = d.Quantity,
                     UnitId = d.UnitId,
+                    PartDimensions = d.PartDimensions,
+                    PartNo = d.PartNo,
                     ProjectCode = d.ItemDemand.Project != null ? d.ItemDemand.Project.ProjectCode : "",
                     ProjectName = d.ItemDemand.Project != null ? d.ItemDemand.Project.ProjectName : "",
                     ItemCode = d.Item != null ? d.Item.ItemCode : d.ItemExplanation,
@@ -270,6 +276,8 @@ namespace HekaMiniumApi.Controllers{
                     NetQuantity = d.NetQuantity,
                     Quantity = d.Quantity,
                     UnitId = d.UnitId,
+                    PartDimensions = d.PartDimensions,
+                    PartNo = d.PartNo,
                     ItemCode = d.Item != null ? d.Item.ItemCode : d.ItemExplanation,
                     ItemName = d.Item != null ? d.Item.ItemName : d.ItemExplanation,
                     ItemDemandNo = d.ItemDemand.ReceiptNo,
@@ -306,6 +314,9 @@ namespace HekaMiniumApi.Controllers{
             {
                 if (model.ReceiptDate == null)
                     model.ReceiptDate = DateTime.Now;
+
+                if (!_context.Plant.Any(d => d.Id == (model.PlantId ?? 0)))
+                    model.PlantId = null;
                 
                 // if (model.DeadlineDate == null)
                 //     throw new Exception("İhtiyaç tarihi belirtilmelidir.");

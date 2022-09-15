@@ -31,10 +31,19 @@ namespace HekaMiniumApi.Context{
         public string CriticalExplanation { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? DeadlineDate { get; set; }
+        public int? Quantity { get; set; }
+        public decimal? ForexRate { get; set; }
+        public decimal? OfferForexPrice { get; set; }
+
+        [ForeignKey("Forex")]
+        public int? ForexId { get; set; }
+        public int? ProfitRate { get; set; }
+        public decimal? OfferPrice { get; set; }
 
         public virtual Plant Plant { get; set; }
         public virtual Firm Firm { get; set; }
         public virtual ProjectCategory ProjectCategory { get; set; }
         public virtual ProjectPhaseTemplate ProjectPhaseTemplate { get; set; }
+        public virtual Forex Forex { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using HekaMiniumApi.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HekaMiniumApi.Migrations
 {
     [DbContext(typeof(HekaMiniumSchema))]
-    partial class HekaMiniumSchemaModelSnapshot : ModelSnapshot
+    [Migration("20220914122324_PartNo_And_Dimensions")]
+    partial class PartNo_And_Dimensions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1243,14 +1245,8 @@ namespace HekaMiniumApi.Migrations
                     b.Property<int?>("ForexId")
                         .HasColumnType("integer");
 
-                    b.Property<decimal?>("ForexRate")
-                        .HasColumnType("numeric");
-
                     b.Property<string>("MeetingExplanation")
                         .HasColumnType("text");
-
-                    b.Property<decimal?>("OfferForexPrice")
-                        .HasColumnType("numeric");
 
                     b.Property<decimal?>("OfferPrice")
                         .HasColumnType("numeric");

@@ -3,6 +3,7 @@ using System;
 using HekaMiniumApi.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HekaMiniumApi.Migrations
 {
     [DbContext(typeof(HekaMiniumSchema))]
-    partial class HekaMiniumSchemaModelSnapshot : ModelSnapshot
+    [Migration("20220914071741_Project_Quantity_And_Forex")]
+    partial class Project_Quantity_And_Forex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -484,12 +486,6 @@ namespace HekaMiniumApi.Migrations
                     b.Property<decimal?>("NetQuantity")
                         .HasColumnType("numeric");
 
-                    b.Property<string>("PartDimensions")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PartNo")
-                        .HasColumnType("text");
-
                     b.Property<decimal?>("Quantity")
                         .HasColumnType("numeric");
 
@@ -708,12 +704,6 @@ namespace HekaMiniumApi.Migrations
                     b.Property<decimal?>("OverallTotal")
                         .HasColumnType("numeric");
 
-                    b.Property<string>("PartDimensions")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PartNo")
-                        .HasColumnType("text");
-
                     b.Property<int?>("ProjectId")
                         .HasColumnType("integer");
 
@@ -917,12 +907,6 @@ namespace HekaMiniumApi.Migrations
 
                     b.Property<decimal?>("OverallTotal")
                         .HasColumnType("numeric");
-
-                    b.Property<string>("PartDimensions")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PartNo")
-                        .HasColumnType("text");
 
                     b.Property<int?>("ProjectId")
                         .HasColumnType("integer");
@@ -1243,22 +1227,10 @@ namespace HekaMiniumApi.Migrations
                     b.Property<int?>("ForexId")
                         .HasColumnType("integer");
 
-                    b.Property<decimal?>("ForexRate")
-                        .HasColumnType("numeric");
-
                     b.Property<string>("MeetingExplanation")
                         .HasColumnType("text");
 
-                    b.Property<decimal?>("OfferForexPrice")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("OfferPrice")
-                        .HasColumnType("numeric");
-
                     b.Property<int?>("PlantId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("ProfitRate")
                         .HasColumnType("integer");
 
                     b.Property<int?>("ProjectCategoryId")
@@ -1412,12 +1384,6 @@ namespace HekaMiniumApi.Migrations
 
                     b.Property<decimal?>("OverallTotal")
                         .HasColumnType("numeric");
-
-                    b.Property<string>("PartDimensions")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PartNo")
-                        .HasColumnType("text");
 
                     b.Property<int?>("ProjectId")
                         .HasColumnType("integer");

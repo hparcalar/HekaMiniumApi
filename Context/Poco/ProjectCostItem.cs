@@ -30,6 +30,9 @@ namespace HekaMiniumApi.Context{
         [ForeignKey("Forex")]
         public int? ForexId { get; set; }
 
+        public string PartNo { get; set; }
+        public string PartDimensions { get; set; }
+
         public decimal? EstimatedUnitPrice { get; set; }
         public decimal? EstimatedForexUnitPrice { get; set; }
         public decimal? EstimatedForexRate { get; set; }

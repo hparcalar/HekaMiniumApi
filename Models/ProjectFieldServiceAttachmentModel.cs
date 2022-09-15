@@ -7,5 +7,9 @@ namespace HekaMiniumApi.Models{
         public byte[] FileContent { get; set; }
         public string FileHeader { get; set; }
         public string FileExtension { get; set; }
+
+        #region VISUAL ELEMENTS
+        public string ContentBase64 { get; set; }
+        #endregion
     }
 }

@@ -107,6 +107,8 @@ namespace HekaMiniumApi.Controllers{
                             BrandId = d.BrandId,
                             BrandModelId = d.BrandModelId,
                             DiscountPrice = d.DiscountPrice,
+                            PartDimensions = d.PartDimensions,
+                            PartNo = d.PartNo,
                             DiscountRate = d.DiscountRate,
                             ForexDiscountPrice = d.ForexDiscountPrice,
                             ForexId = d.ForexId,

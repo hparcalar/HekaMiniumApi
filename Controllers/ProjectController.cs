@@ -48,11 +48,122 @@ namespace HekaMiniumApi.Controllers{
                     ProjectCategoryCode = d.ProjectCategory != null ? d.ProjectCategory.ProjectCategoryCode : "",
                     ProjectCategoryName = d.ProjectCategory != null ? d.ProjectCategory.ProjectCategoryName : "",
                     ProjectStatus = d.ProjectStatus,
-                    ProjectStatusText = (d.ProjectStatus ?? 0) == 0 ? "Teklif verilecek" :
-                                            d.ProjectStatus == 1 ? "Teklif verildi" :
-                                            d.ProjectStatus == 2 ? "Onaylandı" :
-                                            d.ProjectStatus == 3 ? "Tamamlandı" : 
-                                            d.ProjectStatus == 4 ? "İptal edildi" : ""
+                    ForexId = d.ForexId,
+                    ForexCode = d.Forex != null ? d.Forex.ForexCode : "",
+                    ForexName = d.Forex != null ? d.Forex.ForexName : "",
+                    Quantity = d.Quantity,
+                    ProfitRate = d.ProfitRate,
+                    OfferPrice = d.OfferPrice,
+                    ForexRate = d.ForexRate,
+                    OfferForexPrice = d.OfferForexPrice,
+                    ProjectStatusText = (d.ProjectStatus ?? 0) == 0 ? "Oluşturuldu" :
+                                            d.ProjectStatus == 1 ? "Teklif verilecek" :
+                                            d.ProjectStatus == 2 ? "Teklif verildi" :
+                                            d.ProjectStatus == 3 ? "Onaylandı" :
+                                            d.ProjectStatus == 4 ? "Tamamlandı" : 
+                                            d.ProjectStatus == 5 ? "İptal edildi" : ""
+                }).ToArray();
+            }
+            catch
+            {
+                
+            }
+            
+            return data;
+        }
+
+        [HttpGet]
+        [Route("AfterCreated")]
+        public IEnumerable<ProjectModel> GetAfterCreated()
+        {
+            ProjectModel[] data = new ProjectModel[0];
+            try
+            {
+                data = _context.Project.Where(d => d.ProjectStatus > 0).Select(d => new ProjectModel{
+                    Id = d.Id,
+                    Budget = d.Budget,
+                    FirmCode = d.Firm != null ? d.Firm.FirmCode : "",
+                    FirmId = d.FirmId,
+                    FirmName = d.Firm != null ? d.Firm.FirmName : "",
+                    Explanation = d.Explanation,
+                    FirmLocation = d.FirmLocation,
+                    PlantId = d.PlantId,
+                    StartDate = d.StartDate,
+                    DeadlineDate = d.DeadlineDate,
+                    ProjectCategoryId = d.ProjectCategoryId,
+                    ProjectCode = d.ProjectCode,
+                    ProjectName = d.ProjectName,
+                    ProjectPhaseTemplateId = d.ProjectPhaseTemplateId,
+                    ResponsibleInfo = d.ResponsibleInfo,
+                    ResponsiblePerson = d.ResponsiblePerson,
+                    ProjectCategoryCode = d.ProjectCategory != null ? d.ProjectCategory.ProjectCategoryCode : "",
+                    ProjectCategoryName = d.ProjectCategory != null ? d.ProjectCategory.ProjectCategoryName : "",
+                    ProjectStatus = d.ProjectStatus,
+                    ForexId = d.ForexId,
+                    ForexCode = d.Forex != null ? d.Forex.ForexCode : "",
+                    ForexName = d.Forex != null ? d.Forex.ForexName : "",
+                    Quantity = d.Quantity,
+                    ProfitRate = d.ProfitRate,
+                    OfferPrice = d.OfferPrice,
+                    ForexRate = d.ForexRate,
+                    OfferForexPrice = d.OfferForexPrice,
+                    ProjectStatusText = (d.ProjectStatus ?? 0) == 0 ? "Oluşturuldu" :
+                                            d.ProjectStatus == 1 ? "Teklif verilecek" :
+                                            d.ProjectStatus == 2 ? "Teklif verildi" :
+                                            d.ProjectStatus == 3 ? "Onaylandı" :
+                                            d.ProjectStatus == 4 ? "Tamamlandı" : 
+                                            d.ProjectStatus == 5 ? "İptal edildi" : ""
+                }).ToArray();
+            }
+            catch
+            {
+                
+            }
+            
+            return data;
+        }
+
+        [HttpGet]
+        [Route("Demandable")]
+        public IEnumerable<ProjectModel> GetDemandable()
+        {
+            ProjectModel[] data = new ProjectModel[0];
+            try
+            {
+                data = _context.Project.Where(d => d.ProjectStatus == 3).Select(d => new ProjectModel{
+                    Id = d.Id,
+                    Budget = d.Budget,
+                    FirmCode = d.Firm != null ? d.Firm.FirmCode : "",
+                    FirmId = d.FirmId,
+                    FirmName = d.Firm != null ? d.Firm.FirmName : "",
+                    Explanation = d.Explanation,
+                    FirmLocation = d.FirmLocation,
+                    PlantId = d.PlantId,
+                    StartDate = d.StartDate,
+                    DeadlineDate = d.DeadlineDate,
+                    ProjectCategoryId = d.ProjectCategoryId,
+                    ProjectCode = d.ProjectCode,
+                    ProjectName = d.ProjectName,
+                    ProjectPhaseTemplateId = d.ProjectPhaseTemplateId,
+                    ResponsibleInfo = d.ResponsibleInfo,
+                    ResponsiblePerson = d.ResponsiblePerson,
+                    ProjectCategoryCode = d.ProjectCategory != null ? d.ProjectCategory.ProjectCategoryCode : "",
+                    ProjectCategoryName = d.ProjectCategory != null ? d.ProjectCategory.ProjectCategoryName : "",
+                    ProjectStatus = d.ProjectStatus,
+                    ForexId = d.ForexId,
+                    ForexCode = d.Forex != null ? d.Forex.ForexCode : "",
+                    ForexName = d.Forex != null ? d.Forex.ForexName : "",
+                    Quantity = d.Quantity,
+                    ProfitRate = d.ProfitRate,
+                    OfferPrice = d.OfferPrice,
+                    ForexRate = d.ForexRate,
+                    OfferForexPrice = d.OfferForexPrice,
+                    ProjectStatusText = (d.ProjectStatus ?? 0) == 0 ? "Oluşturuldu" :
+                                            d.ProjectStatus == 1 ? "Teklif verilecek" :
+                                            d.ProjectStatus == 2 ? "Teklif verildi" :
+                                            d.ProjectStatus == 3 ? "Onaylandı" :
+                                            d.ProjectStatus == 4 ? "Tamamlandı" : 
+                                            d.ProjectStatus == 5 ? "İptal edildi" : ""
                 }).ToArray();
             }
             catch
@@ -86,6 +197,26 @@ namespace HekaMiniumApi.Controllers{
             return data;
         }
 
+        private string GetNextProjectNumber(){
+            try
+            {
+                string currentYear = string.Format("{0:yyyy}", DateTime.Now).Substring(2);
+
+                int nextNumber = 1;
+                var lastRecord = _context.Project.Where(d => d.ProjectCode.Substring(0,2).Contains(currentYear))
+                    .OrderByDescending(d => d.ProjectCode.Substring(3)).Select(d => d.ProjectCode.Substring(3)).FirstOrDefault();
+                if (lastRecord != null && !string.IsNullOrEmpty(lastRecord))
+                    nextNumber = Convert.ToInt32(lastRecord) + 1;
+
+                return currentYear + "-" + string.Format("{0:000000}", nextNumber);
+            }
+            catch (System.Exception)
+            {
+                
+            }
+
+            return string.Empty;
+        }
 
         [HttpGet]
         [Route("{id}")]
@@ -114,6 +245,14 @@ namespace HekaMiniumApi.Controllers{
                         ResponsibleInfo = d.ResponsibleInfo,
                         ResponsiblePerson = d.ResponsiblePerson,
                         ProjectStatus = d.ProjectStatus,
+                        ForexId = d.ForexId,
+                        ForexCode = d.Forex != null ? d.Forex.ForexCode : "",
+                        ForexName = d.Forex != null ? d.Forex.ForexName : "",
+                        Quantity = d.Quantity,
+                        ProfitRate = d.ProfitRate,
+                        OfferPrice = d.OfferPrice,
+                        ForexRate = d.ForexRate,
+                        OfferForexPrice = d.OfferForexPrice,
                         ProjectStatusText = (d.ProjectStatus ?? 0) == 0 ? "Teklif verilecek" :
                                             d.ProjectStatus == 1 ? "Teklif verildi" :
                                             d.ProjectStatus == 2 ? "Onaylandı" :
@@ -165,12 +304,15 @@ namespace HekaMiniumApi.Controllers{
                             UnitPrice = d.UnitPrice,
                             CostStatusText = (d.CostStatus) == 0 ? "Bekleniyor" : "Gerçekleşti",
                             CostTypeText = (d.CostType) == 0 ? "Malzeme" : "İşçilik",
+                            PartNo = d.PartNo,
+                            PartDimensions = d.PartDimensions,
                         }).ToArray();
                 }
                 else{
                     if (data == null)
                         data = new ProjectModel();
 
+                    data.ProjectCode = GetNextProjectNumber();
                     data.CostItems = new ProjectCostItemModel[0];
                 }
             }
@@ -215,7 +357,10 @@ namespace HekaMiniumApi.Controllers{
             {
                 var dbObj = _context.Project.FirstOrDefault(d => d.Id == model.Id);
                 if (dbObj == null){
+                    model.ProjectCode = GetNextProjectNumber();
+
                     dbObj = new Project();
+                    dbObj.ProjectCode = model.ProjectCode;
                     _context.Project.Add(dbObj);
                 }
 
@@ -225,7 +370,12 @@ namespace HekaMiniumApi.Controllers{
                 if (_context.Project.Any(d => d.ProjectCode == model.ProjectCode && d.PlantId == model.PlantId && d.Id != model.Id))
                     throw new Exception("Bu proje koduna ait bir kayıt zaten bulunmaktadır. Lütfen başka bir kod belirtiniz.");
 
+                // keep values
+                string currentCode = dbObj.ProjectCode;
+
                 model.MapTo(dbObj);
+
+                dbObj.ProjectCode = currentCode;
 
                 if (dbObj.DeadlineDate < dbObj.StartDate)
                     throw new Exception("Termin tarihi proje başlangıç tarihinden önce olamaz.");

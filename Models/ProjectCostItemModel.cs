@@ -38,6 +38,8 @@ namespace HekaMiniumApi.Models{
         public decimal? TaxTotal { get; set; }
         public decimal? ForexOverallTotal { get; set; }
         public decimal? OverallTotal { get; set; }
+        public string PartNo { get; set; }
+        public string PartDimensions { get; set; }
         #endregion
 
         #region VISUAL ELEMENTS
