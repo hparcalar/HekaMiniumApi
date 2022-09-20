@@ -34,8 +34,11 @@ namespace HekaMiniumApi.Models{
         public int? ReceiptStatus { get; set; }
         public string PartNo { get; set; }
         public string PartDimensions { get; set; }
+        public bool? IsContracted { get; set; }
+        public string ItemExplanation { get; set; }
 
         #region VISUAL ELEMENTS
+        public ItemDemandConsumeModel[] DemandConsumes { get; set; }
         public string ItemCode { get; set; }
         public string ItemName { get; set; }
         public string BrandCode { get; set; }
@@ -47,6 +50,10 @@ namespace HekaMiniumApi.Models{
         public string ForexCode { get; set; }
         public string ProjectCode { get; set; }
         public string ProjectName { get; set; }
+        public DateTime? ReceiptDate { get; set; }
+        public string ReceiptNo { get; set; }
+        public string FirmCode { get; set; }
+        public string FirmName { get; set; }
         public string StatusText { get; set; }
         #endregion
     }

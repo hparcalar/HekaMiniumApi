@@ -38,6 +38,7 @@ namespace HekaMiniumApi.Controllers{
                     ProjectId = d.ProjectId,
                     ReceiptDate = d.ReceiptDate,
                     ReceiptNo = d.ReceiptNo,
+                    IsContracted = d.IsContracted,
                     ProjectCode = d.Project != null ? d.Project.ProjectCode : "",
                     ProjectName = d.Project != null ? d.Project.ProjectName : "",
                     StatusText = d.DemandStatus == 0 ? "Onay bekleniyor" : 
@@ -75,6 +76,7 @@ namespace HekaMiniumApi.Controllers{
                         ProjectId = d.ProjectId,
                         ReceiptDate = d.ReceiptDate,
                         ReceiptNo = d.ReceiptNo,
+                        IsContracted = d.IsContracted,
                         ProjectCode = d.Project != null ? d.Project.ProjectCode : "",
                         ProjectName = d.Project != null ? d.Project.ProjectName : "",
                         StatusText = d.DemandStatus == 0 ? "Onay bekleniyor" : 
@@ -99,6 +101,7 @@ namespace HekaMiniumApi.Controllers{
                             PartNo = d.PartNo,
                             Quantity = d.Quantity,
                             UnitId = d.UnitId,
+                            IsContracted = d.IsContracted,
                             ItemCode = d.Item != null ? d.Item.ItemCode : d.ItemExplanation,
                             ItemName = d.Item != null ? d.Item.ItemName : d.ItemExplanation,
                             ItemDemandNo = d.ItemDemand.ReceiptNo,
@@ -165,6 +168,7 @@ namespace HekaMiniumApi.Controllers{
                     UnitId = d.UnitId,
                     PartDimensions = d.PartDimensions,
                     PartNo = d.PartNo,
+                    IsContracted = d.IsContracted,
                     ItemCode = d.Item != null ? d.Item.ItemCode : d.ItemExplanation,
                     ItemName = d.Item != null ? d.Item.ItemName : d.ItemExplanation,
                     ItemDemandNo = d.ItemDemand.ReceiptNo,
@@ -209,6 +213,8 @@ namespace HekaMiniumApi.Controllers{
                     UnitId = d.UnitId,
                     PartDimensions = d.PartDimensions,
                     PartNo = d.PartNo,
+                    IsContracted = d.IsContracted,
+                    ProjectId = d.ItemDemand.ProjectId,
                     ProjectCode = d.ItemDemand.Project != null ? d.ItemDemand.Project.ProjectCode : "",
                     ProjectName = d.ItemDemand.Project != null ? d.ItemDemand.Project.ProjectName : "",
                     ItemCode = d.Item != null ? d.Item.ItemCode : d.ItemExplanation,
@@ -265,7 +271,7 @@ namespace HekaMiniumApi.Controllers{
             ItemDemandDetailModel[] data = new ItemDemandDetailModel[0];
             try
             {
-                data = _context.ItemDemandDetail.Where(d => d.DemandStatus == 1).Select(d => new ItemDemandDetailModel{
+                data = _context.ItemDemandDetail.Where(d => (d.DemandStatus ?? 0) == 0).Select(d => new ItemDemandDetailModel{
                     Id = d.Id,
                     DemandStatus = d.DemandStatus,
                     Explanation = d.Explanation,
@@ -278,6 +284,7 @@ namespace HekaMiniumApi.Controllers{
                     UnitId = d.UnitId,
                     PartDimensions = d.PartDimensions,
                     PartNo = d.PartNo,
+                    IsContracted = d.IsContracted,
                     ItemCode = d.Item != null ? d.Item.ItemCode : d.ItemExplanation,
                     ItemName = d.Item != null ? d.Item.ItemName : d.ItemExplanation,
                     ItemDemandNo = d.ItemDemand.ReceiptNo,
@@ -366,6 +373,7 @@ namespace HekaMiniumApi.Controllers{
 
                     item.MapTo(dbDetail);
                     dbDetail.ItemDemand = dbObj;
+                    dbDetail.IsContracted = dbObj.IsContracted;
                 }
                 #endregion
 

@@ -56,6 +56,9 @@ namespace HekaMiniumApi.Context{
         public string PartNo { get; set; }
         public string PartDimensions { get; set; }
 
+        public bool? IsContracted { get; set; }
+        public string ItemExplanation { get; set; }
+
         public virtual ItemDemandDetail ItemDemandDetail { get; set; }
         public virtual ItemOrder ItemOrder { get; set; }
         public virtual Item Item { get; set; }

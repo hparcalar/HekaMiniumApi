@@ -411,5 +411,32 @@ namespace HekaMiniumApi.Controllers
         public IActionResult CheckToken(){
             return Ok();
         }
+    
+        [Authorize(Policy = "WebUser")]
+        [Route("ChangePass")]
+        [HttpPost]
+        public BusinessResult ChangePassword(UserChangePassModel model){
+            BusinessResult result = new BusinessResult();
+
+            try
+            {
+                var dbObj = _context.SysUser.FirstOrDefault(d => d.Id == model.Id);
+                if (dbObj != null){
+                    dbObj.Password = HekaHelpers.ComputeSha256Hash(model.Password);
+                    _context.SaveChanges();
+                }
+
+                result.Result=true;
+                result.RecordId = dbObj.Id;
+            }
+            catch (System.Exception ex)
+            {
+                result.Result=false;
+                result.ErrorMessage = ex.Message;
+            }
+
+            return result;
+        }
+
     }
 }

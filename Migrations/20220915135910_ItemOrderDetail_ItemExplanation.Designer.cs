@@ -3,6 +3,7 @@ using System;
 using HekaMiniumApi.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HekaMiniumApi.Migrations
 {
     [DbContext(typeof(HekaMiniumSchema))]
-    partial class HekaMiniumSchemaModelSnapshot : ModelSnapshot
+    [Migration("20220915135910_ItemOrderDetail_ItemExplanation")]
+    partial class ItemOrderDetail_ItemExplanation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -456,35 +458,6 @@ namespace HekaMiniumApi.Migrations
                     b.HasIndex("SysUserId");
 
                     b.ToTable("ItemDemand");
-                });
-
-            modelBuilder.Entity("HekaMiniumApi.Context.ItemDemandConsume", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("ConsumeDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<int>("ItemDemandDetailId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("ItemOrderDetailId")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal?>("Quantity")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ItemDemandDetailId");
-
-                    b.HasIndex("ItemOrderDetailId");
-
-                    b.ToTable("ItemDemandConsume");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.ItemDemandDetail", b =>
@@ -2132,23 +2105,6 @@ namespace HekaMiniumApi.Migrations
                     b.Navigation("Project");
 
                     b.Navigation("SysUser");
-                });
-
-            modelBuilder.Entity("HekaMiniumApi.Context.ItemDemandConsume", b =>
-                {
-                    b.HasOne("HekaMiniumApi.Context.ItemDemandDetail", "ItemDemandDetail")
-                        .WithMany()
-                        .HasForeignKey("ItemDemandDetailId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HekaMiniumApi.Context.ItemOrderDetail", "ItemOrderDetail")
-                        .WithMany()
-                        .HasForeignKey("ItemOrderDetailId");
-
-                    b.Navigation("ItemDemandDetail");
-
-                    b.Navigation("ItemOrderDetail");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.ItemDemandDetail", b =>

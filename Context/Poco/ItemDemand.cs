@@ -25,6 +25,8 @@ namespace HekaMiniumApi.Context{
         [ForeignKey("SysUser")]
         public int? SysUserId { get; set; }
 
+        public bool? IsContracted { get; set; }
+
         public virtual SysUser SysUser { get; set; }
 
         public virtual Project Project { get; set; }

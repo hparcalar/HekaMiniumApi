@@ -13,6 +13,7 @@ namespace HekaMiniumApi.Models{
         public bool? IsWaybilled { get; set; }
         public int? ReceiptStatus { get; set; }
         public int? SysUserId { get; set; }
+        public bool? IsContracted { get; set; }
 
         #region VISUAL ELEMENTS
         public string FirmCode { get; set; }

@@ -17,6 +17,7 @@ namespace HekaMiniumApi.Models{
         public int? DemandStatus { get; set; }
         public string PartNo { get; set; }
         public string PartDimensions { get; set; }
+        public bool? IsContracted { get; set; }
 
         #region VISUAL ELEMENTS
         public int? ProjectId { get; set; }

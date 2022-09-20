@@ -13,6 +13,7 @@ namespace HekaMiniumApi.Models{
         public bool? IsOrdered { get; set; }
         public int? DemandStatus { get; set; }
         public int? SysUserId { get; set; }
+        public bool? IsContracted { get; set; }
 
         #region VISUAL ELEMENTS
         public string ProjectCode { get; set; }

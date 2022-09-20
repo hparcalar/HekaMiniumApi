@@ -11,6 +11,7 @@ using HekaMiniumApi.Models.Operational;
 using Microsoft.AspNetCore.Cors;
 using HekaMiniumApi.Helpers;
 using HekaMiniumApi.Business;
+using HekaMiniumApi.Models.Constants;
 
 namespace HekaMiniumApi.Controllers{
 
@@ -49,6 +50,7 @@ namespace HekaMiniumApi.Controllers{
                     OutWarehouseId = d.OutWarehouseId,
                     WarehouseCode = d.InWarehouse != null ? d.InWarehouse.WarehouseCode : "",
                     WarehouseName = d.InWarehouse != null ? d.InWarehouse.WarehouseName : "",
+                    ReceiptTypeText = ConstReceiptType.GetDesc(d.ReceiptType),
                     // StatusText = d.ReceiptStatus == 0 ? "Sipariş oluşturuldu" : 
                     //                 d.ReceiptStatus == 1 ? "Sipariş onaylandı" :
                     //                 d.ReceiptStatus == 2 ? "Sipariş tamamlandı" :
@@ -92,6 +94,7 @@ namespace HekaMiniumApi.Controllers{
                     }).FirstOrDefault();
 
                 if (data != null && data.Id > 0){
+                    data.ReceiptTypeList = receiptType > 100 ? ConstReceiptType.Sales : ConstReceiptType.Purchasing;
                     data.Details = _context.ItemReceiptDetail.Where(d => d.ItemReceiptId == data.Id)
                         .Select(d => new ItemReceiptDetailModel{
                             Id = d.Id,
@@ -143,6 +146,8 @@ namespace HekaMiniumApi.Controllers{
                     if (data == null)
                         data = new ItemReceiptModel();
 
+                    data.ReceiptType = receiptType;
+                    data.ReceiptTypeList = receiptType > 100 ? ConstReceiptType.Sales : ConstReceiptType.Purchasing;
                     data.ReceiptNo = GetNextReceiptNumber(receiptType);
                     data.Details = new ItemReceiptDetailModel[0];
                 }
