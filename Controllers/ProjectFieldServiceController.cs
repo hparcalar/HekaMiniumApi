@@ -118,61 +118,73 @@ namespace HekaMiniumApi.Controllers{
             return data;
         }
 
-        // [Authorize(Policy = "WebUser")]
-        // [HttpPost]
-        // public BusinessResult Post(ProjectFieldServiceModel model){
-        //     BusinessResult result = new BusinessResult();
+        [Authorize(Policy = "WebUser")]
+        [HttpPost]
+        public BusinessResult Post(ProjectFieldServiceModel model){
+            BusinessResult result = new BusinessResult();
 
-        //     try
-        //     {
-        //         var dbObj = _context.ProjectFieldService.FirstOrDefault(d => d.Id == model.Id);
-        //         if (dbObj == null){
-        //             dbObj = new Warehouse();
-        //             _context.Warehouse.Add(dbObj);
-        //         }
+            try
+            {
+                var dbObj = _context.ProjectFieldService.FirstOrDefault(d => d.Id == model.Id);
+                if (dbObj == null){
+                    dbObj = new ProjectFieldService();
+                    _context.ProjectFieldService.Add(dbObj);
+                }
 
-        //         if (_context.Warehouse.Any(d => d.WarehouseCode == model.WarehouseCode && d.PlantId == model.PlantId && d.Id != model.Id))
-        //             throw new Exception("Bu depo koduna ait bir kayıt zaten bulunmaktadır. Lütfen başka bir kod belirtiniz.");
+                // if (_context.ProjectFieldService.Any(d => d.Prof == model.WarehouseCode && d.PlantId == model.PlantId && d.Id != model.Id))
+                //     throw new Exception("Bu depo koduna ait bir kayıt zaten bulunmaktadır. Lütfen başka bir kod belirtiniz.");
 
-        //         model.MapTo(dbObj);
+                model.MapTo(dbObj);
 
-        //         _context.SaveChanges();
-        //         result.Result=true;
-        //         result.RecordId = dbObj.Id;
-        //     }
-        //     catch (System.Exception ex)
-        //     {
-        //         result.Result=false;
-        //         result.ErrorMessage = ex.Message;
-        //     }
+                _context.SaveChanges();
+                result.Result=true;
+                result.RecordId = dbObj.Id;
+            }
+            catch (System.Exception ex)
+            {
+                result.Result=false;
+                result.ErrorMessage = ex.Message;
+            }
 
-        //     return result;
-        // }
+            return result;
+        }
 
-        // [Authorize(Policy = "WebUser")]
-        // [HttpDelete]
-        // public BusinessResult Delete(int id){
-        //     BusinessResult result = new BusinessResult();
+        [Authorize(Policy = "WebUser")]
+        [HttpDelete]
+        public BusinessResult Delete(int id){
+            BusinessResult result = new BusinessResult();
 
-        //     try
-        //     {
-        //         var dbObj = _context.Warehouse.FirstOrDefault(d => d.Id == id);
-        //         if (dbObj == null)
-        //             throw new Exception("");
+            try
+            {
+                var dbObj = _context.ProjectFieldService.FirstOrDefault(d => d.Id == id);
+                if (dbObj == null)
+                    throw new Exception("Silinmesi istenen kayıt bulunamadı.");
 
-        //         _context.Warehouse.Remove(dbObj);
+                var attachments = _context.ProjectFieldServiceAttachment.Where(d => d.ProjectFieldServiceId == id);
+                foreach (var item in attachments)
+                {
+                    _context.ProjectFieldServiceAttachment.Remove(item);
+                }
 
-        //         _context.SaveChanges();
-        //         result.Result=true;
-        //     }
-        //     catch (System.Exception ex)
-        //     {
-        //         result.Result=false;
-        //         result.ErrorMessage = ex.Message;
-        //     }
+                var details = _context.ProjectFieldServiceDetail.Where(d => d.ProjectFieldServiceId == id).ToArray();
+                foreach (var item in details)
+                {
+                    _context.ProjectFieldServiceDetail.Remove(item);
+                }
 
-        //     return result;
-        // }
+                _context.ProjectFieldService.Remove(dbObj);
+
+                _context.SaveChanges();
+                result.Result=true;
+            }
+            catch (System.Exception ex)
+            {
+                result.Result=false;
+                result.ErrorMessage = ex.Message;
+            }
+
+            return result;
+        }
 
      }
 }

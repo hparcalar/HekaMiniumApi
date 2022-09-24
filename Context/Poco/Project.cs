@@ -34,6 +34,8 @@ namespace HekaMiniumApi.Context{
         public int? Quantity { get; set; }
         public decimal? ForexRate { get; set; }
         public decimal? OfferForexPrice { get; set; }
+        public decimal? TotalCost { get; set; }
+        public decimal? TotalForexCost { get; set; }
 
         [ForeignKey("Forex")]
         public int? ForexId { get; set; }

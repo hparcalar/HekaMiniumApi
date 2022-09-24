@@ -51,6 +51,8 @@ namespace HekaMiniumApi.Controllers{
                     ForexId = d.ForexId,
                     ForexCode = d.Forex != null ? d.Forex.ForexCode : "",
                     ForexName = d.Forex != null ? d.Forex.ForexName : "",
+                    TotalCost = d.TotalCost,
+                        TotalForexCost = d.TotalForexCost,
                     Quantity = d.Quantity,
                     ProfitRate = d.ProfitRate,
                     OfferPrice = d.OfferPrice,
@@ -103,6 +105,8 @@ namespace HekaMiniumApi.Controllers{
                     ForexCode = d.Forex != null ? d.Forex.ForexCode : "",
                     ForexName = d.Forex != null ? d.Forex.ForexName : "",
                     Quantity = d.Quantity,
+                    TotalCost = d.TotalCost,
+                        TotalForexCost = d.TotalForexCost,
                     ProfitRate = d.ProfitRate,
                     OfferPrice = d.OfferPrice,
                     ForexRate = d.ForexRate,
@@ -153,6 +157,8 @@ namespace HekaMiniumApi.Controllers{
                     ForexId = d.ForexId,
                     ForexCode = d.Forex != null ? d.Forex.ForexCode : "",
                     ForexName = d.Forex != null ? d.Forex.ForexName : "",
+                    TotalCost = d.TotalCost,
+                        TotalForexCost = d.TotalForexCost,
                     Quantity = d.Quantity,
                     ProfitRate = d.ProfitRate,
                     OfferPrice = d.OfferPrice,
@@ -253,6 +259,8 @@ namespace HekaMiniumApi.Controllers{
                         OfferPrice = d.OfferPrice,
                         ForexRate = d.ForexRate,
                         OfferForexPrice = d.OfferForexPrice,
+                        TotalCost = d.TotalCost,
+                        TotalForexCost = d.TotalForexCost,
                         ProjectStatusText = (d.ProjectStatus ?? 0) == 0 ? "Teklif verilecek" :
                                             d.ProjectStatus == 1 ? "Teklif verildi" :
                                             d.ProjectStatus == 2 ? "Onaylandı" :

@@ -22,6 +22,8 @@ namespace HekaMiniumApi.Models{
         public decimal? OfferPrice { get; set; }
         public decimal? ForexRate { get; set; }
         public decimal? OfferForexPrice { get; set; }
+         public decimal? TotalCost { get; set; }
+        public decimal? TotalForexCost { get; set; }
 
 
         public int? Quantity { get; set; }
