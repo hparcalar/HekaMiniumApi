@@ -8,10 +8,17 @@ namespace HekaMiniumApi.Business{
         }
 
         public bool CheckReceiptDetail(int receiptDetailId){
-            try
+           try
             {
                 var dbObj = _context.ItemReceiptDetail.FirstOrDefault(d => d.Id == receiptDetailId);
                 
+                decimal? totalConsumed = _context.ItemReceiptConsume.Where(d => d.ConsumedReceiptDetailId == receiptDetailId)
+                    .Sum(d => (d.ConsumeNetQuantity ?? 0));
+                
+                if (dbObj.Quantity > totalConsumed)
+                    dbObj.ReceiptStatus = 0; // to be created
+                else if (dbObj.Quantity <= totalConsumed)
+                    dbObj.ReceiptStatus = 2; // to be completed
             }
             catch (System.Exception)
             {

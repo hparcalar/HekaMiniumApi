@@ -457,7 +457,7 @@ namespace HekaMiniumApi.Controllers{
 
 
         [Authorize(Policy = "WebUser")]
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public BusinessResult Delete(int id){
             BusinessResult result = new BusinessResult();
 
@@ -466,6 +466,12 @@ namespace HekaMiniumApi.Controllers{
                 var dbObj = _context.Project.FirstOrDefault(d => d.Id == id);
                 if (dbObj == null)
                     throw new Exception("");
+
+                var costItems = _context.ProjectCostItem.Where(d => d.ProjectId == id).ToArray();
+                foreach (var item in costItems)
+                {
+                    _context.ProjectCostItem.Remove(item);
+                }
 
                 _context.Project.Remove(dbObj);
 

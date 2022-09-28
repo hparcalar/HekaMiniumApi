@@ -111,6 +111,7 @@ namespace HekaMiniumApi.Controllers{
                             TaxRate =d.TaxRate,
                             ItemExplanation = d.ItemExplanation,
                             UnitPrice = d.UnitPrice,
+                            FirmId = d.ItemOrder.FirmId,
                             UsedNetQuantity = d.UsedNetQuantity,
                             BrandCode = d.Brand != null ? d.Brand.BrandCode : "",
                             BrandName = d.Brand != null ? d.Brand.BrandName : "",
@@ -128,6 +129,102 @@ namespace HekaMiniumApi.Controllers{
                                     d.ReceiptStatus == 2 ? "Sipariş verildi" :
                                     d.ReceiptStatus == 3 ? "Sipariş tamamlandı" :
                                     d.ReceiptStatus == 4 ? "İptal edildi" : "",
+                })
+                .OrderByDescending(d => d.ReceiptDate)
+                .ToArray();
+
+                foreach (var item in data)
+                {
+                    item.DemandConsumes = _context.ItemDemandConsume.Where(d => d.ItemOrderDetailId == item.Id)
+                            .Select(d => new ItemDemandConsumeModel{
+                                Id = d.Id,
+                                ConsumeDate = d.ConsumeDate,
+                                ItemDemandDetailId = d.ItemDemandDetailId,
+                                ItemOrderDetailId = d.ItemOrderDetailId,
+                                ItemId = d.ItemDemandDetail != null ? d.ItemDemandDetail.ItemId : null,
+                                DemandQuantity = d.ItemDemandDetail != null ? d.ItemDemandDetail.Quantity : 0,
+                                ItemCode = d.ItemDemandDetail != null && d.ItemDemandDetail.Item != null ? d.ItemDemandDetail.Item.ItemCode : "",
+                                ItemName = d.ItemDemandDetail != null && d.ItemDemandDetail.Item != null ? d.ItemDemandDetail.Item.ItemName : "",
+                                ItemExplanation = d.ItemDemandDetail != null ? d.ItemDemandDetail.ItemExplanation : "",
+                                PartNo = d.ItemDemandDetail != null ? d.ItemDemandDetail.PartNo : "",
+                                PartDimensions = d.ItemDemandDetail != null ? d.ItemDemandDetail.PartDimensions : "",
+                            }).ToArray();
+                }
+            }
+            catch
+            {
+                
+            }
+            
+            return data;
+        }
+
+
+        [HttpGet]
+        [Route("Purchase/OpenDetails")]
+        [Authorize(Policy = "WebUser")]
+        public IEnumerable<ItemOrderDetailModel> GetPurchaseOpenDetails(){
+            ItemOrderDetailModel[] data = new ItemOrderDetailModel[0];
+            try
+            {
+                data = _context.ItemOrderDetail.Where(d => (d.ReceiptStatus ?? 0) == 2).Select(d => new ItemOrderDetailModel{
+                    Id = d.Id,
+                    ReceiptDate = d.ItemOrder.ReceiptDate,
+                    ReceiptNo = d.ItemOrder.ReceiptNo,
+                    FirmCode = d.ItemOrder.Firm != null ? d.ItemOrder.Firm.FirmCode : "",
+                    FirmName = d.ItemOrder.Firm != null ? d.ItemOrder.Firm.FirmName : "",
+                    ReceiptStatus = d.ReceiptStatus,
+                    Explanation = d.Explanation,
+                    ItemOrderId = d.ItemOrderId,
+                    ItemId = d.ItemId,
+                    LineNumber = d.LineNumber,
+                    NetQuantity = d.NetQuantity,
+                    Quantity = d.Quantity,
+                    IsContracted = d.IsContracted,
+                    UnitId = d.UnitId,
+                    AlternatingQuantity = d.AlternatingQuantity,
+                    BrandId = d.BrandId,
+                    BrandModelId = d.BrandModelId,
+                    DiscountPrice = d.DiscountPrice,
+                    DiscountRate = d.DiscountRate,
+                    ForexDiscountPrice = d.ForexDiscountPrice,
+                    ForexId = d.ForexId,
+                    ForexOverallTotal = d.ForexOverallTotal,
+                    ForexRate = d.ForexRate,
+                    ForexSubTotal =d.ForexSubTotal,
+                    ForexTaxPrice = d.ForexTaxPrice,
+                    ForexUnitPrice = d.ForexUnitPrice,
+                    GrossQuantity = d.GrossQuantity,
+                    PartDimensions = d.PartDimensions,
+                    PartNo = d.PartNo,
+                    FirmId = d.ItemOrder.FirmId,
+                    ItemDemandDetailId = d.ItemDemandDetailId,
+                    OverallTotal = d.OverallTotal,
+                    ProjectId = d.ProjectId,
+                    SubTotal = d.SubTotal,
+                    TaxIncluded = d.TaxIncluded,
+                    TaxPrice = d.TaxPrice,
+                    TaxRate =d.TaxRate,
+                    ItemExplanation = d.ItemExplanation,
+                    UnitPrice = d.UnitPrice,
+                    UsedNetQuantity = d.UsedNetQuantity,
+                    BrandCode = d.Brand != null ? d.Brand.BrandCode : "",
+                    BrandName = d.Brand != null ? d.Brand.BrandName : "",
+                    BrandModelCode = d.BrandModel != null ? d.BrandModel.BrandModelCode : "",
+                    BrandModelName = d.BrandModel != null ? d.BrandModel.BrandModelName : "",
+                    DeadlineDate = d.ItemOrder.DeadlineDate,
+                    ForexCode = d.Forex != null ? d.Forex.ForexCode : "",
+                    ProjectCode = d.Project != null ? d.Project.ProjectCode : "",
+                    ProjectName = d.Project != null ? d.Project.ProjectName : "",
+                    ItemCode = d.Item != null ? d.Item.ItemCode : "",
+                    ItemName = d.Item != null ? d.Item.ItemName : "",
+                    UnitCode = d.UnitType != null ? d.UnitType.UnitTypeCode : "",
+                    UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
+                    StatusText = d.ReceiptStatus == 0 ? "Sipariş oluşturuldu" : 
+                            d.ReceiptStatus == 1 ? "Sipariş onaylandı" :
+                            d.ReceiptStatus == 2 ? "Sipariş verildi" :
+                            d.ReceiptStatus == 3 ? "Sipariş tamamlandı" :
+                            d.ReceiptStatus == 4 ? "İptal edildi" : "",
                 })
                 .OrderByDescending(d => d.ReceiptDate)
                 .ToArray();

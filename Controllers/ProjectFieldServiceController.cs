@@ -136,6 +136,48 @@ namespace HekaMiniumApi.Controllers{
 
                 model.MapTo(dbObj);
 
+                #region SAVE DETAILS
+                var currentDetails = _context.ProjectFieldServiceDetail.Where(d => d.ProjectFieldServiceId == dbObj.Id).ToArray();
+
+                var removedDetails = currentDetails.Where(d => !model.Details.Any(m => m.Id == d.Id)).ToArray();
+                foreach (var item in removedDetails)
+                {
+                    _context.ProjectFieldServiceDetail.Remove(item);
+                }
+
+                foreach (var item in model.Details)
+                {
+                    var dbDetail = _context.ProjectFieldServiceDetail.FirstOrDefault(d => d.Id == item.Id);
+                    if (dbDetail == null){
+                        dbDetail = new ProjectFieldServiceDetail();
+                        _context.ProjectFieldServiceDetail.Add(dbDetail);
+                    }
+
+                    item.MapTo(dbDetail);
+                    dbDetail.ProjectFieldService = dbObj;
+
+                    if (item.Attachments != null && item.Attachments.Length > 0){
+                        foreach (var itemAttach in item.Attachments)
+                        {
+                            var dbAttach = _context.ProjectFieldServiceAttachment.FirstOrDefault(d => d.Id == item.Id);
+                            if (dbAttach == null){
+                                dbAttach = new ProjectFieldServiceAttachment();
+                                _context.ProjectFieldServiceAttachment.Add(dbAttach);
+                            }
+
+                            item.MapTo(dbDetail);
+                            
+                            if (!string.IsNullOrEmpty(itemAttach.ContentBase64)){
+                                dbAttach.FileContent = Convert.FromBase64String(itemAttach.ContentBase64);
+                            }
+
+                            dbAttach.ProjectFieldService = dbObj;
+                            dbAttach.ProjectFieldServiceDetail = dbDetail;
+                        }
+                    }
+                }
+                #endregion
+
                 _context.SaveChanges();
                 result.Result=true;
                 result.RecordId = dbObj.Id;
