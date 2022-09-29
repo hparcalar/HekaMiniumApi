@@ -16,5 +16,8 @@ namespace HekaMiniumApi.Context{
         public byte[] FileContent { get; set; }
         public string FileHeader { get; set; }
         public string FileExtension { get; set; }
+
+        public virtual ProjectFieldService ProjectFieldService { get; set; }
+        public virtual ProjectFieldServiceDetail ProjectFieldServiceDetail { get; set; }
     }
 }
