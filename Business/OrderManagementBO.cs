@@ -7,6 +7,19 @@ namespace HekaMiniumApi.Business{
             _context = context;
         }
 
+        public bool CheckOfferDetail(int offerDetailId){
+            try
+            {
+                
+            }
+            catch (System.Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public bool CheckOrderDetail(int orderDetailId){
             try
             {

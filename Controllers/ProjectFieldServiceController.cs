@@ -48,6 +48,34 @@ namespace HekaMiniumApi.Controllers{
             return data;
         }
 
+
+        [HttpGet]
+        [Route("ByProject/{projectId}")]
+        public IEnumerable<ProjectFieldServiceModel> GetByProject(int projectId)
+        {
+            ProjectFieldServiceModel[] data = new ProjectFieldServiceModel[0];
+            try
+            {
+                data = _context.ProjectFieldService.Where(d => d.ProjectId == projectId).Select(d => new ProjectFieldServiceModel{
+                    Id = d.Id,
+                    DocumentNo = d.DocumentNo,
+                    ProjectId = d.ProjectId,
+                    ServiceDate = d.ServiceDate,
+                    ServiceStatus = d.ServiceStatus,
+                    ServiceStatusText = "",
+                    ServiceUserId = d.ServiceUserId,
+                    UserCode = d.SysUser != null ? d.SysUser.UserCode : "",
+                    UserName = d.SysUser != null ? d.SysUser.UserName : "",
+                }).ToArray();
+            }
+            catch
+            {
+                
+            }
+            
+            return data;
+        }
+
         [HttpGet]
         [Route("{id}")]
         public ProjectFieldServiceModel Get(int id)
@@ -129,6 +157,8 @@ namespace HekaMiniumApi.Controllers{
                 if (dbObj == null){
                     dbObj = new ProjectFieldService();
                     _context.ProjectFieldService.Add(dbObj);
+                    
+                    dbObj.ServiceDate = DateTime.Now;
                 }
 
                 // if (_context.ProjectFieldService.Any(d => d.Prof == model.WarehouseCode && d.PlantId == model.PlantId && d.Id != model.Id))

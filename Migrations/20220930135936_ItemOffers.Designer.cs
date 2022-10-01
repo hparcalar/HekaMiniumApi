@@ -3,6 +3,7 @@ using System;
 using HekaMiniumApi.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HekaMiniumApi.Migrations
 {
     [DbContext(typeof(HekaMiniumSchema))]
-    partial class HekaMiniumSchemaModelSnapshot : ModelSnapshot
+    [Migration("20220930135936_ItemOffers")]
+    partial class ItemOffers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -895,9 +897,6 @@ namespace HekaMiniumApi.Migrations
                     b.Property<int?>("ItemId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("ItemOfferDetailId")
-                        .HasColumnType("integer");
-
                     b.Property<int?>("ItemOrderId")
                         .HasColumnType("integer");
 
@@ -957,8 +956,6 @@ namespace HekaMiniumApi.Migrations
                     b.HasIndex("ItemDemandDetailId");
 
                     b.HasIndex("ItemId");
-
-                    b.HasIndex("ItemOfferDetailId");
 
                     b.HasIndex("ItemOrderId");
 
@@ -2499,10 +2496,6 @@ namespace HekaMiniumApi.Migrations
                         .WithMany()
                         .HasForeignKey("ItemId");
 
-                    b.HasOne("HekaMiniumApi.Context.ItemOfferDetail", "ItemOfferDetail")
-                        .WithMany()
-                        .HasForeignKey("ItemOfferDetailId");
-
                     b.HasOne("HekaMiniumApi.Context.ItemOrder", "ItemOrder")
                         .WithMany()
                         .HasForeignKey("ItemOrderId");
@@ -2524,8 +2517,6 @@ namespace HekaMiniumApi.Migrations
                     b.Navigation("Item");
 
                     b.Navigation("ItemDemandDetail");
-
-                    b.Navigation("ItemOfferDetail");
 
                     b.Navigation("ItemOrder");
 
