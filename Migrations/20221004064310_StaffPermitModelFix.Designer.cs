@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HekaMiniumApi.Migrations
 {
     [DbContext(typeof(HekaMiniumSchema))]
-    [Migration("20221003065556_StaffPermitModelMig")]
-    partial class StaffPermitModelMig
+    [Migration("20221004064310_StaffPermitModelFix")]
+    partial class StaffPermitModelFix
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -1966,8 +1966,8 @@ namespace HekaMiniumApi.Migrations
                     b.Property<int?>("PermitStatus")
                         .HasColumnType("integer");
 
-                    b.Property<string>("StaffId")
-                        .HasColumnType("text");
+                    b.Property<int>("StaffId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("StaffPermitExplanation")
                         .HasColumnType("text");

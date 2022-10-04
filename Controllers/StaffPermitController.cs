@@ -35,6 +35,8 @@ namespace HekaMiniumApi.Controllers{
                     StartDate = d.StartDate,
                     EndDate = d.EndDate,
                     PermitStatus = d.PermitStatus,
+                    StatusText = d.PermitStatus == 0 ? "Onay bekleniyor" : 
+                                    d.PermitStatus == 1 ? "Onaylandı" : "",
                 }).ToArray();
             }
             catch
@@ -46,7 +48,7 @@ namespace HekaMiniumApi.Controllers{
         }
 
         [HttpGet]
-        [Route("{id}")]
+        [Route("byId/{id}")]
         public StaffPermitModel Get(int id)
         {
             StaffPermitModel data = new StaffPermitModel();
@@ -59,6 +61,8 @@ namespace HekaMiniumApi.Controllers{
                     StartDate = d.StartDate,
                     EndDate = d.EndDate,
                     PermitStatus = d.PermitStatus,
+                    StatusText = d.PermitStatus == 0 ? "Onay bekleniyor" : 
+                                    d.PermitStatus == 1 ? "Onaylandı" : "",
                     }).FirstOrDefault();
             }
             catch
@@ -69,6 +73,34 @@ namespace HekaMiniumApi.Controllers{
             return data;
         }
 
+        [HttpGet]
+        [Route("{staffId}")]
+        [Authorize(Policy = "WebUser")]
+        public IEnumerable<StaffPermitModel> DetailsOfPermit(int staffId){
+            StaffPermitModel[] data = new StaffPermitModel[0];
+            try
+            {
+                data = _context.StaffPermit.Where(d => d.StaffId == staffId).Select(d => new StaffPermitModel{
+                    Id = d.Id,
+                    StaffId = d.StaffId,
+                    StaffPermitExplanation = d.StaffPermitExplanation,
+                    StartDate = d.StartDate,
+                    EndDate = d.EndDate,
+                    PermitStatus = d.PermitStatus,
+                    StatusText = d.PermitStatus == 0 ? "Onay bekleniyor" : 
+                                    d.PermitStatus == 1 ? "Onaylandı" : "",
+                })
+                .OrderByDescending(d => d.Id)
+                .ToArray();
+            }
+            catch
+            {
+                
+            }
+            
+            return data;
+        }
+        
         [Authorize(Policy = "WebUser")]
         [HttpPost]
         public BusinessResult Post(StaffPermitModel model){

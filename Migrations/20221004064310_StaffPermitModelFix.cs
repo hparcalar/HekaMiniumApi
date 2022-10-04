@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace HekaMiniumApi.Migrations
 {
-    public partial class StaffPermitModelMig : Migration
+    public partial class StaffPermitModelFix : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -16,7 +16,7 @@ namespace HekaMiniumApi.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    StaffId = table.Column<string>(type: "text", nullable: true),
+                    StaffId = table.Column<int>(type: "integer", nullable: false),
                     StaffPermitExplanation = table.Column<string>(type: "text", nullable: true),
                     StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     EndDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
