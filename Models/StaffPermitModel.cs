@@ -7,5 +7,10 @@ namespace HekaMiniumApi.Models{
         public DateTime? EndDate { get; set; }
         public int? PermitStatus { get; set; }
         public string StatusText { get; set; }
+
+        #region VISUAL ELEMENTS
+        public string UserCode { get; set; }
+        public string UserName { get; set; }
+        #endregion
     }
 }

@@ -12,6 +12,7 @@ namespace HekaMiniumApi.Models{
         public ProjectFieldServiceAttachmentModel[] Attachments { get; set; }
         public string UserCode { get; set; }
         public string UserName { get; set; }
+        public string ProjectName { get; set; }
         public string ServiceStatusText { get; set; }
         #endregion
     }

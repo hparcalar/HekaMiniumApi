@@ -35,6 +35,7 @@ namespace HekaMiniumApi.Controllers{
                     ServiceDate = d.ServiceDate,
                     ServiceStatus = d.ServiceStatus,
                     ServiceStatusText = "",
+                    ProjectName = d.Project != null ? d.Project.ProjectName : "",
                     ServiceUserId = d.ServiceUserId,
                     UserCode = d.SysUser != null ? d.SysUser.UserCode : "",
                     UserName = d.SysUser != null ? d.SysUser.UserName : "",
@@ -160,6 +161,9 @@ namespace HekaMiniumApi.Controllers{
                     
                     dbObj.ServiceDate = DateTime.Now;
                 }
+
+                if (model.ServiceDate == null)
+                    model.ServiceDate = DateTime.Now;
 
                 // if (_context.ProjectFieldService.Any(d => d.Prof == model.WarehouseCode && d.PlantId == model.PlantId && d.Id != model.Id))
                 //     throw new Exception("Bu depo koduna ait bir kayıt zaten bulunmaktadır. Lütfen başka bir kod belirtiniz.");
