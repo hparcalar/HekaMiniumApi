@@ -1,6 +1,11 @@
 using AutoMapper;
 using System.Text;  
 using System.Security.Cryptography;  
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 
 namespace HekaMiniumApi.Helpers{
     public static class HekaHelpers
@@ -38,6 +43,32 @@ namespace HekaMiniumApi.Helpers{
                 }  
                 return builder.ToString();  
             }  
+        }
+    
+        public static Nullable<int> GetUserId(HttpContext httpContext){
+            if (httpContext.User != null && httpContext.User.Identity != null){
+                var identity = httpContext.User.Identity as ClaimsIdentity;
+                if (identity != null)
+                {
+                    IEnumerable<Claim> claims = identity.Claims; 
+                    
+                    try
+                    {
+                        if (claims.Any(d => d.Type == ClaimTypes.UserData)){
+                            return Convert.ToInt32(
+                                claims.Where(d => d.Type == ClaimTypes.UserData)
+                                    .Select(d => d.Value).First()
+                            );
+                        }
+                    }
+                    catch (System.Exception)
+                    {
+                        
+                    }   
+                }
+            }
+
+            return null;
         }
     }
 }

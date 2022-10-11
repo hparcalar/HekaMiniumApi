@@ -1,27 +1,13 @@
-using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace HekaMiniumApi.Context{
-    public class ItemOfferDetail{
+namespace HekaMiniumApi.Models{
+    public class ItemOfferDetailModel{
         public int Id { get; set; }
-
-        [ForeignKey("ItemOffer")]
         public int? ItemOfferId { get; set; }
 
         public int? LineNumber { get; set; }
-
-        [ForeignKey("Item")]
         public int? ItemId { get; set; }
-
-        [ForeignKey("UnitType")]
         public int? UnitId { get; set; }
-
-        [ForeignKey("AcceptedFirm")]
         public int? AcceptedFirmId { get; set; }
 
-        [ForeignKey("Forex")]
         public int? ForexId { get; set; }
 
         public decimal? ForexRate { get; set; }
@@ -43,10 +29,19 @@ namespace HekaMiniumApi.Context{
         public string PartNo { get; set; }
         public string PartDimensions { get; set; }
 
-        public virtual ItemOffer ItemOffer { get; set; }
-        public virtual Item Item { get; set; }
-        public virtual UnitType UnitType { get; set; }
-        public virtual Firm AcceptedFirm { get; set; }
-        public virtual Forex Forex { get; set; }
+        #region VISUAL ELEMENTS
+        public string ItemCode { get; set; }
+        public string ItemName { get; set; }
+        public string UnitCode { get; set; }
+        public string UnitName { get; set; }
+        public string StatusText { get; set; }
+        public string FirmCode { get; set; }
+        public string FirmName { get; set; }
+        public string ForexCode { get; set; }
+        public string ForexName { get; set; }
+        public ItemOfferDetailDemandModel[] Demands { get; set; }
+        public ItemOfferFirmPriceModel[] FirmPrices { get; set; }
+        public ItemOrderDetailModel OrderDetail { get; set; }
+        #endregion
     }
 }

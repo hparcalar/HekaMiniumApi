@@ -4,22 +4,17 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HekaMiniumApi.Context{
-    public class ItemOfferDetail{
+    public class ItemOfferFirmPrice{
         public int Id { get; set; }
+
+        [ForeignKey("ItemOfferDetail")]
+        public int? ItemOfferDetailId { get; set; }
 
         [ForeignKey("ItemOffer")]
         public int? ItemOfferId { get; set; }
 
-        public int? LineNumber { get; set; }
-
-        [ForeignKey("Item")]
-        public int? ItemId { get; set; }
-
-        [ForeignKey("UnitType")]
-        public int? UnitId { get; set; }
-
-        [ForeignKey("AcceptedFirm")]
-        public int? AcceptedFirmId { get; set; }
+        [ForeignKey("Firm")]
+        public int? FirmId { get; set; }
 
         [ForeignKey("Forex")]
         public int? ForexId { get; set; }
@@ -34,19 +29,10 @@ namespace HekaMiniumApi.Context{
         public decimal? OverallTotal { get; set; }
         public decimal? OverallForexTotal { get; set; }
 
-        public decimal? Quantity { get; set; }
-        public int? OfferStatus { get; set; }
-
-        public decimal? NetQuantity { get; set; }
-        public string ItemExplanation { get; set; }
-        public string Explanation { get; set; }
-        public string PartNo { get; set; }
-        public string PartDimensions { get; set; }
-
         public virtual ItemOffer ItemOffer { get; set; }
-        public virtual Item Item { get; set; }
-        public virtual UnitType UnitType { get; set; }
-        public virtual Firm AcceptedFirm { get; set; }
+        public virtual ItemOfferDetail ItemOfferDetail { get; set; }
+        public virtual Firm Firm { get; set; }
         public virtual Forex Forex { get; set; }
+
     }
 }

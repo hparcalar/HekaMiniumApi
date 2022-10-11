@@ -27,6 +27,8 @@ namespace HekaMiniumApi.Models{
         public string ItemName { get; set; }
         public string UnitCode { get; set; }
         public string UnitName { get; set; }
+        public string UserCode { get; set; }
+        public string UserName { get; set; }
         public DateTime? DemandDate { get; set; }
         public DateTime? DeadlineDate { get; set; }
         public string ItemDemandNo { get; set; }

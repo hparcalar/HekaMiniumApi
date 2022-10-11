@@ -47,6 +47,7 @@ namespace HekaMiniumApi.Models{
         public string ProjectCode { get; set; }
         public string ProjectName { get; set; }
         public string StatusText { get; set; }
+        public ItemOrderConsumeModel[] OrderConsumes { get; set; }
         #endregion
     }
 }

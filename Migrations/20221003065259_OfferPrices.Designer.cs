@@ -3,6 +3,7 @@ using System;
 using HekaMiniumApi.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HekaMiniumApi.Migrations
 {
     [DbContext(typeof(HekaMiniumSchema))]
-    partial class HekaMiniumSchemaModelSnapshot : ModelSnapshot
+    [Migration("20221003065259_OfferPrices")]
+    partial class OfferPrices
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -760,63 +762,6 @@ namespace HekaMiniumApi.Migrations
                     b.HasIndex("ItemOfferId");
 
                     b.ToTable("ItemOfferFirmOption");
-                });
-
-            modelBuilder.Entity("HekaMiniumApi.Context.ItemOfferFirmPrice", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("FirmId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("ForexId")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal?>("ForexRate")
-                        .HasColumnType("numeric");
-
-                    b.Property<int?>("ItemOfferDetailId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("ItemOfferId")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal?>("OverallForexTotal")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("OverallTotal")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("SubForexTotal")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("SubTotal")
-                        .HasColumnType("numeric");
-
-                    b.Property<bool?>("TaxIncluded")
-                        .HasColumnType("boolean");
-
-                    b.Property<int?>("TaxRate")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal?>("UnitPrice")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FirmId");
-
-                    b.HasIndex("ForexId");
-
-                    b.HasIndex("ItemOfferDetailId");
-
-                    b.HasIndex("ItemOfferId");
-
-                    b.ToTable("ItemOfferFirmPrice");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.ItemOrder", b =>
@@ -2519,33 +2464,6 @@ namespace HekaMiniumApi.Migrations
                     b.Navigation("Firm");
 
                     b.Navigation("ItemOffer");
-                });
-
-            modelBuilder.Entity("HekaMiniumApi.Context.ItemOfferFirmPrice", b =>
-                {
-                    b.HasOne("HekaMiniumApi.Context.Firm", "Firm")
-                        .WithMany()
-                        .HasForeignKey("FirmId");
-
-                    b.HasOne("HekaMiniumApi.Context.Forex", "Forex")
-                        .WithMany()
-                        .HasForeignKey("ForexId");
-
-                    b.HasOne("HekaMiniumApi.Context.ItemOfferDetail", "ItemOfferDetail")
-                        .WithMany()
-                        .HasForeignKey("ItemOfferDetailId");
-
-                    b.HasOne("HekaMiniumApi.Context.ItemOffer", "ItemOffer")
-                        .WithMany()
-                        .HasForeignKey("ItemOfferId");
-
-                    b.Navigation("Firm");
-
-                    b.Navigation("Forex");
-
-                    b.Navigation("ItemOffer");
-
-                    b.Navigation("ItemOfferDetail");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.ItemOrder", b =>

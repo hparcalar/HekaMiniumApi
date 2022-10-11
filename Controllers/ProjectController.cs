@@ -134,7 +134,7 @@ namespace HekaMiniumApi.Controllers{
             ProjectModel[] data = new ProjectModel[0];
             try
             {
-                data = _context.Project.Where(d => d.ProjectStatus == 3).Select(d => new ProjectModel{
+                data = _context.Project.Where(d => d.ProjectStatus == 3 || d.ProjectStatus == 4).Select(d => new ProjectModel{
                     Id = d.Id,
                     Budget = d.Budget,
                     FirmCode = d.Firm != null ? d.Firm.FirmCode : "",

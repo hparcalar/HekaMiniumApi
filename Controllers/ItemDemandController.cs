@@ -36,6 +36,9 @@ namespace HekaMiniumApi.Controllers{
                     IsOrdered = d.IsOrdered,
                     PlantId = d.PlantId,
                     ProjectId = d.ProjectId,
+                    SysUserId = d.SysUserId,
+                    UserCode = d.SysUser != null ? d.SysUser.UserCode : "",
+                    UserName = d.SysUser != null ? d.SysUser.UserName : "",
                     ReceiptDate = d.ReceiptDate,
                     ReceiptNo = d.ReceiptNo,
                     IsContracted = d.IsContracted,
@@ -45,7 +48,8 @@ namespace HekaMiniumApi.Controllers{
                                     d.DemandStatus == 1 ? "Onaylandı" :
                                     d.DemandStatus == 2 ? "Sipariş verildi" :
                                     d.DemandStatus == 3 ? "Sipariş teslim alındı" :
-                                    d.DemandStatus == 4 ? "İptal edildi" : "",
+                                    d.DemandStatus == 4 ? "İptal edildi" : 
+                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : "",
                 })
                 .OrderByDescending(d => d.ReceiptDate) 
                 .ToArray();
@@ -75,6 +79,7 @@ namespace HekaMiniumApi.Controllers{
                         PlantId = d.PlantId,
                         ProjectId = d.ProjectId,
                         ReceiptDate = d.ReceiptDate,
+                        SysUserId = d.SysUserId,
                         ReceiptNo = d.ReceiptNo,
                         IsContracted = d.IsContracted,
                         ProjectCode = d.Project != null ? d.Project.ProjectCode : "",
@@ -83,7 +88,8 @@ namespace HekaMiniumApi.Controllers{
                                     d.DemandStatus == 1 ? "Onaylandı" :
                                     d.DemandStatus == 2 ? "Sipariş verildi" :
                                     d.DemandStatus == 3 ? "Sipariş teslim alındı" :
-                                    d.DemandStatus == 4 ? "İptal edildi" : "",
+                                    d.DemandStatus == 4 ? "İptal edildi" : 
+                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : "",
                     }).FirstOrDefault();
 
                 if (data != null && data.Id > 0){
@@ -111,7 +117,8 @@ namespace HekaMiniumApi.Controllers{
                                     d.DemandStatus == 1 ? "Onaylandı" :
                                     d.DemandStatus == 2 ? "Sipariş verildi" :
                                     d.DemandStatus == 3 ? "Sipariş teslim alındı" :
-                                    d.DemandStatus == 4 ? "İptal edildi" : "",
+                                    d.DemandStatus == 4 ? "İptal edildi" : 
+                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : "",
                         }).ToArray();
                 }
                 else{
@@ -171,6 +178,8 @@ namespace HekaMiniumApi.Controllers{
                     IsContracted = d.IsContracted,
                     ItemCode = d.Item != null ? d.Item.ItemCode : d.ItemExplanation,
                     ItemName = d.Item != null ? d.Item.ItemName : d.ItemExplanation,
+                    UserCode = d.ItemDemand.SysUser != null ? d.ItemDemand.SysUser.UserCode : "",
+                    UserName = d.ItemDemand.SysUser != null ? d.ItemDemand.SysUser.UserName : "",
                     ItemDemandNo = d.ItemDemand.ReceiptNo,
                     UnitCode = d.UnitType != null ? d.UnitType.UnitTypeCode : "",
                     UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
@@ -178,7 +187,8 @@ namespace HekaMiniumApi.Controllers{
                                     d.DemandStatus == 1 ? "Onaylandı" :
                                     d.DemandStatus == 2 ? "Sipariş verildi" :
                                     d.DemandStatus == 3 ? "Sipariş teslim alındı" :
-                                    d.DemandStatus == 4 ? "İptal edildi" : "",
+                                    d.DemandStatus == 4 ? "İptal edildi" : 
+                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : "",
                     DemandDate = d.ItemDemand.ReceiptDate,
                     DeadlineDate = d.ItemDemand.DeadlineDate,
                 })
@@ -214,6 +224,8 @@ namespace HekaMiniumApi.Controllers{
                     PartDimensions = d.PartDimensions,
                     PartNo = d.PartNo,
                     IsContracted = d.IsContracted,
+                    UserCode = d.ItemDemand.SysUser != null ? d.ItemDemand.SysUser.UserCode : "",
+                    UserName = d.ItemDemand.SysUser != null ? d.ItemDemand.SysUser.UserName : "",
                     ProjectId = d.ItemDemand.ProjectId,
                     ProjectCode = d.ItemDemand.Project != null ? d.ItemDemand.Project.ProjectCode : "",
                     ProjectName = d.ItemDemand.Project != null ? d.ItemDemand.Project.ProjectName : "",
@@ -226,7 +238,8 @@ namespace HekaMiniumApi.Controllers{
                                     d.DemandStatus == 1 ? "Onaylandı" :
                                     d.DemandStatus == 2 ? "Sipariş verildi" :
                                     d.DemandStatus == 3 ? "Sipariş teslim alındı" :
-                                    d.DemandStatus == 4 ? "İptal edildi" : "",
+                                    d.DemandStatus == 4 ? "İptal edildi" : 
+                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : "",
                     DemandDate = d.ItemDemand.ReceiptDate,
                     DeadlineDate = d.ItemDemand.DeadlineDate,
                 })
@@ -241,6 +254,58 @@ namespace HekaMiniumApi.Controllers{
             return data;
         }
 
+        [HttpGet]
+        [Route("MyDemands")]
+        [Authorize(Policy = "WebUser")]
+        public IEnumerable<ItemDemandDetailModel> GetMyDemands(){
+            int? userId = HekaHelpers.GetUserId(Request.HttpContext);
+
+            ItemDemandDetailModel[] data = new ItemDemandDetailModel[0];
+            try
+            {
+                data = _context.ItemDemandDetail.Where(d => userId != null && d.ItemDemand.SysUserId == userId).Select(d => new ItemDemandDetailModel{
+                    Id = d.Id,
+                    DemandStatus = d.DemandStatus,
+                    Explanation = d.Explanation,
+                    ItemDemandId = d.ItemDemandId,
+                    ItemExplanation = d.ItemExplanation,
+                    ItemId = d.ItemId,
+                    LineNumber = d.LineNumber,
+                    NetQuantity = d.NetQuantity,
+                    Quantity = d.Quantity,
+                    UnitId = d.UnitId,
+                    PartDimensions = d.PartDimensions,
+                    UserCode = d.ItemDemand.SysUser != null ? d.ItemDemand.SysUser.UserCode : "",
+                    UserName = d.ItemDemand.SysUser != null ? d.ItemDemand.SysUser.UserName : "",
+                    PartNo = d.PartNo,
+                    IsContracted = d.IsContracted,
+                    ProjectId = d.ItemDemand.ProjectId,
+                    ProjectCode = d.ItemDemand.Project != null ? d.ItemDemand.Project.ProjectCode : "",
+                    ProjectName = d.ItemDemand.Project != null ? d.ItemDemand.Project.ProjectName : "",
+                    ItemCode = d.Item != null ? d.Item.ItemCode : d.ItemExplanation,
+                    ItemName = d.Item != null ? d.Item.ItemName : d.ItemExplanation,
+                    ItemDemandNo = d.ItemDemand.ReceiptNo,
+                    UnitCode = d.UnitType != null ? d.UnitType.UnitTypeCode : "",
+                    UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
+                    StatusText = d.DemandStatus == 0 ? "Onay bekleniyor" : 
+                                    d.DemandStatus == 1 ? "Onaylandı" :
+                                    d.DemandStatus == 2 ? "Sipariş verildi" :
+                                    d.DemandStatus == 3 ? "Sipariş teslim alındı" :
+                                    d.DemandStatus == 4 ? "İptal edildi" : 
+                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : "",
+                    DemandDate = d.ItemDemand.ReceiptDate,
+                    DeadlineDate = d.ItemDemand.DeadlineDate,
+                })
+                .OrderByDescending(d => d.DemandDate)
+                .ToArray();
+            }
+            catch
+            {
+                
+            }
+            
+            return data;
+        }
 
         [HttpGet]
         [Route("Detail/{id}")]
@@ -283,6 +348,8 @@ namespace HekaMiniumApi.Controllers{
                     Quantity = d.Quantity,
                     UnitId = d.UnitId,
                     PartDimensions = d.PartDimensions,
+                    UserCode = d.ItemDemand.SysUser != null ? d.ItemDemand.SysUser.UserCode : "",
+                    UserName = d.ItemDemand.SysUser != null ? d.ItemDemand.SysUser.UserName : "",
                     PartNo = d.PartNo,
                     IsContracted = d.IsContracted,
                     ItemCode = d.Item != null ? d.Item.ItemCode : d.ItemExplanation,
@@ -294,7 +361,8 @@ namespace HekaMiniumApi.Controllers{
                                     d.DemandStatus == 1 ? "Onaylandı" :
                                     d.DemandStatus == 2 ? "Sipariş verildi" :
                                     d.DemandStatus == 3 ? "Sipariş teslim alındı" :
-                                    d.DemandStatus == 4 ? "İptal edildi" : "",
+                                    d.DemandStatus == 4 ? "İptal edildi" : 
+                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : "",
                     DemandDate = d.ItemDemand.ReceiptDate,
                     DeadlineDate = d.ItemDemand.DeadlineDate,
                     ProjectId = d.ItemDemand.ProjectId,
@@ -319,6 +387,11 @@ namespace HekaMiniumApi.Controllers{
 
             try
             {
+                // assign demand creator
+                int? creatorId = HekaHelpers.GetUserId(Request.HttpContext);
+                if (model.Id <= 0)
+                    model.SysUserId = creatorId;
+
                 if (model.ReceiptDate == null)
                     model.ReceiptDate = DateTime.Now;
 

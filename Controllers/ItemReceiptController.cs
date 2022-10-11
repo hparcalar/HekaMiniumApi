@@ -141,6 +141,22 @@ namespace HekaMiniumApi.Controllers{
                             UnitCode = d.UnitType != null ? d.UnitType.UnitTypeCode : "",
                             UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
                         }).ToArray();
+                
+                    // fill order consumes
+                    foreach (var item in data.Details)
+                    {
+                        item.OrderConsumes = _context.ItemOrderConsume.Where(d => d.ConsumerItemReceiptDetailId == item.Id)
+                            .Select(d => new ItemOrderConsumeModel{
+                                Id = d.Id,
+                                ConsumeDate = d.ConsumeDate,
+                                ConsumeNetQuantity = d.ConsumeNetQuantity,
+                                ConsumerItemReceiptDetailId = d.ConsumerItemReceiptDetailId,
+                                ContributeDate = d.ContributeDate,
+                                ContributeNetQuantity = d.ContributeNetQuantity,
+                                ContributerItemReceiptDetailId = d.ContributerItemReceiptDetailId,
+                                ItemOrderDetailId = d.ItemOrderDetailId,
+                            }).ToArray();
+                    }
                 }
                 else{
                     if (data == null)
@@ -188,6 +204,7 @@ namespace HekaMiniumApi.Controllers{
             {
                 // after check list
                 List<int> orderDetailsWillBeChecked = new List<int>();
+                List<int> orderHeadersWillBeChecked = new List<int>();
                 List<int> receiptDetailsWillBeChecked = new List<int>();
 
                 var dbObj = _context.ItemReceipt.FirstOrDefault(d => d.Id == model.Id);
@@ -231,6 +248,9 @@ namespace HekaMiniumApi.Controllers{
 
                 foreach (var item in model.Details)
                 {
+                    if (item.ItemId == null)
+                        throw new Exception("İrsaliye girişi yapabilmek için kalemlerde uygun stok tanımlarını seçmelisiniz.");
+
                     var dbDetail = _context.ItemReceiptDetail.FirstOrDefault(d => d.Id == item.Id);
                     if (dbDetail == null){
                         dbDetail = new ItemReceiptDetail();
@@ -239,6 +259,48 @@ namespace HekaMiniumApi.Controllers{
 
                     item.MapTo(dbDetail);
                     dbDetail.ItemReceipt = dbObj;
+
+                    #region SAVE ORDER CONSUMINGS
+                    if (item.OrderConsumes != null && item.OrderConsumes.Length > 0){
+                        foreach (var consItem in item.OrderConsumes)
+                        {
+                            var _currentConsume = _context.ItemOrderConsume.FirstOrDefault(d => d.ItemOrderDetailId == consItem.ItemOrderDetailId
+                                && d.ConsumerItemReceiptDetailId == item.Id);
+                            if (_currentConsume == null){
+                                _currentConsume = new ItemOrderConsume();
+                                _context.ItemOrderConsume.Add(_currentConsume);
+                            }
+
+                            consItem.MapTo(_currentConsume);
+                            _currentConsume.ConsumerReceiptDetail = dbDetail;
+
+                            var dbOrderDetail = _context.ItemOrderDetail.FirstOrDefault(d => d.Id == consItem.ItemOrderDetailId);
+                            if (dbOrderDetail != null) {
+                                if (!orderDetailsWillBeChecked.Contains(dbOrderDetail.Id))
+                                    orderDetailsWillBeChecked.Add(dbOrderDetail.Id);
+
+                                if (!orderHeadersWillBeChecked.Contains(dbOrderDetail.ItemOrderId ?? 0))
+                                    orderHeadersWillBeChecked.Add(dbOrderDetail.ItemOrderId ?? 0);
+                            }
+                        }
+                    }
+                    else{
+                        var _existingConsumes = _context.ItemOrderConsume.Where(d => d.ConsumerItemReceiptDetailId == item.Id).ToArray();
+                        foreach (var consItem in _existingConsumes)
+                        {
+                            var dbOrderDetail = _context.ItemOrderDetail.FirstOrDefault(d => d.Id == consItem.ItemOrderDetailId);
+                            if (dbOrderDetail != null){
+                                if (!orderDetailsWillBeChecked.Contains(dbOrderDetail.Id))
+                                    orderDetailsWillBeChecked.Add(dbOrderDetail.Id);
+
+                                if (!orderHeadersWillBeChecked.Contains(dbOrderDetail.ItemOrderId ?? 0))
+                                    orderHeadersWillBeChecked.Add(dbOrderDetail.ItemOrderId ?? 0);
+                            }
+
+                            _context.ItemOrderConsume.Remove(consItem);
+                        }
+                    }
+                    #endregion
 
                     // check receipts which consume this receipt detail if any not enough quantity exists after new quantity of this receipt detail
                     decimal? consumersTotal = _context.ItemReceiptConsume.Where(d => d.ConsumedReceiptDetailId == item.Id).Sum(d => d.ConsumeNetQuantity);
@@ -276,18 +338,33 @@ namespace HekaMiniumApi.Controllers{
                 _context.SaveChanges();
 
                 // apply after check
+                foreach (var item in orderDetailsWillBeChecked)
+                {
+                    using (HekaMiniumSchema checkContext = SchemaFactory.CreateContext()){
+                        using (OrderManagementBO bObj = new OrderManagementBO(checkContext)){
+                            bObj.CheckOrderDetail(item);
+                        }
+
+                        checkContext.SaveChanges();
+                    }
+                }
+
+                foreach (var item in orderHeadersWillBeChecked)
+                {
+                    using (HekaMiniumSchema checkContext = SchemaFactory.CreateContext()){
+                        using (OrderManagementBO bObj = new OrderManagementBO(checkContext)){
+                            bObj.CheckOrderHeader(item);
+                        }
+
+                        checkContext.SaveChanges();
+                    }
+                }
+
                 using (HekaMiniumSchema checkContext = SchemaFactory.CreateContext()){
                     using (ItemManagementBO bObj = new ItemManagementBO(checkContext)){
                         foreach (var rdId in receiptDetailsWillBeChecked)
                         {
                             bObj.CheckReceiptDetail(rdId);
-                        }
-                    }
-
-                    using (OrderManagementBO bObj = new OrderManagementBO(checkContext)){
-                        foreach (var odId in orderDetailsWillBeChecked)
-                        {
-                            bObj.CheckOrderDetail(odId);
                         }
                     }
 
@@ -307,7 +384,7 @@ namespace HekaMiniumApi.Controllers{
         }
 
         [Authorize(Policy = "WebUser")]
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public BusinessResult Delete(int id){
             BusinessResult result = new BusinessResult();
 
@@ -315,6 +392,7 @@ namespace HekaMiniumApi.Controllers{
             {
                 // after check list
                 List<int> orderDetailsWillBeChecked = new List<int>();
+                List<int> orderHeadersWillBeChecked = new List<int>();
 
                 var dbObj = _context.ItemReceipt.FirstOrDefault(d => d.Id == id);
                 if (dbObj == null)
@@ -331,8 +409,13 @@ namespace HekaMiniumApi.Controllers{
                     var consumings = _context.ItemOrderConsume.Where(d => d.ContributerItemReceiptDetailId == item.Id || d.ConsumerItemReceiptDetailId == item.Id).ToArray();
                     foreach (var cons in consumings)
                     {
-                        if (cons.ItemOrderDetailId != null && !orderDetailsWillBeChecked.Contains(cons.ItemOrderDetailId ?? 0))
+                        if (cons.ItemOrderDetailId != null && !orderDetailsWillBeChecked.Contains(cons.ItemOrderDetailId ?? 0)){
                             orderDetailsWillBeChecked.Add(cons.ItemOrderDetailId ?? 0);
+                            var dbOrderDetail = _context.ItemOrderDetail.FirstOrDefault(d => d.Id == (cons.ItemOrderDetailId ?? 0));
+                            if (dbOrderDetail != null && !orderHeadersWillBeChecked.Contains(dbOrderDetail.ItemOrderId ?? 0)){
+                                orderHeadersWillBeChecked.Add(dbOrderDetail.ItemOrderId ?? 0);
+                            }
+                        }
 
                         _context.ItemOrderConsume.Remove(cons);
                     }
@@ -341,8 +424,31 @@ namespace HekaMiniumApi.Controllers{
                 }
 
                 _context.ItemReceipt.Remove(dbObj);
-
                 _context.SaveChanges();
+
+                // apply after check
+                foreach (var item in orderDetailsWillBeChecked)
+                {
+                    using (HekaMiniumSchema checkContext = SchemaFactory.CreateContext()){
+                        using (OrderManagementBO bObj = new OrderManagementBO(checkContext)){
+                            bObj.CheckOrderDetail(item);
+                        }
+
+                        checkContext.SaveChanges();
+                    }
+                }
+
+                foreach (var item in orderHeadersWillBeChecked)
+                {
+                    using (HekaMiniumSchema checkContext = SchemaFactory.CreateContext()){
+                        using (OrderManagementBO bObj = new OrderManagementBO(checkContext)){
+                            bObj.CheckOrderHeader(item);
+                        }
+
+                        checkContext.SaveChanges();
+                    }
+                }
+
                 result.Result=true;
             }
             catch (System.Exception ex)

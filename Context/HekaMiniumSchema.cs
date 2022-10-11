@@ -52,6 +52,7 @@ namespace HekaMiniumApi.Context {
         public DbSet<ItemOfferFirmOption> ItemOfferFirmOption { get; set; }
         public DbSet<ItemOfferDetail> ItemOfferDetail { get; set; }
         public DbSet<ItemOfferDetailDemand> ItemOfferDetailDemand { get; set; }
+        public DbSet<ItemOfferFirmPrice> ItemOfferFirmPrice { get; set; }
 
         public HekaMiniumSchema() : base(){}
         public HekaMiniumSchema(Microsoft.EntityFrameworkCore.DbContextOptions options) : base(options){}

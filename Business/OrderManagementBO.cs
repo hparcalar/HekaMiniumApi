@@ -7,10 +7,39 @@ namespace HekaMiniumApi.Business{
             _context = context;
         }
 
+
+        public bool CheckDemandDetail(int demandDetailId){
+            try
+            {
+                var dbObj = _context.ItemDemandDetail.FirstOrDefault(d => d.Id == demandDetailId);
+
+                if (_context.ItemDemandConsume.Any(d => d.ItemDemandDetailId == demandDetailId && d.ItemOrderDetailId != null))
+                    dbObj.DemandStatus = 2; // to be ordered
+                else if (_context.ItemOfferDetailDemand.Any(d => d.ItemDemandDetailId == demandDetailId))
+                    dbObj.DemandStatus = 5; // to be offered
+                else
+                    dbObj.DemandStatus = 0;
+            }
+            catch (System.Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public bool CheckOfferDetail(int offerDetailId){
             try
             {
+                var dbObj = _context.ItemOfferDetail.FirstOrDefault(d => d.Id == offerDetailId);
                 
+                decimal? totalConsumed = _context.ItemOrderDetail.Where(d => d.ItemOfferDetailId == offerDetailId)
+                    .Sum(d => d.Quantity);
+
+                if (dbObj.Quantity > totalConsumed)
+                    dbObj.OfferStatus = 0;
+                else if (dbObj.Quantity <= totalConsumed)
+                    dbObj.OfferStatus = 3;
             }
             catch (System.Exception)
             {
@@ -78,11 +107,32 @@ namespace HekaMiniumApi.Business{
                     if (_context.ItemDemandDetail.Any(d => d.DemandStatus == 2 && d.ItemDemandId == demandId) && !_context.ItemDemandDetail.Any(d => d.DemandStatus != 2 && d.ItemDemandId == demandId)){
                         dbObj.DemandStatus = 2;
                     }
-                    else if (_context.ItemDemandDetail.Any(d => d.DemandStatus == 3 && d.ItemDemandId == demandId) && !_context.ItemDemandDetail.Any(d => d.DemandStatus != 3 && d.ItemDemandId == demandId)){
+                    else if (_context.ItemDemandDetail.Any(d => d.DemandStatus == 3 && d.ItemDemandId == demandId) 
+                        && !_context.ItemDemandDetail.Any(d => d.DemandStatus != 3 && d.ItemDemandId == demandId)){
                         dbObj.DemandStatus = 3;
                     }
                     else
                         dbObj.DemandStatus = 0;
+                }
+            }
+            catch (System.Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool CheckOfferHeader(int offerId){
+            try
+            {
+                var dbObj = _context.ItemOffer.FirstOrDefault(d => d.Id == offerId);
+                if (dbObj != null){
+                    if (_context.ItemOfferDetail.Any(d => d.OfferStatus == 3 && d.ItemOfferId == offerId) &&
+                        !_context.ItemOfferDetail.Any(d => d.OfferStatus != 3 && d.ItemOfferId == offerId))
+                        dbObj.OfferStatus = 3;
+                    else
+                        dbObj.OfferStatus = 0;
                 }
             }
             catch (System.Exception)
