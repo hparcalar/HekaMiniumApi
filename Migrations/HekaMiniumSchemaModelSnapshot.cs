@@ -2036,6 +2036,39 @@ namespace HekaMiniumApi.Migrations
                     b.ToTable("Route");
                 });
 
+            modelBuilder.Entity("HekaMiniumApi.Context.StaffPermit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("PermitStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StaffId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("StaffPermitExplanation")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("StatusText")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StaffId");
+
+                    b.ToTable("StaffPermit");
+                });
+
             modelBuilder.Entity("HekaMiniumApi.Context.SysRole", b =>
                 {
                     b.Property<int>("Id")
@@ -3008,6 +3041,17 @@ namespace HekaMiniumApi.Migrations
                     b.Navigation("Forex");
 
                     b.Navigation("Plant");
+                });
+
+            modelBuilder.Entity("HekaMiniumApi.Context.StaffPermit", b =>
+                {
+                    b.HasOne("HekaMiniumApi.Context.SysUser", "Staff")
+                        .WithMany()
+                        .HasForeignKey("StaffId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Staff");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.SysRole", b =>
