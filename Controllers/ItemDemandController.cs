@@ -46,10 +46,12 @@ namespace HekaMiniumApi.Controllers{
                     ProjectName = d.Project != null ? d.Project.ProjectName : "",
                     StatusText = d.DemandStatus == 0 ? "Onay bekleniyor" : 
                                     d.DemandStatus == 1 ? "Onaylandı" :
-                                    d.DemandStatus == 2 ? "Sipariş verildi" :
+                                    d.DemandStatus == 2 ? "Sipariş oluşturuldu" :
                                     d.DemandStatus == 3 ? "Sipariş teslim alındı" :
                                     d.DemandStatus == 4 ? "İptal edildi" : 
-                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : "",
+                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : 
+                                    d.DemandStatus == 6 ? "Sipariş iletildi" :
+                                    d.DemandStatus == 7 ? "Kısmi teslim alındı" : "",
                 })
                 .OrderByDescending(d => d.ReceiptDate) 
                 .ToArray();
@@ -86,10 +88,12 @@ namespace HekaMiniumApi.Controllers{
                         ProjectName = d.Project != null ? d.Project.ProjectName : "",
                         StatusText = d.DemandStatus == 0 ? "Onay bekleniyor" : 
                                     d.DemandStatus == 1 ? "Onaylandı" :
-                                    d.DemandStatus == 2 ? "Sipariş verildi" :
+                                    d.DemandStatus == 2 ? "Sipariş oluşturuldu" :
                                     d.DemandStatus == 3 ? "Sipariş teslim alındı" :
                                     d.DemandStatus == 4 ? "İptal edildi" : 
-                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : "",
+                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : 
+                                    d.DemandStatus == 6 ? "Sipariş iletildi" :
+                                    d.DemandStatus == 7 ? "Kısmi teslim alındı" : "",
                     }).FirstOrDefault();
 
                 if (data != null && data.Id > 0){
@@ -115,10 +119,12 @@ namespace HekaMiniumApi.Controllers{
                             UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
                             StatusText = d.DemandStatus == 0 ? "Onay bekleniyor" : 
                                     d.DemandStatus == 1 ? "Onaylandı" :
-                                    d.DemandStatus == 2 ? "Sipariş verildi" :
+                                    d.DemandStatus == 2 ? "Sipariş oluşturuldu" :
                                     d.DemandStatus == 3 ? "Sipariş teslim alındı" :
                                     d.DemandStatus == 4 ? "İptal edildi" : 
-                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : "",
+                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : 
+                                    d.DemandStatus == 6 ? "Sipariş iletildi" :
+                                    d.DemandStatus == 7 ? "Kısmi teslim alındı" : "",
                         }).ToArray();
                 }
                 else{
@@ -185,10 +191,12 @@ namespace HekaMiniumApi.Controllers{
                     UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
                     StatusText = d.DemandStatus == 0 ? "Onay bekleniyor" : 
                                     d.DemandStatus == 1 ? "Onaylandı" :
-                                    d.DemandStatus == 2 ? "Sipariş verildi" :
+                                    d.DemandStatus == 2 ? "Sipariş oluşturuldu" :
                                     d.DemandStatus == 3 ? "Sipariş teslim alındı" :
                                     d.DemandStatus == 4 ? "İptal edildi" : 
-                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : "",
+                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : 
+                                    d.DemandStatus == 6 ? "Sipariş iletildi" :
+                                    d.DemandStatus == 7 ? "Kısmi teslim alındı" : "",
                     DemandDate = d.ItemDemand.ReceiptDate,
                     DeadlineDate = d.ItemDemand.DeadlineDate,
                 })
@@ -236,10 +244,12 @@ namespace HekaMiniumApi.Controllers{
                     UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
                     StatusText = d.DemandStatus == 0 ? "Onay bekleniyor" : 
                                     d.DemandStatus == 1 ? "Onaylandı" :
-                                    d.DemandStatus == 2 ? "Sipariş verildi" :
+                                    d.DemandStatus == 2 ? "Sipariş oluşturuldu" :
                                     d.DemandStatus == 3 ? "Sipariş teslim alındı" :
                                     d.DemandStatus == 4 ? "İptal edildi" : 
-                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : "",
+                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : 
+                                    d.DemandStatus == 6 ? "Sipariş iletildi" :
+                                    d.DemandStatus == 7 ? "Kısmi teslim alındı" : "",
                     DemandDate = d.ItemDemand.ReceiptDate,
                     DeadlineDate = d.ItemDemand.DeadlineDate,
                 })
@@ -289,10 +299,12 @@ namespace HekaMiniumApi.Controllers{
                     UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
                     StatusText = d.DemandStatus == 0 ? "Onay bekleniyor" : 
                                     d.DemandStatus == 1 ? "Onaylandı" :
-                                    d.DemandStatus == 2 ? "Sipariş verildi" :
+                                    d.DemandStatus == 2 ? "Sipariş oluşturuldu" :
                                     d.DemandStatus == 3 ? "Sipariş teslim alındı" :
                                     d.DemandStatus == 4 ? "İptal edildi" : 
-                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : "",
+                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : 
+                                    d.DemandStatus == 6 ? "Sipariş iletildi" :
+                                    d.DemandStatus == 7 ? "Kısmi teslim alındı" : "",
                     DemandDate = d.ItemDemand.ReceiptDate,
                     DeadlineDate = d.ItemDemand.DeadlineDate,
                 })
@@ -359,10 +371,12 @@ namespace HekaMiniumApi.Controllers{
                     UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
                     StatusText = d.DemandStatus == 0 ? "Onay bekleniyor" : 
                                     d.DemandStatus == 1 ? "Onaylandı" :
-                                    d.DemandStatus == 2 ? "Sipariş verildi" :
+                                    d.DemandStatus == 2 ? "Sipariş oluşturuldu" :
                                     d.DemandStatus == 3 ? "Sipariş teslim alındı" :
                                     d.DemandStatus == 4 ? "İptal edildi" : 
-                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : "",
+                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : 
+                                    d.DemandStatus == 6 ? "Sipariş iletildi" :
+                                    d.DemandStatus == 7 ? "Kısmi teslim alındı" : "",
                     DemandDate = d.ItemDemand.ReceiptDate,
                     DeadlineDate = d.ItemDemand.DeadlineDate,
                     ProjectId = d.ItemDemand.ProjectId,
@@ -462,6 +476,44 @@ namespace HekaMiniumApi.Controllers{
 
             return result;
         }
+
+        [Authorize(Policy = "WebUser")]
+        [HttpPost]
+        [Route("SaveDetail")]
+        public BusinessResult PostDetail(ItemDemandDetailModel model){
+            BusinessResult result = new BusinessResult();
+
+            try
+            {
+                // assign demand creator
+                int? creatorId = HekaHelpers.GetUserId(Request.HttpContext);
+                
+
+                var dbObj = _context.ItemDemandDetail.FirstOrDefault(d => d.Id == model.Id);
+                if (dbObj == null){
+                    throw new Exception("Düzenlenmesi istenen talep detayı bulunamadı.");
+                }
+
+                // model.MapTo(dbObj);
+                dbObj.ItemId = model.ItemId;
+                dbObj.ItemExplanation = model.ItemExplanation;
+                dbObj.PartNo = model.PartNo;
+                dbObj.PartDimensions = model.PartDimensions;
+                dbObj.Quantity = model.Quantity;
+
+                _context.SaveChanges();
+                result.Result=true;
+                result.RecordId = dbObj.Id;
+            }
+            catch (System.Exception ex)
+            {
+                result.Result=false;
+                result.ErrorMessage = ex.Message;
+            }
+
+            return result;
+        }
+
 
         [Authorize(Policy = "WebUser")]
         [Route("ApproveDetails")]

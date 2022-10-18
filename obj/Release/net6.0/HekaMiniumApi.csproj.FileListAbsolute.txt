@@ -52,3 +52,4 @@
 /home/hakan/Projects/HekaMiniumApi/obj/Release/net6.0/HekaMiniumApi.pdb
 /home/hakan/Projects/HekaMiniumApi/obj/Release/net6.0/HekaMiniumApi.genruntimeconfig.cache
 /home/hakan/Projects/HekaMiniumApi/obj/Release/net6.0/ref/HekaMiniumApi.dll
+/home/hakan/Projects/HekaMiniumApi/bin/Release/net6.0/Microsoft.AspNetCore.Authentication.Certificate.dll

@@ -3,6 +3,7 @@ using HekaMiniumApi.Context;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.Certificate;
 using HekaMiniumApi.Authentication;
 using System.Security.Claims;
 
@@ -19,6 +20,9 @@ SchemaFactory.ApplyMigrations();
 
 // Apply JWT authentication configuration
 string apiKey = "HekaMinium2021HekaButan2022 IS THE SCRET KEY OF THE COMPANY";
+// builder.Services.AddAuthentication(
+//         CertificateAuthenticationDefaults.AuthenticationScheme)
+//         .AddCertificate();
 builder.Services.AddAuthentication(x =>
     {
         x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -59,6 +63,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.WebHost.UseSetting("https_port", "443");
 
 var app = builder.Build();
 
@@ -70,6 +75,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHsts();
+// app.UseHttpsRedirection();
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();

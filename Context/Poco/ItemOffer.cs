@@ -5,6 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HekaMiniumApi.Context{
     public class ItemOffer{
+        public ItemOffer(){
+            this.ItemOfferFirmOptions = new HashSet<ItemOfferFirmOption>();
+        }
         public int Id { get; set; }
         public string ReceiptNo { get; set; }
         public DateTime? ReceiptDate { get; set; }
@@ -24,5 +27,8 @@ namespace HekaMiniumApi.Context{
         public virtual Firm Firm { get; set; }
         public virtual Plant Plant { get; set; }
         public virtual SysUser SysUser { get; set; }
+
+        [InverseProperty("ItemOffer")]
+        public virtual ICollection<ItemOfferFirmOption> ItemOfferFirmOptions { get; set; }
     }
 }

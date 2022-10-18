@@ -33,6 +33,8 @@ namespace HekaMiniumApi.Models{
         public int? ReceiptStatus { get; set; }
         public string PartNo { get; set; }
         public string PartDimensions { get; set; }
+        public int? ItemOrderDetailId { get; set; }
+        public int? ItemDemandDetailId { get; set; }
 
         #region VISUAL ELEMENTS
         public string ItemCode { get; set; }

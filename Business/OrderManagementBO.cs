@@ -7,14 +7,22 @@ namespace HekaMiniumApi.Business{
             _context = context;
         }
 
-
         public bool CheckDemandDetail(int demandDetailId){
             try
             {
                 var dbObj = _context.ItemDemandDetail.FirstOrDefault(d => d.Id == demandDetailId);
 
-                if (_context.ItemDemandConsume.Any(d => d.ItemDemandDetailId == demandDetailId && d.ItemOrderDetailId != null))
+                if (_context.ItemDemandConsume.Any(d => d.ItemDemandDetailId == demandDetailId && d.ItemOrderDetailId != null)){
                     dbObj.DemandStatus = 2; // to be ordered
+                    if (_context.ItemDemandConsume.Any(d => d.ItemDemandDetailId == demandDetailId && d.ItemOrderDetail.ReceiptStatus == 2))
+                        dbObj.DemandStatus = 6; // to be order forwarded
+                    
+                    var incomingQuantity = (_context.ItemReceiptDetail.Where(d => d.ItemDemandDetailId == demandDetailId && d.ItemReceipt.ReceiptType < 100).Select(d => d.Quantity).Sum() ?? 0);
+                    if (dbObj.Quantity > incomingQuantity && incomingQuantity > 0)
+                        dbObj.DemandStatus = 7; // to be partially received
+                    else if (dbObj.Quantity <= incomingQuantity && incomingQuantity > 0)
+                        dbObj.DemandStatus = 3; // to be completely received
+                }
                 else if (_context.ItemOfferDetailDemand.Any(d => d.ItemDemandDetailId == demandDetailId))
                     dbObj.DemandStatus = 5; // to be offered
                 else
@@ -54,13 +62,47 @@ namespace HekaMiniumApi.Business{
             {
                 var dbObj = _context.ItemOrderDetail.FirstOrDefault(d => d.Id == orderDetailId);
                 
-                decimal? totalConsumed = _context.ItemOrderConsume.Where(d => d.ItemOrderDetailId == orderDetailId)
+                decimal? orderConsumings = _context.ItemOrderConsume.Where(d => d.ItemOrderDetailId == orderDetailId)
                     .Sum(d => (d.ConsumeNetQuantity ?? 0) + (d.ContributeNetQuantity ?? 0));
-                
-                if (dbObj.Quantity > totalConsumed)
-                    dbObj.ReceiptStatus = dbObj.ReceiptStatus > 2 ? 0 : dbObj.ReceiptStatus; // to be created, approved or sent to supplier status
-                else if (dbObj.Quantity <= totalConsumed)
-                    dbObj.ReceiptStatus = 3; // to be completed
+
+                var demandConsumes = _context.ItemDemandConsume.Where(d => d.ItemOrderDetailId == orderDetailId).ToArray();
+                int demandSatisfyStatus = 3;
+
+                if (demandConsumes.Length == 0)
+                    demandSatisfyStatus = 0;
+
+                foreach (var demand in demandConsumes)
+                {
+                    decimal? consumedByReceipts = _context.ItemReceiptDetail.Where(d => d.ItemOrderDetailId == orderDetailId
+                        && d.ItemDemandDetailId == demand.ItemDemandDetailId).Select(d => d.Quantity).Sum() ?? 0;
+
+                    var dbDemandDetail = _context.ItemDemandDetail.FirstOrDefault(d => d.Id == demand.ItemDemandDetailId);
+                    
+                    if ((consumedByReceipts ?? 0) <= 0){
+                        demandSatisfyStatus = 0;
+                        break;
+                    }
+                    else if (dbDemandDetail.Quantity > consumedByReceipts)
+                    {
+                        demandSatisfyStatus = 5;
+                        break;
+                    }
+                }
+
+                if (orderConsumings > 0){
+                    if (dbObj.Quantity > orderConsumings)
+                        dbObj.ReceiptStatus = dbObj.ReceiptStatus > 2 ? 0 : dbObj.ReceiptStatus; // to be created, approved or sent to supplier status
+                    else if (dbObj.Quantity <= orderConsumings)
+                        dbObj.ReceiptStatus = 3; // to be completed
+                }
+                else{
+                    if (demandSatisfyStatus == 0)
+                        dbObj.ReceiptStatus = dbObj.ReceiptStatus > 2 ? 0 : dbObj.ReceiptStatus; // to be created, approved or sent to supplier status
+                    else if (demandSatisfyStatus == 3)
+                        dbObj.ReceiptStatus = 3; // to be completed
+                    else if (demandSatisfyStatus == 5)
+                        dbObj.ReceiptStatus = 5; // to partially completed
+                }
             }
             catch (System.Exception)
             {
@@ -87,6 +129,9 @@ namespace HekaMiniumApi.Business{
                     else if (_context.ItemOrderDetail.Any(d => d.ReceiptStatus == 1 && d.ItemOrderId == orderId) && !_context.ItemOrderDetail.Any(d => d.ReceiptStatus != 1 && d.ItemOrderId == orderId)){
                         dbObj.ReceiptStatus = 1;
                     }
+                    else if (_context.ItemOrderDetail.Any(d => d.ReceiptStatus == 5 && d.ItemOrderId == orderId) && !_context.ItemOrderDetail.Any(d => d.ReceiptStatus != 5 && d.ItemOrderId == orderId)){
+                        dbObj.ReceiptStatus = 5;
+                    }
                     else
                         dbObj.ReceiptStatus = 0;
                 }
@@ -106,6 +151,12 @@ namespace HekaMiniumApi.Business{
                 if (dbObj != null){
                     if (_context.ItemDemandDetail.Any(d => d.DemandStatus == 2 && d.ItemDemandId == demandId) && !_context.ItemDemandDetail.Any(d => d.DemandStatus != 2 && d.ItemDemandId == demandId)){
                         dbObj.DemandStatus = 2;
+                    }
+                    else if (_context.ItemDemandDetail.Any(d => d.DemandStatus == 6 && d.ItemDemandId == demandId) && !_context.ItemDemandDetail.Any(d => d.DemandStatus != 6 && d.ItemDemandId == demandId)){
+                        dbObj.DemandStatus = 6;
+                    }
+                    else if (_context.ItemDemandDetail.Any(d => d.DemandStatus == 7 && d.ItemDemandId == demandId) && !_context.ItemDemandDetail.Any(d => d.DemandStatus != 7 && d.ItemDemandId == demandId)){
+                        dbObj.DemandStatus = 7;
                     }
                     else if (_context.ItemDemandDetail.Any(d => d.DemandStatus == 3 && d.ItemDemandId == demandId) 
                         && !_context.ItemDemandDetail.Any(d => d.DemandStatus != 3 && d.ItemDemandId == demandId)){

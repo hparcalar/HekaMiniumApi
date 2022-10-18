@@ -5,6 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HekaMiniumApi.Context{
     public class ItemDemandDetail{
+        public ItemDemandDetail(){
+            this.ItemReceiptDetails = new HashSet<ItemReceiptDetail>();
+        }
         public int Id { get; set; }
 
         [ForeignKey("ItemDemand")]
@@ -33,6 +36,9 @@ namespace HekaMiniumApi.Context{
         public virtual ItemDemand ItemDemand { get; set; }
         public virtual Item Item { get; set; }
         public virtual UnitType UnitType { get; set; }
+
+        [InverseProperty("ItemDemandDetail")]
+        public virtual ICollection<ItemReceiptDetail> ItemReceiptDetails { get; set; }
 
     }
 }

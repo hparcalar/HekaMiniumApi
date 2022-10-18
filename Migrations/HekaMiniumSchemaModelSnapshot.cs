@@ -1193,7 +1193,13 @@ namespace HekaMiniumApi.Migrations
                     b.Property<decimal?>("GrossQuantity")
                         .HasColumnType("numeric");
 
+                    b.Property<int?>("ItemDemandDetailId")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("ItemId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ItemOrderDetailId")
                         .HasColumnType("integer");
 
                     b.Property<int?>("ItemReceiptId")
@@ -1252,7 +1258,11 @@ namespace HekaMiniumApi.Migrations
 
                     b.HasIndex("ForexId");
 
+                    b.HasIndex("ItemDemandDetailId");
+
                     b.HasIndex("ItemId");
+
+                    b.HasIndex("ItemOrderDetailId");
 
                     b.HasIndex("ItemReceiptId");
 
@@ -2546,7 +2556,7 @@ namespace HekaMiniumApi.Migrations
                         .HasForeignKey("FirmId");
 
                     b.HasOne("HekaMiniumApi.Context.ItemOffer", "ItemOffer")
-                        .WithMany()
+                        .WithMany("FirmOptions")
                         .HasForeignKey("ItemOfferId");
 
                     b.Navigation("Firm");
@@ -2748,9 +2758,17 @@ namespace HekaMiniumApi.Migrations
                         .WithMany()
                         .HasForeignKey("ForexId");
 
+                    b.HasOne("HekaMiniumApi.Context.ItemDemandDetail", "ItemDemandDetail")
+                        .WithMany()
+                        .HasForeignKey("ItemDemandDetailId");
+
                     b.HasOne("HekaMiniumApi.Context.Item", "Item")
                         .WithMany()
                         .HasForeignKey("ItemId");
+
+                    b.HasOne("HekaMiniumApi.Context.ItemOrderDetail", "ItemOrderDetail")
+                        .WithMany()
+                        .HasForeignKey("ItemOrderDetailId");
 
                     b.HasOne("HekaMiniumApi.Context.ItemReceipt", "ItemReceipt")
                         .WithMany()
@@ -2771,6 +2789,10 @@ namespace HekaMiniumApi.Migrations
                     b.Navigation("Forex");
 
                     b.Navigation("Item");
+
+                    b.Navigation("ItemDemandDetail");
+
+                    b.Navigation("ItemOrderDetail");
 
                     b.Navigation("ItemReceipt");
 
@@ -3133,6 +3155,11 @@ namespace HekaMiniumApi.Migrations
                         .HasForeignKey("PlantId");
 
                     b.Navigation("Plant");
+                });
+
+            modelBuilder.Entity("HekaMiniumApi.Context.ItemOffer", b =>
+                {
+                    b.Navigation("FirmOptions");
                 });
 #pragma warning restore 612, 618
         }

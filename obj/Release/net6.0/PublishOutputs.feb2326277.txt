@@ -8,6 +8,7 @@
 /home/hakan/Projects/HekaMiniumApi/bin/Release/net6.0/publish/ClosedXML.dll
 /home/hakan/Projects/HekaMiniumApi/bin/Release/net6.0/publish/DocumentFormat.OpenXml.dll
 /home/hakan/Projects/HekaMiniumApi/bin/Release/net6.0/publish/ExcelNumberFormat.dll
+/home/hakan/Projects/HekaMiniumApi/bin/Release/net6.0/publish/Microsoft.AspNetCore.Authentication.Certificate.dll
 /home/hakan/Projects/HekaMiniumApi/bin/Release/net6.0/publish/Microsoft.AspNetCore.Authentication.JwtBearer.dll
 /home/hakan/Projects/HekaMiniumApi/bin/Release/net6.0/publish/Microsoft.EntityFrameworkCore.dll
 /home/hakan/Projects/HekaMiniumApi/bin/Release/net6.0/publish/Microsoft.EntityFrameworkCore.Abstractions.dll

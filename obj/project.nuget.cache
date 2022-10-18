@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "FcyxwhFlNrHPiYGEuiCRHhseIX1YunlGLabBRK2f4GWWXt3u/eI6MOB25X+IbFkfFpzwgkI1SicBjsY1jFBF3Q==",
+  "dgSpecHash": "Vz/iNIrSubXivcNy5FfERXl8EtBlSUiogKVQFIJNOOm7M9cosJLD8o5G8Ay0nsBqCq8xBTJ4FdXEKUp9T58Czw==",
   "success": true,
   "projectFilePath": "/home/hakan/Projects/HekaMiniumApi/HekaMiniumApi.csproj",
   "expectedPackageFiles": [
@@ -11,6 +11,7 @@
     "/root/.nuget/packages/humanizer.core/2.8.26/humanizer.core.2.8.26.nupkg.sha512",
     "/root/.nuget/packages/microsoft.aspnetcore.authentication/2.2.0/microsoft.aspnetcore.authentication.2.2.0.nupkg.sha512",
     "/root/.nuget/packages/microsoft.aspnetcore.authentication.abstractions/2.2.0/microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",
+    "/root/.nuget/packages/microsoft.aspnetcore.authentication.certificate/6.0.10/microsoft.aspnetcore.authentication.certificate.6.0.10.nupkg.sha512",
     "/root/.nuget/packages/microsoft.aspnetcore.authentication.core/2.2.0/microsoft.aspnetcore.authentication.core.2.2.0.nupkg.sha512",
     "/root/.nuget/packages/microsoft.aspnetcore.authentication.jwtbearer/6.0.6/microsoft.aspnetcore.authentication.jwtbearer.6.0.6.nupkg.sha512",
     "/root/.nuget/packages/microsoft.aspnetcore.cors/2.2.0/microsoft.aspnetcore.cors.2.2.0.nupkg.sha512",

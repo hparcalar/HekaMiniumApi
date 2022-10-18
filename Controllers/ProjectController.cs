@@ -64,7 +64,7 @@ namespace HekaMiniumApi.Controllers{
                                             d.ProjectStatus == 3 ? "Onaylandı" :
                                             d.ProjectStatus == 4 ? "Tamamlandı" : 
                                             d.ProjectStatus == 5 ? "İptal edildi" : ""
-                }).ToArray();
+                }).OrderByDescending(d => d.ProjectCode).ToArray();
             }
             catch
             {
@@ -117,7 +117,7 @@ namespace HekaMiniumApi.Controllers{
                                             d.ProjectStatus == 3 ? "Onaylandı" :
                                             d.ProjectStatus == 4 ? "Tamamlandı" : 
                                             d.ProjectStatus == 5 ? "İptal edildi" : ""
-                }).ToArray();
+                }).OrderByDescending(d => d.ProjectCode).ToArray();
             }
             catch
             {

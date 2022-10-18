@@ -3,9 +3,7 @@ namespace HekaMiniumApi.Models{
         public int Id { get; set; }
         public int ItemDemandDetailId { get; set; }
         public int? ItemOrderDetailId { get; set; }
-
         public decimal? Quantity { get; set; }
-
         public DateTime? ConsumeDate { get; set; }
 
         #region VISUAL ELEMENTS
@@ -17,6 +15,7 @@ namespace HekaMiniumApi.Models{
         public string PartDimensions { get; set; }
         public decimal? DemandQuantity { get; set; }
         public string ProjectName { get; set; }
+        public decimal? RemainingQuantity { get; set; }
 
         #endregion
     }

@@ -50,11 +50,12 @@ namespace HekaMiniumApi.Controllers{
                     FirmName = d.Firm != null ? d.Firm.FirmName : "",
                     StatusText = d.ReceiptStatus == 0 ? "Sipariş oluşturuldu" : 
                                     d.ReceiptStatus == 1 ? "Sipariş onaylandı" :
-                                    d.ReceiptStatus == 2 ? "Sipariş verildi" :
+                                    d.ReceiptStatus == 2 ? "Sipariş iletildi" :
                                     d.ReceiptStatus == 3 ? "Sipariş tamamlandı" :
-                                    d.ReceiptStatus == 4 ? "İptal edildi" : "",
+                                    d.ReceiptStatus == 4 ? "İptal edildi" :
+                                    d.ReceiptStatus == 5 ? "Kısmi teslim alındı" : "",
                 })
-                .OrderByDescending(d => d.ReceiptDate)
+                .OrderByDescending(d => d.ReceiptNo)
                 .ToArray();
             }
             catch
@@ -127,11 +128,12 @@ namespace HekaMiniumApi.Controllers{
                             UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
                             StatusText = d.ReceiptStatus == 0 ? "Sipariş oluşturuldu" : 
                                     d.ReceiptStatus == 1 ? "Sipariş onaylandı" :
-                                    d.ReceiptStatus == 2 ? "Sipariş verildi" :
+                                    d.ReceiptStatus == 2 ? "Sipariş iletildi" :
                                     d.ReceiptStatus == 3 ? "Sipariş tamamlandı" :
-                                    d.ReceiptStatus == 4 ? "İptal edildi" : "",
+                                    d.ReceiptStatus == 4 ? "İptal edildi" :
+                                    d.ReceiptStatus == 5 ? "Kısmi teslim alındı" : "",
                 })
-                .OrderByDescending(d => d.ReceiptDate)
+                .OrderByDescending(d => d.ReceiptNo)
                 .ToArray();
 
                 foreach (var item in data)
@@ -149,6 +151,10 @@ namespace HekaMiniumApi.Controllers{
                                 ItemExplanation = d.ItemDemandDetail != null ? d.ItemDemandDetail.ItemExplanation : "",
                                 PartNo = d.ItemDemandDetail != null ? d.ItemDemandDetail.PartNo : "",
                                 PartDimensions = d.ItemDemandDetail != null ? d.ItemDemandDetail.PartDimensions : "",
+                                RemainingQuantity = d.ItemDemandDetail != null ?
+                                    (d.ItemDemandDetail.Quantity - 
+                                            (d.ItemDemandDetail.ItemReceiptDetails.Where(m => m.ItemReceipt.ReceiptType < 100).Select(m => (decimal?)m.Quantity).Sum() ?? 0)
+                                        ) : 0,
                                 ProjectName = d.ItemDemandDetail != null && d.ItemDemandDetail.ItemDemand.Project != null ? d.ItemDemandDetail.ItemDemand.Project.ProjectName : "",
                             }).ToArray();
                 }
@@ -223,12 +229,13 @@ namespace HekaMiniumApi.Controllers{
                     UnitCode = d.UnitType != null ? d.UnitType.UnitTypeCode : "",
                     UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
                     StatusText = d.ReceiptStatus == 0 ? "Sipariş oluşturuldu" : 
-                            d.ReceiptStatus == 1 ? "Sipariş onaylandı" :
-                            d.ReceiptStatus == 2 ? "Sipariş verildi" :
-                            d.ReceiptStatus == 3 ? "Sipariş tamamlandı" :
-                            d.ReceiptStatus == 4 ? "İptal edildi" : "",
+                                    d.ReceiptStatus == 1 ? "Sipariş onaylandı" :
+                                    d.ReceiptStatus == 2 ? "Sipariş iletildi" :
+                                    d.ReceiptStatus == 3 ? "Sipariş tamamlandı" :
+                                    d.ReceiptStatus == 4 ? "İptal edildi" :
+                                    d.ReceiptStatus == 5 ? "Kısmi teslim alındı" : "",
                 })
-                .OrderByDescending(d => d.ReceiptDate)
+                .OrderByDescending(d => d.ReceiptNo)
                 .ToArray();
 
                 foreach (var item in data)
@@ -246,7 +253,13 @@ namespace HekaMiniumApi.Controllers{
                                 ItemExplanation = d.ItemDemandDetail != null ? d.ItemDemandDetail.ItemExplanation : "",
                                 PartNo = d.ItemDemandDetail != null ? d.ItemDemandDetail.PartNo : "",
                                 PartDimensions = d.ItemDemandDetail != null ? d.ItemDemandDetail.PartDimensions : "",
+                                RemainingQuantity = d.ItemDemandDetail != null ?
+                                    (d.ItemDemandDetail.Quantity - 
+                                            (d.ItemDemandDetail.ItemReceiptDetails.Where(m => m.ItemReceipt.ReceiptType < 100).Select(m => (decimal?)m.Quantity).Sum() ?? 0)
+                                        ) : 0,
                             }).ToArray();
+
+                    item.DemandConsumes = item.DemandConsumes.Where(d => d.RemainingQuantity > 0).ToArray();
                 }
             }
             catch
@@ -309,13 +322,30 @@ namespace HekaMiniumApi.Controllers{
             BusinessResult result = new BusinessResult();
             try
             {
+                List<int> demandDetailsWillBeChecked = new List<int>();
+                List<int> demandHeadersWillBeChecked = new List<int>();
+
                 var dbDetails = _context.ItemOrderDetail.Where(d => d.ItemOrderId == model.Id).ToArray();
                 foreach (var item in dbDetails)
                 {
                     item.ReceiptStatus = 2;
+
+                    // add demand details to check list
+                    var demandConsumes = _context.ItemDemandConsume.Where(d => d.ItemOrderDetailId == item.Id).ToArray();
+                    foreach (var dCons in demandConsumes)
+                    {
+                        if (!demandDetailsWillBeChecked.Contains(dCons.ItemDemandDetailId))
+                        {
+                            demandDetailsWillBeChecked.Add(dCons.ItemDemandDetailId);
+                            var dbDemandDetail = _context.ItemDemandDetail.FirstOrDefault(d => d.Id == dCons.ItemDemandDetailId);
+                            if (!demandHeadersWillBeChecked.Contains(dbDemandDetail.ItemDemandId ?? 0))
+                                demandHeadersWillBeChecked.Add(dbDemandDetail.ItemDemandId ?? 0);
+                        }
+                    }
                 }
                 _context.SaveChanges();
 
+                // apply after check
                 using (HekaMiniumSchema _nContext = SchemaFactory.CreateContext()){
                     using (OrderManagementBO bObj = new OrderManagementBO(_nContext)){
                         bObj.CheckOrderHeader(model.Id);
@@ -323,6 +353,29 @@ namespace HekaMiniumApi.Controllers{
 
                     _nContext.SaveChanges();
                 }
+
+                foreach (var item in demandDetailsWillBeChecked)
+                {
+                    using (HekaMiniumSchema checkContext = SchemaFactory.CreateContext()){
+                        using (OrderManagementBO bObj = new OrderManagementBO(checkContext)){
+                            bObj.CheckDemandDetail(item);
+                        }
+
+                        checkContext.SaveChanges();
+                    }
+                }
+
+                foreach (var item in demandHeadersWillBeChecked)
+                {
+                    using (HekaMiniumSchema checkContext = SchemaFactory.CreateContext()){
+                        using (OrderManagementBO bObj = new OrderManagementBO(checkContext)){
+                            bObj.CheckDemandHeader(item);
+                        }
+
+                        checkContext.SaveChanges();
+                    }
+                }
+
 
                 result.Result=true;
             }
@@ -344,6 +397,9 @@ namespace HekaMiniumApi.Controllers{
             try
             {
                 List<int> _checkListOrderHeaders = new List<int>();
+                List<int> demandDetailsWillBeChecked = new List<int>();
+                List<int> demandHeadersWillBeChecked = new List<int>();
+
 
                 foreach (var dId in detailId)
                 {
@@ -354,10 +410,24 @@ namespace HekaMiniumApi.Controllers{
                         if (!_checkListOrderHeaders.Contains(dbObj.ItemOrderId ?? 0))
                             _checkListOrderHeaders.Add(dbObj.ItemOrderId ?? 0);
                     }
+
+                    // add demand details to check list
+                    var demandConsumes = _context.ItemDemandConsume.Where(d => d.ItemOrderDetailId == dId).ToArray();
+                    foreach (var dCons in demandConsumes)
+                    {
+                        if (!demandDetailsWillBeChecked.Contains(dCons.ItemDemandDetailId))
+                        {
+                            demandDetailsWillBeChecked.Add(dCons.ItemDemandDetailId);
+                            var dbDemandDetail = _context.ItemDemandDetail.FirstOrDefault(d => d.Id == dCons.ItemDemandDetailId);
+                            if (!demandHeadersWillBeChecked.Contains(dbDemandDetail.ItemDemandId ?? 0))
+                                demandHeadersWillBeChecked.Add(dbDemandDetail.ItemDemandId ?? 0);
+                        }
+                    }
                 }
 
                 _context.SaveChanges();
 
+                // apply after check
                 foreach(var item in _checkListOrderHeaders) {
                     using (HekaMiniumSchema _nContext = SchemaFactory.CreateContext()){
                         using (OrderManagementBO bObj = new OrderManagementBO(_nContext)){
@@ -366,6 +436,29 @@ namespace HekaMiniumApi.Controllers{
                         }
                     }
                 }
+
+                foreach (var item in demandDetailsWillBeChecked)
+                {
+                    using (HekaMiniumSchema checkContext = SchemaFactory.CreateContext()){
+                        using (OrderManagementBO bObj = new OrderManagementBO(checkContext)){
+                            bObj.CheckDemandDetail(item);
+                        }
+
+                        checkContext.SaveChanges();
+                    }
+                }
+
+                foreach (var item in demandHeadersWillBeChecked)
+                {
+                    using (HekaMiniumSchema checkContext = SchemaFactory.CreateContext()){
+                        using (OrderManagementBO bObj = new OrderManagementBO(checkContext)){
+                            bObj.CheckDemandHeader(item);
+                        }
+
+                        checkContext.SaveChanges();
+                    }
+                }
+
 
                 result.Result=true;
             }
@@ -404,9 +497,10 @@ namespace HekaMiniumApi.Controllers{
                         FirmName = d.Firm != null ? d.Firm.FirmName : "",
                         StatusText = d.ReceiptStatus == 0 ? "Sipariş oluşturuldu" : 
                                     d.ReceiptStatus == 1 ? "Sipariş onaylandı" :
-                                    d.ReceiptStatus == 2 ? "Sipariş verildi" :
+                                    d.ReceiptStatus == 2 ? "Sipariş iletildi" :
                                     d.ReceiptStatus == 3 ? "Sipariş tamamlandı" :
-                                    d.ReceiptStatus == 4 ? "İptal edildi" : "",
+                                    d.ReceiptStatus == 4 ? "İptal edildi" :
+                                    d.ReceiptStatus == 5 ? "Kısmi teslim alındı" : "",
                     }).FirstOrDefault();
 
                 if (data != null && data.Id > 0){
@@ -463,9 +557,10 @@ namespace HekaMiniumApi.Controllers{
                             UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
                             StatusText = d.ReceiptStatus == 0 ? "Sipariş oluşturuldu" : 
                                     d.ReceiptStatus == 1 ? "Sipariş onaylandı" :
-                                    d.ReceiptStatus == 2 ? "Sipariş verildi" :
+                                    d.ReceiptStatus == 2 ? "Sipariş iletildi" :
                                     d.ReceiptStatus == 3 ? "Sipariş tamamlandı" :
-                                    d.ReceiptStatus == 4 ? "İptal edildi" : "",
+                                    d.ReceiptStatus == 4 ? "İptal edildi" :
+                                    d.ReceiptStatus == 5 ? "Kısmi teslim alındı" : "",
                         }).ToArray();
                 
                     // fetch demand consumings
@@ -529,7 +624,8 @@ namespace HekaMiniumApi.Controllers{
             try
             {
                 // check list
-                List<int> _checkListForDemands = new List<int>();
+                List<int> demandDetailsWillBeChecked = new List<int>();
+                List<int> demandHeadersWillBeChecked = new List<int>();
                 List<int> _checkListForOfferDetails = new List<int>();
                 List<int> _checkListForOffers = new List<int>();
 
@@ -585,8 +681,11 @@ namespace HekaMiniumApi.Controllers{
                         if (dbDemandDetail != null){
                             dbDemandDetail.DemandStatus = 0;
 
-                            if (!_checkListForDemands.Contains(dbDemandDetail.ItemDemandId ?? 0))
-                                _checkListForDemands.Add(dbDemandDetail.ItemDemandId ?? 0);
+                            if (!demandDetailsWillBeChecked.Contains(dbDemandDetail.Id))
+                                    demandDetailsWillBeChecked.Add(dbDemandDetail.Id);
+
+                            if (!demandHeadersWillBeChecked.Contains(dbDemandDetail.ItemDemandId ?? 0))
+                                demandHeadersWillBeChecked.Add(dbDemandDetail.ItemDemandId ?? 0);
                         }
 
                         _context.ItemDemandConsume.Remove(consItem);
@@ -634,8 +733,11 @@ namespace HekaMiniumApi.Controllers{
                             if (dbDemandDetail != null) {
                                 dbDemandDetail.DemandStatus = 2;
 
-                                if (!_checkListForDemands.Contains(dbDemandDetail.ItemDemandId ?? 0))
-                                    _checkListForDemands.Add(dbDemandDetail.ItemDemandId ?? 0);
+                                if (!demandDetailsWillBeChecked.Contains(dbDemandDetail.Id))
+                                    demandDetailsWillBeChecked.Add(dbDemandDetail.Id);
+
+                                if (!demandHeadersWillBeChecked.Contains(dbDemandDetail.ItemDemandId ?? 0))
+                                    demandHeadersWillBeChecked.Add(dbDemandDetail.ItemDemandId ?? 0);
                             }
                         }
                     }
@@ -647,8 +749,11 @@ namespace HekaMiniumApi.Controllers{
                             if (dbDemandDetail != null){
                                 dbDemandDetail.DemandStatus = 0;
 
-                                if (!_checkListForDemands.Contains(dbDemandDetail.ItemDemandId ?? 0))
-                                    _checkListForDemands.Add(dbDemandDetail.ItemDemandId ?? 0);
+                                if (!demandDetailsWillBeChecked.Contains(dbDemandDetail.Id))
+                                    demandDetailsWillBeChecked.Add(dbDemandDetail.Id);
+
+                                if (!demandHeadersWillBeChecked.Contains(dbDemandDetail.ItemDemandId ?? 0))
+                                    demandHeadersWillBeChecked.Add(dbDemandDetail.ItemDemandId ?? 0);
                             }
 
                             _context.ItemDemandConsume.Remove(consItem);
@@ -677,15 +782,28 @@ namespace HekaMiniumApi.Controllers{
                     }
                 }
 
-                foreach (var item in _checkListForDemands)
+                foreach (var item in demandDetailsWillBeChecked)
                 {
-                    using (HekaMiniumSchema _nContext = SchemaFactory.CreateContext()){
-                        using (OrderManagementBO bObj = new OrderManagementBO(_nContext)){
-                            bObj.CheckDemandHeader(item);
-                            _nContext.SaveChanges();
+                    using (HekaMiniumSchema checkContext = SchemaFactory.CreateContext()){
+                        using (OrderManagementBO bObj = new OrderManagementBO(checkContext)){
+                            bObj.CheckDemandDetail(item);
                         }
+
+                        checkContext.SaveChanges();
                     }
                 }
+
+                foreach (var item in demandHeadersWillBeChecked)
+                {
+                    using (HekaMiniumSchema checkContext = SchemaFactory.CreateContext()){
+                        using (OrderManagementBO bObj = new OrderManagementBO(checkContext)){
+                            bObj.CheckDemandHeader(item);
+                        }
+
+                        checkContext.SaveChanges();
+                    }
+                }
+
 
                 foreach (var item in _checkListForOfferDetails)
                 {

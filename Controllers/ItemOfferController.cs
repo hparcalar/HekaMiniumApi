@@ -42,8 +42,9 @@ namespace HekaMiniumApi.Controllers{
                     UserCode = d.SysUser != null ? d.SysUser.UserCode : "",
                     UserName = d.SysUser != null ? d.SysUser.UserName : "",
                     FirmId = d.FirmId,
-                    FirmCode = d.Firm != null ? d.Firm.FirmCode : "",
-                    FirmName = d.Firm != null ? d.Firm.FirmName : "",
+                    // FirmCode = d.Firm != null ? d.Firm.FirmCode : "",
+                    // FirmName = d.Firm != null ? d.Firm.FirmName : "",
+                    FirmName = String.Join(", ",d.ItemOfferFirmOptions.Select(m => m.Firm.FirmName).ToArray()),
                     StatusText = d.OfferStatus == 0 ? "Teklif oluşturuldu" : 
                                     d.OfferStatus == 3 ? "Sipariş verildi" : "",
                 })
