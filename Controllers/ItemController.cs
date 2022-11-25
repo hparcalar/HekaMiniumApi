@@ -122,13 +122,35 @@ namespace HekaMiniumApi.Controllers{
                         RecordIcon = d.RecordIcon,
                         SerialNo = d.SerialNo,
                     }).FirstOrDefault();
+                if(data == null){
+                    data = new ItemModel();
+                    data.ItemCode = GetNextNumber();
+                }
             }
-            catch
+            catch (Exception)
             {
                 
             }
             
             return data;
+        }
+
+        private string GetNextNumber(){
+            try
+            {
+                int nextNumber = 1;
+                var lastRecord = _context.Item.OrderByDescending(d => d.ItemCode).Select(d => d.ItemCode).FirstOrDefault();
+                if (lastRecord != null && !string.IsNullOrEmpty(lastRecord))
+                    nextNumber = Convert.ToInt32(lastRecord) + 1;
+
+                return string.Format("{0:000000}", nextNumber);
+            }
+            catch (System.Exception)
+            {
+                
+            }
+
+            return string.Empty;
         }
 
         [HttpGet]
@@ -273,7 +295,7 @@ namespace HekaMiniumApi.Controllers{
 
 
         [Authorize(Policy = "WebUser")]
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public BusinessResult Delete(int id){
             BusinessResult result = new BusinessResult();
 

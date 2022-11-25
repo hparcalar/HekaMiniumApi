@@ -26,6 +26,7 @@ namespace HekaMiniumApi.Context{
         public int? SysUserId { get; set; }
 
         public bool? IsContracted { get; set; }
+        public DateTime? LastUpdateDate { get; set; }
 
         public virtual SysUser SysUser { get; set; }
 

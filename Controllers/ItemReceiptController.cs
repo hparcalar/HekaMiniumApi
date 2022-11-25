@@ -19,7 +19,7 @@ namespace HekaMiniumApi.Controllers{
     [ApiController] 
     [Route("[controller]")]
     [EnableCors()]
-     public class ItemReceiptController : HekaControllerBase{
+    public class ItemReceiptController : HekaControllerBase{
         public ItemReceiptController(HekaMiniumSchema context): base(context){ 
             ResolveHeaders(Request);
         }
@@ -572,5 +572,5 @@ namespace HekaMiniumApi.Controllers{
         }
 
 
-     }
+    }
 }

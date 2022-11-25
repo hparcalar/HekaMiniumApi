@@ -42,6 +42,7 @@ namespace HekaMiniumApi.Controllers{
                     ReceiptDate = d.ReceiptDate,
                     ReceiptNo = d.ReceiptNo,
                     IsContracted = d.IsContracted,
+                    LastUpdateDate = d.LastUpdateDate,
                     ProjectCode = d.Project != null ? d.Project.ProjectCode : "",
                     ProjectName = d.Project != null ? d.Project.ProjectName : "",
                     StatusText = d.DemandStatus == 0 ? "Onay bekleniyor" : 
@@ -84,6 +85,7 @@ namespace HekaMiniumApi.Controllers{
                         SysUserId = d.SysUserId,
                         ReceiptNo = d.ReceiptNo,
                         IsContracted = d.IsContracted,
+                        LastUpdateDate = d.LastUpdateDate,
                         ProjectCode = d.Project != null ? d.Project.ProjectCode : "",
                         ProjectName = d.Project != null ? d.Project.ProjectName : "",
                         StatusText = d.DemandStatus == 0 ? "Onay bekleniyor" : 
@@ -406,8 +408,13 @@ namespace HekaMiniumApi.Controllers{
                 if (model.Id <= 0)
                     model.SysUserId = creatorId;
 
-                if (model.ReceiptDate == null)
+                if(model.ReceiptDate != null){
+                    model.LastUpdateDate = DateTime.Now;
+                }
+
+                if (model.ReceiptDate == null){
                     model.ReceiptDate = DateTime.Now;
+                }
 
                 if (!_context.Plant.Any(d => d.Id == (model.PlantId ?? 0)))
                     model.PlantId = null;

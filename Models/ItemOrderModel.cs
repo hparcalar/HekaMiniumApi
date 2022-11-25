@@ -14,6 +14,7 @@ namespace HekaMiniumApi.Models{
         public int? ReceiptStatus { get; set; }
         public int? SysUserId { get; set; }
         public bool? IsContracted { get; set; }
+        public string DenialExplanation { get; set; }
 
         #region VISUAL ELEMENTS
         public string FirmCode { get; set; }

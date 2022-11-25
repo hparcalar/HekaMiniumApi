@@ -43,6 +43,7 @@ namespace HekaMiniumApi.Controllers{
                     ReceiptDate = d.ReceiptDate,
                     IsContracted = d.IsContracted,
                     ReceiptNo = d.ReceiptNo,
+                    DenialExplanation = d.ItemOrderDetail.Where(d => d.DenialExplanation != null).Select(d => d.DenialExplanation).FirstOrDefault(),
                     FirmId = d.FirmId,
                     ItemDemandId = d.ItemDemandId,
                     ItemDemandNo = d.ItemDemand != null ? d.ItemDemand.ReceiptNo : "",
@@ -57,6 +58,7 @@ namespace HekaMiniumApi.Controllers{
                 })
                 .OrderByDescending(d => d.ReceiptNo)
                 .ToArray();
+
             }
             catch
             {
@@ -115,6 +117,7 @@ namespace HekaMiniumApi.Controllers{
                             UnitPrice = d.UnitPrice,
                             FirmId = d.ItemOrder.FirmId,
                             UsedNetQuantity = d.UsedNetQuantity,
+                            DenialExplanation = d.DenialExplanation,
                             BrandCode = d.Brand != null ? d.Brand.BrandCode : "",
                             BrandName = d.Brand != null ? d.Brand.BrandName : "",
                             BrandModelCode = d.BrandModel != null ? d.BrandModel.BrandModelCode : "",
@@ -216,6 +219,7 @@ namespace HekaMiniumApi.Controllers{
                     ItemExplanation = d.ItemExplanation,
                     UnitPrice = d.UnitPrice,
                     UsedNetQuantity = d.UsedNetQuantity,
+                    DenialExplanation = d.DenialExplanation,
                     BrandCode = d.Brand != null ? d.Brand.BrandCode : "",
                     BrandName = d.Brand != null ? d.Brand.BrandName : "",
                     BrandModelCode = d.BrandModel != null ? d.BrandModel.BrandModelCode : "",
@@ -391,7 +395,7 @@ namespace HekaMiniumApi.Controllers{
         [Authorize(Policy = "WebUser")]
         [Route("Purchase/DenyDetails")]
         [HttpPost]
-        public BusinessResult DenyOrderDetails(int[] detailId){
+        public BusinessResult DenyOrderDetails(DenyOrderModel model){
             BusinessResult result = new BusinessResult();
 
             try
@@ -401,11 +405,12 @@ namespace HekaMiniumApi.Controllers{
                 List<int> demandHeadersWillBeChecked = new List<int>();
 
 
-                foreach (var dId in detailId)
+                foreach (var dId in model.DetailId)
                 {
                     var dbObj = _context.ItemOrderDetail.FirstOrDefault(d => d.Id == dId);
                     if (dbObj != null){
                         dbObj.ReceiptStatus = 4;
+                        dbObj.DenialExplanation = model.Explanation;
 
                         if (!_checkListOrderHeaders.Contains(dbObj.ItemOrderId ?? 0))
                             _checkListOrderHeaders.Add(dbObj.ItemOrderId ?? 0);

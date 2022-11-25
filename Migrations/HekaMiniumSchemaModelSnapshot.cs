@@ -432,6 +432,9 @@ namespace HekaMiniumApi.Migrations
                     b.Property<bool?>("IsOrdered")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime?>("LastUpdateDate")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<int?>("PlantId")
                         .HasColumnType("integer");
 
@@ -935,6 +938,9 @@ namespace HekaMiniumApi.Migrations
 
                     b.Property<int?>("BrandModelId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("DenialExplanation")
+                        .HasColumnType("text");
 
                     b.Property<decimal?>("DiscountPrice")
                         .HasColumnType("numeric");
@@ -2556,7 +2562,7 @@ namespace HekaMiniumApi.Migrations
                         .HasForeignKey("FirmId");
 
                     b.HasOne("HekaMiniumApi.Context.ItemOffer", "ItemOffer")
-                        .WithMany("FirmOptions")
+                        .WithMany("ItemOfferFirmOptions")
                         .HasForeignKey("ItemOfferId");
 
                     b.Navigation("Firm");
@@ -2759,7 +2765,7 @@ namespace HekaMiniumApi.Migrations
                         .HasForeignKey("ForexId");
 
                     b.HasOne("HekaMiniumApi.Context.ItemDemandDetail", "ItemDemandDetail")
-                        .WithMany()
+                        .WithMany("ItemReceiptDetails")
                         .HasForeignKey("ItemDemandDetailId");
 
                     b.HasOne("HekaMiniumApi.Context.Item", "Item")
@@ -3157,9 +3163,14 @@ namespace HekaMiniumApi.Migrations
                     b.Navigation("Plant");
                 });
 
+            modelBuilder.Entity("HekaMiniumApi.Context.ItemDemandDetail", b =>
+                {
+                    b.Navigation("ItemReceiptDetails");
+                });
+
             modelBuilder.Entity("HekaMiniumApi.Context.ItemOffer", b =>
                 {
-                    b.Navigation("FirmOptions");
+                    b.Navigation("ItemOfferFirmOptions");
                 });
 #pragma warning restore 612, 618
         }

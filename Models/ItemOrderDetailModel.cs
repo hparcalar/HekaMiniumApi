@@ -37,6 +37,7 @@ namespace HekaMiniumApi.Models{
         public bool? IsContracted { get; set; }
         public string ItemExplanation { get; set; }
         public int? ItemOfferDetailId { get; set; }
+        public string DenialExplanation { get; set; }
 
         #region VISUAL ELEMENTS
         public ItemDemandConsumeModel[] DemandConsumes { get; set; }

@@ -62,6 +62,8 @@ namespace HekaMiniumApi.Context{
         public bool? IsContracted { get; set; }
         public string ItemExplanation { get; set; }
 
+        public string DenialExplanation { get; set; }
+
         public virtual ItemDemandDetail ItemDemandDetail { get; set; }
         public virtual ItemOrder ItemOrder { get; set; }
         public virtual Item Item { get; set; }

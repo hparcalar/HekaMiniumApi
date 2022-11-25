@@ -126,6 +126,10 @@ namespace HekaMiniumApi.Controllers{
                         data.AuthorText = firmAuthor.AuthorName;
                     }
                 }
+                else{
+                    data = new FirmModel();
+                    data.FirmCode = GetNextNumber();
+                }
             }
             catch
             {
@@ -133,6 +137,24 @@ namespace HekaMiniumApi.Controllers{
             }
             
             return data;
+        }
+
+        private string GetNextNumber(){
+            try
+            {
+                int nextNumber = 1;
+                var lastRecord = _context.Firm.OrderByDescending(d => d.FirmCode).Select(d => d.FirmCode).FirstOrDefault();
+                if (lastRecord != null && !string.IsNullOrEmpty(lastRecord))
+                    nextNumber = Convert.ToInt32(lastRecord) + 1;
+
+                return string.Format("{0:000}", nextNumber);
+            }
+            catch (System.Exception)
+            {
+                
+            }
+
+            return string.Empty;
         }
 
 
@@ -258,7 +280,7 @@ namespace HekaMiniumApi.Controllers{
 
 
         [Authorize(Policy = "WebUser")]
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public BusinessResult Delete(int id){
             BusinessResult result = new BusinessResult();
 

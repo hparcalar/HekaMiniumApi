@@ -14,6 +14,7 @@ namespace HekaMiniumApi.Models{
         public int? DemandStatus { get; set; }
         public int? SysUserId { get; set; }
         public bool? IsContracted { get; set; }
+        public DateTime? LastUpdateDate { get; set; }
 
         #region VISUAL ELEMENTS
         public string ProjectCode { get; set; }
