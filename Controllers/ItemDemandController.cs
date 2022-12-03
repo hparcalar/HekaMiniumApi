@@ -9,6 +9,7 @@ using HekaMiniumApi.Context;
 using HekaMiniumApi.Models;
 using HekaMiniumApi.Models.Operational;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.EntityFrameworkCore;
 using HekaMiniumApi.Helpers;
 
 namespace HekaMiniumApi.Controllers{
@@ -113,6 +114,7 @@ namespace HekaMiniumApi.Controllers{
                             PartNo = d.PartNo,
                             Quantity = d.Quantity,
                             UnitId = d.UnitId,
+                            CreatedDate = d.CreatedDate ?? d.ItemDemand.ReceiptDate,
                             IsContracted = d.IsContracted,
                             ItemCode = d.Item != null ? d.Item.ItemCode : d.ItemExplanation,
                             ItemName = d.Item != null ? d.Item.ItemName : d.ItemExplanation,
@@ -128,6 +130,23 @@ namespace HekaMiniumApi.Controllers{
                                     d.DemandStatus == 6 ? "Sipariş iletildi" :
                                     d.DemandStatus == 7 ? "Kısmi teslim alındı" : "",
                         }).ToArray();
+
+                    foreach (var item in data.Details)
+                    {
+                        var relatedOffer = _context.ItemOfferDetailDemand.Where(d => d.ItemDemandDetailId == item.Id)
+                            .Select(d => d.ItemOfferDetail.ItemOffer).FirstOrDefault();
+                        if (relatedOffer != null){
+                            item.RelatedOfferId = relatedOffer.Id;
+                            item.RelatedOfferNo = relatedOffer.ReceiptNo;
+                        }
+
+                        var relatedOrder = _context.ItemDemandConsume.Where(d => d.ItemDemandDetailId == item.Id && d.ItemOrderDetailId != null)
+                            .Select(d => d.ItemOrderDetail.ItemOrder).FirstOrDefault();
+                        if (relatedOrder != null){
+                            item.RelatedOrderId = relatedOrder.Id;
+                            item.RelatedOrderNo = relatedOrder.ReceiptNo;
+                        }
+                    }
                 }
                 else{
                     if (data == null)
@@ -181,6 +200,7 @@ namespace HekaMiniumApi.Controllers{
                     NetQuantity = d.NetQuantity,
                     Quantity = d.Quantity,
                     UnitId = d.UnitId,
+                    CreatedDate = d.CreatedDate ?? d.ItemDemand.ReceiptDate,
                     PartDimensions = d.PartDimensions,
                     PartNo = d.PartNo,
                     IsContracted = d.IsContracted,
@@ -233,6 +253,7 @@ namespace HekaMiniumApi.Controllers{
                     UnitId = d.UnitId,
                     PartDimensions = d.PartDimensions,
                     PartNo = d.PartNo,
+                    CreatedDate = d.CreatedDate ?? d.ItemDemand.ReceiptDate,
                     IsContracted = d.IsContracted,
                     UserCode = d.ItemDemand.SysUser != null ? d.ItemDemand.SysUser.UserCode : "",
                     UserName = d.ItemDemand.SysUser != null ? d.ItemDemand.SysUser.UserName : "",
@@ -287,6 +308,7 @@ namespace HekaMiniumApi.Controllers{
                     Quantity = d.Quantity,
                     UnitId = d.UnitId,
                     PartDimensions = d.PartDimensions,
+                    CreatedDate = d.CreatedDate ?? d.ItemDemand.ReceiptDate,
                     UserCode = d.ItemDemand.SysUser != null ? d.ItemDemand.SysUser.UserCode : "",
                     UserName = d.ItemDemand.SysUser != null ? d.ItemDemand.SysUser.UserName : "",
                     PartNo = d.PartNo,
@@ -312,6 +334,91 @@ namespace HekaMiniumApi.Controllers{
                 })
                 .OrderByDescending(d => d.DemandDate)
                 .ToArray();
+            }
+            catch
+            {
+                
+            }
+            
+            return data;
+        }
+
+        [HttpGet]
+        [Route("Search/{query}")]
+        [Authorize(Policy = "WebUser")]
+        public IEnumerable<ItemDemandDetailModel> SearchItem(string query){
+            ItemDemandDetailModel[] data = new ItemDemandDetailModel[0];
+
+            try
+            {
+                data = _context.ItemDemandDetail.Where(d => 
+                    (EF.Functions.ILike(d.ItemExplanation, $"%{query}%"))
+                    ||
+                    (d.Item != null && EF.Functions.ILike(d.Item.ItemName, $"%{query}%"))
+                    ||
+                    (d.ItemDemand.Project != null && EF.Functions.ILike(d.ItemDemand.Project.ProjectName, $"%{query}%"))
+                    ||
+                    EF.Functions.ILike(d.PartDimensions, $"%{query}%")
+                    ||
+                    EF.Functions.ILike(d.PartNo, $"%{query}%")
+                ).Select(d => new ItemDemandDetailModel{
+                    Id = d.Id,
+                    DemandStatus = d.DemandStatus,
+                    Explanation = d.Explanation,
+                    ItemDemandId = d.ItemDemandId,
+                    ItemExplanation = d.ItemExplanation,
+                    ItemId = d.ItemId,
+                    LineNumber = d.LineNumber,
+                    NetQuantity = d.NetQuantity,
+                    Quantity = d.Quantity,
+                    UnitId = d.UnitId,
+                    CreatedDate = d.CreatedDate ?? d.ItemDemand.ReceiptDate,
+                    PartDimensions = d.PartDimensions,
+                    PartNo = d.PartNo,
+                    ProjectName = d.ItemDemand.Project != null ? d.ItemDemand.Project.ProjectName : "",
+                    IsContracted = d.IsContracted,
+                    ItemCode = d.Item != null ? d.Item.ItemCode : d.ItemExplanation,
+                    ItemName = d.Item != null ? d.Item.ItemName : d.ItemExplanation,
+                    UserCode = d.ItemDemand.SysUser != null ? d.ItemDemand.SysUser.UserCode : "",
+                    UserName = d.ItemDemand.SysUser != null ? d.ItemDemand.SysUser.UserName : "",
+                    ItemDemandNo = d.ItemDemand.ReceiptNo,
+                    UnitCode = d.UnitType != null ? d.UnitType.UnitTypeCode : "",
+                    UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
+                    StatusText = d.DemandStatus == 0 ? "Onay bekleniyor" : 
+                                    d.DemandStatus == 1 ? "Onaylandı" :
+                                    d.DemandStatus == 2 ? "Sipariş oluşturuldu" :
+                                    d.DemandStatus == 3 ? "Sipariş teslim alındı" :
+                                    d.DemandStatus == 4 ? "İptal edildi" : 
+                                    d.DemandStatus == 5 ? "Teklif bekleniyor" : 
+                                    d.DemandStatus == 6 ? "Sipariş iletildi" :
+                                    d.DemandStatus == 7 ? "Kısmi teslim alındı" : "",
+                    DemandDate = d.ItemDemand.ReceiptDate,
+                    DeadlineDate = d.ItemDemand.DeadlineDate,
+                })
+                .OrderByDescending(d => d.CreatedDate)
+                .ToArray();
+
+                foreach (var item in data)
+                {
+                    var relatedOffer = _context.ItemOfferDetailDemand.Where(d => d.ItemDemandDetailId == item.Id)
+                        .Select(d => d.ItemOfferDetail.ItemOffer).FirstOrDefault();
+                    if (relatedOffer != null){
+                        item.RelatedOfferId = relatedOffer.Id;
+                        item.RelatedOfferNo = relatedOffer.ReceiptNo;
+                        item.RelatedOfferDate = relatedOffer.ReceiptDate;
+                    }
+
+                    var relatedOrder = _context.ItemDemandConsume.Where(d => d.ItemDemandDetailId == item.Id && d.ItemOrderDetailId != null)
+                        .Select(d => d.ItemOrderDetail.ItemOrder).FirstOrDefault();
+                    if (relatedOrder != null){
+                        item.RelatedOrderId = relatedOrder.Id;
+                        item.RelatedOrderNo = relatedOrder.ReceiptNo;
+                        item.RelatedOrderDate = relatedOrder.ReceiptDate;
+
+                        var orderFirm = _context.Firm.FirstOrDefault(d => d.Id == relatedOrder.FirmId);
+                        item.RelatedOrderFirmName = orderFirm != null ? orderFirm.FirmName : "";
+                    }
+                }
             }
             catch
             {
@@ -358,6 +465,7 @@ namespace HekaMiniumApi.Controllers{
                     ItemExplanation = d.ItemExplanation,
                     ItemId = d.ItemId,
                     LineNumber = d.LineNumber,
+                    CreatedDate = d.CreatedDate,
                     NetQuantity = d.NetQuantity,
                     Quantity = d.Quantity,
                     UnitId = d.UnitId,
@@ -463,9 +571,14 @@ namespace HekaMiniumApi.Controllers{
                     if (dbDetail == null){
                         dbDetail = new ItemDemandDetail();
                         _context.ItemDemandDetail.Add(dbDetail);
+                        item.CreatedDate = DateTime.Now;
                     }
 
                     item.MapTo(dbDetail);
+
+                    if (dbDetail.CreatedDate == null)
+                        dbDetail.CreatedDate = dbObj.ReceiptDate;
+
                     dbDetail.ItemDemand = dbObj;
                     dbDetail.IsContracted = dbObj.IsContracted;
                 }

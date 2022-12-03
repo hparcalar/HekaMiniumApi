@@ -35,6 +35,15 @@ namespace HekaMiniumApi.Models{
         public string ItemDemandNo { get; set; }
         public string StatusText { get; set; }
         public bool NewDetail { get; set; } = false;
+        public int? RelatedOfferId { get; set; }
+        public string RelatedOfferNo { get; set; }
+        public DateTime? RelatedOfferDate { get; set; }
+        public int? RelatedOrderId { get; set; }
+        public string RelatedOrderNo { get; set; }
+        public DateTime? RelatedOrderDate { get; set; }
+        public string RelatedOrderFirmName { get; set; }
+        public int? RelatedDeliveryReceiptId { get; set; }
+        public string RelatedDeliveryReceiptNo { get; set; }
         #endregion
     }
 }
