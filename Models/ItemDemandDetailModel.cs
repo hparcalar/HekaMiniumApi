@@ -18,6 +18,7 @@ namespace HekaMiniumApi.Models{
         public string PartNo { get; set; }
         public string PartDimensions { get; set; }
         public bool? IsContracted { get; set; }
+        public DateTime? CreatedDate { get; set; }
 
         #region VISUAL ELEMENTS
         public int? ProjectId { get; set; }

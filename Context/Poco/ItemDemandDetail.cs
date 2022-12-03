@@ -33,6 +33,8 @@ namespace HekaMiniumApi.Context{
         public string PartDimensions { get; set; }
         public bool? IsContracted { get; set; }
 
+        public DateTime? CreatedDate { get; set; }
+
         public virtual ItemDemand ItemDemand { get; set; }
         public virtual Item Item { get; set; }
         public virtual UnitType UnitType { get; set; }
