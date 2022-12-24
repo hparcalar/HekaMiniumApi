@@ -172,6 +172,48 @@ namespace HekaMiniumApi.Controllers{
 
             return data;
         }
+        [Authorize(Policy = "WebUser")]
+        [HttpGet]
+        [Route("ItemStocks/{id}")]
+        public ItemStocksModel[] GetItemStocksById(int id){
+            ItemStocksModel[] data = new ItemStocksModel[0];
 
-     }
+            try
+            {
+                data = _context.ItemReceiptDetail.Where(d => d.ItemId != null && d.ItemReceipt.InWarehouseId != null && d.ItemReceipt.InWarehouseId == id)
+                    .GroupBy(d => new ItemStocksModel {
+                        Id = (d.ItemId ?? 0) * (d.ItemReceipt.InWarehouseId ?? 0),
+                        ItemId = d.ItemId ?? 0,
+                        ItemCode = d.Item.ItemCode,
+                        ItemName = d.Item.ItemName,
+                        WarehouseCode = d.ItemReceipt.InWarehouse.WarehouseCode,
+                        WarehouseName = d.ItemReceipt.InWarehouse.WarehouseName,
+                        ReceiptType = d.ItemReceipt.ReceiptType,
+                        WarehouseId = d.ItemReceipt.InWarehouseId,
+                    }).Select(d => new ItemStocksModel{
+                        Id = d.Key.Id,
+                        ItemId = d.Key.ItemId,
+                        ItemCode = d.Key.ItemCode,
+                        ItemName = d.Key.ItemName,
+                        WarehouseId = d.Key.WarehouseId,
+                        WarehouseCode = d.Key.WarehouseCode,
+                        WarehouseName = d.Key.WarehouseName,
+                        InQuantity = d.Where(m => m.ItemReceipt.ReceiptType < 100).Sum(m => m.Quantity) ?? 0,
+                        OutQuantity = d.Where(m => m.ItemReceipt.ReceiptType > 100).Sum(m => m.Quantity) ?? 0,
+                    }).ToArray();
+
+                foreach (var item in data)
+                {
+                    item.TotalQuantity = item.InQuantity - item.OutQuantity;
+                }
+            }
+            catch (System.Exception)
+            {
+                
+            }
+
+            return data;
+        }
+
+    }
 }

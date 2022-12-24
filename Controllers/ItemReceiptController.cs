@@ -282,7 +282,7 @@ namespace HekaMiniumApi.Controllers{
                     item.MapTo(dbDetail);
                     dbDetail.ItemReceipt = dbObj;
 
-                    if (!orderDetailsWillBeChecked.Contains(dbDetail.ItemOrderDetailId ?? 0)){
+                    if (dbDetail.ItemOrderDetailId > 0 && !orderDetailsWillBeChecked.Contains(dbDetail.ItemOrderDetailId ?? 0)){
                         orderDetailsWillBeChecked.Add(dbDetail.ItemOrderDetailId ?? 0);
                         var dbOrderDetail = _context.ItemOrderDetail.FirstOrDefault(d => d.Id == dbDetail.ItemOrderDetailId);
                         if (!orderHeadersWillBeChecked.Contains(dbOrderDetail.ItemOrderId ?? 0))
