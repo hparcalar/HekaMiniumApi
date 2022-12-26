@@ -10,11 +10,11 @@
         "projectUniqueName": "/home/hakan/Projects/HekaMiniumApi/HekaMiniumApi.csproj",
         "projectName": "HekaMiniumApi",
         "projectPath": "/home/hakan/Projects/HekaMiniumApi/HekaMiniumApi.csproj",
-        "packagesPath": "/home/hakan/.nuget/packages/",
+        "packagesPath": "/root/.nuget/packages/",
         "outputPath": "/home/hakan/Projects/HekaMiniumApi/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/hakan/.nuget/NuGet/NuGet.Config"
+          "/root/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"

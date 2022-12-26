@@ -44,6 +44,7 @@ namespace HekaMiniumApi.Controllers{
                     ProjectName = d.ProjectName,
                     ProjectPhaseTemplateId = d.ProjectPhaseTemplateId,
                     ResponsibleInfo = d.ResponsibleInfo,
+                    CloudDocId = d.CloudDocId,
                     ResponsiblePerson = d.ResponsiblePerson,
                     ProjectCategoryCode = d.ProjectCategory != null ? d.ProjectCategory.ProjectCategoryCode : "",
                     ProjectCategoryName = d.ProjectCategory != null ? d.ProjectCategory.ProjectCategoryName : "",
@@ -96,6 +97,7 @@ namespace HekaMiniumApi.Controllers{
                     ProjectCode = d.ProjectCode,
                     ProjectName = d.ProjectName,
                     ProjectPhaseTemplateId = d.ProjectPhaseTemplateId,
+                    CloudDocId = d.CloudDocId,
                     ResponsibleInfo = d.ResponsibleInfo,
                     ResponsiblePerson = d.ResponsiblePerson,
                     ProjectCategoryCode = d.ProjectCategory != null ? d.ProjectCategory.ProjectCategoryCode : "",
@@ -145,6 +147,7 @@ namespace HekaMiniumApi.Controllers{
                     PlantId = d.PlantId,
                     StartDate = d.StartDate,
                     DeadlineDate = d.DeadlineDate,
+                    CloudDocId = d.CloudDocId,
                     ProjectCategoryId = d.ProjectCategoryId,
                     ProjectCode = d.ProjectCode,
                     ProjectName = d.ProjectName,
@@ -245,11 +248,14 @@ namespace HekaMiniumApi.Controllers{
                         ProjectCode = d.ProjectCode,
                         ProjectName = d.ProjectName,
                         CriticalExplanation = d.CriticalExplanation,
+                        OfferType = d.OfferType,
                         Explanation = d.Explanation,
                         MeetingExplanation = d.MeetingExplanation,
                         ProjectPhaseTemplateId = d.ProjectPhaseTemplateId,
                         ResponsibleInfo = d.ResponsibleInfo,
                         ResponsiblePerson = d.ResponsiblePerson,
+                        CloudDocId = d.CloudDocId,
+                        CloudSheetId = d.CloudSheetId,
                         ProjectStatus = d.ProjectStatus,
                         ForexId = d.ForexId,
                         ForexCode = d.Forex != null ? d.Forex.ForexCode : "",
@@ -315,6 +321,18 @@ namespace HekaMiniumApi.Controllers{
                             PartNo = d.PartNo,
                             PartDimensions = d.PartDimensions,
                         }).ToArray();
+               
+                    data.Attachments = _context.Attachment.Where(d => d.RecordType == 1 && d.RecordId == id)
+                        .Select(d => new AttachmentModel{
+                            Id = d.Id,
+                            Explanation = d.Explanation,
+                            FileExtension = d.FileExtension,
+                            FileName = d.FileName,
+                            FileType = d.FileType,
+                            RecordId = d.RecordId,
+                            RecordType = d.RecordType,
+                            Title = d.Title,
+                        }).ToArray();
                 }
                 else{
                     if (data == null)
@@ -322,6 +340,7 @@ namespace HekaMiniumApi.Controllers{
 
                     data.ProjectCode = GetNextProjectNumber();
                     data.CostItems = new ProjectCostItemModel[0];
+                    data.Attachments = new AttachmentModel[0];
                 }
             }
             catch

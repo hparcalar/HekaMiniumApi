@@ -35,6 +35,7 @@ namespace HekaMiniumApi.Models{
         public string PartDimensions { get; set; }
         public int? ItemOrderDetailId { get; set; }
         public int? ItemDemandDetailId { get; set; }
+        public string ItemExplanation { get; set; }
 
         #region VISUAL ELEMENTS
         public string ItemCode { get; set; }
@@ -44,11 +45,15 @@ namespace HekaMiniumApi.Models{
         public string BrandModelCode { get; set; }
         public string BrandModelName { get; set; }
         public string UnitCode { get; set; }
+        public string FirmCode { get; set; }
+        public string FirmName { get; set; }
         public string UnitName { get; set; }
         public string ForexCode { get; set; }
         public string ProjectCode { get; set; }
         public string ProjectName { get; set; }
         public string StatusText { get; set; }
+        public string ReceiptNo { get; set; }
+        public DateTime? ReceiptDate { get; set; }
         public ItemOrderConsumeModel[] OrderConsumes { get; set; }
         #endregion
     }

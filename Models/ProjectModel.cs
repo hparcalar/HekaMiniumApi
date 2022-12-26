@@ -28,6 +28,9 @@ namespace HekaMiniumApi.Models{
 
         public int? Quantity { get; set; }
         public int? ForexId { get; set; }
+        public string CloudDocId { get; set; }
+        public string CloudSheetId { get; set; }
+        public string OfferType { get; set; }
 
         #region VISUAL ELEMENTS
         public string FirmCode { get; set; }
@@ -38,6 +41,7 @@ namespace HekaMiniumApi.Models{
         public string ForexCode { get; set; }
         public string ForexName { get; set; }
         public ProjectCostItemModel[] CostItems { get; set; }
+        public AttachmentModel[] Attachments { get; set; }
         #endregion
     }
 }

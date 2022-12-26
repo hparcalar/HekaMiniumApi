@@ -170,6 +170,84 @@ namespace HekaMiniumApi.Controllers{
             return data;
         }
 
+        [HttpGet]
+        [Route("Purchase/OfProject/{projectId}")]
+        [Authorize(Policy = "WebUser")]
+        public IEnumerable<ItemOrderDetailModel> PurchaseOfProject(int projectId){
+            ItemOrderDetailModel[] data = new ItemOrderDetailModel[0];
+            try
+            {
+                data = _context.ItemDemandConsume.Where(d => d.ItemOrderDetail != null && d.ItemDemandDetail != null 
+                        && d.ItemDemandDetail.ItemDemand.ProjectId == projectId).Select(d => new ItemOrderDetailModel{
+                    Id = d.Id,
+                    ReceiptDate = d.ItemOrderDetail.ItemOrder.ReceiptDate,
+                    ReceiptNo = d.ItemOrderDetail.ItemOrder.ReceiptNo,
+                    FirmCode = d.ItemOrderDetail.ItemOrder.Firm != null ? d.ItemOrderDetail.ItemOrder.Firm.FirmCode : "",
+                    FirmName = d.ItemOrderDetail.ItemOrder.Firm != null ? d.ItemOrderDetail.ItemOrder.Firm.FirmName : "",
+                            ReceiptStatus = d.ItemOrderDetail.ReceiptStatus,
+                            Explanation = d.ItemOrderDetail.Explanation,
+                            ItemOrderId = d.ItemOrderDetail.ItemOrderId,
+                            ItemId = d.ItemOrderDetail.ItemId,
+                            LineNumber = d.ItemOrderDetail.LineNumber,
+                            NetQuantity = d.ItemOrderDetail.NetQuantity,
+                            Quantity = d.ItemOrderDetail.Quantity,
+                            IsContracted = d.ItemOrderDetail.IsContracted,
+                            UnitId = d.ItemOrderDetail.UnitId,
+                            AlternatingQuantity = d.ItemOrderDetail.AlternatingQuantity,
+                            BrandId = d.ItemOrderDetail.BrandId,
+                            BrandModelId = d.ItemOrderDetail.BrandModelId,
+                            DiscountPrice = d.ItemOrderDetail.DiscountPrice,
+                            DiscountRate = d.ItemOrderDetail.DiscountRate,
+                            ForexDiscountPrice = d.ItemOrderDetail.ForexDiscountPrice,
+                            ForexId = d.ItemOrderDetail.ForexId,
+                            ForexOverallTotal = d.ItemOrderDetail.ForexOverallTotal,
+                            ForexRate = d.ItemOrderDetail.ForexRate,
+                            ForexSubTotal =d.ItemOrderDetail.ForexSubTotal,
+                            ForexTaxPrice = d.ItemOrderDetail.ForexTaxPrice,
+                            ForexUnitPrice = d.ItemOrderDetail.ForexUnitPrice,
+                            GrossQuantity = d.ItemOrderDetail.GrossQuantity,
+                            PartDimensions = d.ItemDemandDetail.PartDimensions,
+                            PartNo = d.ItemDemandDetail.PartNo,
+                            ItemDemandDetailId = d.ItemOrderDetail.ItemDemandDetailId,
+                            OverallTotal = d.ItemOrderDetail.OverallTotal,
+                            ProjectId = d.ItemOrderDetail.ProjectId,
+                            SubTotal = d.ItemOrderDetail.SubTotal,
+                            TaxIncluded = d.ItemOrderDetail.TaxIncluded,
+                            TaxPrice = d.ItemOrderDetail.TaxPrice,
+                            TaxRate =d.ItemOrderDetail.TaxRate,
+                            ItemExplanation = d.ItemOrderDetail.ItemExplanation,
+                            UnitPrice = d.ItemOrderDetail.UnitPrice,
+                            FirmId = d.ItemOrderDetail.ItemOrder.FirmId,
+                            UsedNetQuantity = d.ItemOrderDetail.UsedNetQuantity,
+                            DenialExplanation = d.ItemOrderDetail.DenialExplanation,
+                            BrandCode = d.ItemOrderDetail.Brand != null ? d.ItemOrderDetail.Brand.BrandCode : "",
+                            BrandName = d.ItemOrderDetail.Brand != null ? d.ItemOrderDetail.Brand.BrandName : "",
+                            BrandModelCode = d.ItemOrderDetail.BrandModel != null ? d.ItemOrderDetail.BrandModel.BrandModelCode : "",
+                            BrandModelName = d.ItemOrderDetail.BrandModel != null ? d.ItemOrderDetail.BrandModel.BrandModelName : "",
+                            ForexCode = d.ItemOrderDetail.Forex != null ? d.ItemOrderDetail.Forex.ForexCode : "",
+                            ProjectCode = d.ItemOrderDetail.Project != null ? d.ItemOrderDetail.Project.ProjectCode : "",
+                            ProjectName = d.ItemOrderDetail.Project != null ? d.ItemOrderDetail.Project.ProjectName : "",
+                            ItemCode = d.ItemOrderDetail.Item != null ? d.ItemOrderDetail.Item.ItemCode : d.ItemOrderDetail.ItemExplanation,
+                            ItemName = d.ItemOrderDetail.Item != null ? d.ItemOrderDetail.Item.ItemName : d.ItemOrderDetail.ItemExplanation,
+                            UnitCode = d.ItemOrderDetail.UnitType != null ? d.ItemOrderDetail.UnitType.UnitTypeCode : "",
+                            UnitName = d.ItemOrderDetail.UnitType != null ? d.ItemOrderDetail.UnitType.UnitTypeName : "",
+                            StatusText = d.ItemOrderDetail.ReceiptStatus == 0 ? "Sipariş oluşturuldu" : 
+                                    d.ItemOrderDetail.ReceiptStatus == 1 ? "Sipariş onaylandı" :
+                                    d.ItemOrderDetail.ReceiptStatus == 2 ? "Sipariş iletildi" :
+                                    d.ItemOrderDetail.ReceiptStatus == 3 ? "Sipariş tamamlandı" :
+                                    d.ItemOrderDetail.ReceiptStatus == 4 ? "İptal edildi" :
+                                    d.ItemOrderDetail.ReceiptStatus == 5 ? "Kısmi teslim alındı" : "",
+                })
+                .OrderByDescending(d => d.ReceiptNo)
+                .ToArray();
+            }
+            catch
+            {
+                
+            }
+            
+            return data;
+        }
 
         [HttpGet]
         [Route("Purchase/OpenDetails")]

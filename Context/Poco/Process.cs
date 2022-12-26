@@ -18,6 +18,8 @@ namespace HekaMiniumApi.Context{
         [ForeignKey("Forex")]
         public int? ForexId { get; set; }
 
+        public int? ProcessOrder { get; set; }
+
         public virtual Plant Plant { get; set; }
         public virtual Forex Forex { get; set; }
     }

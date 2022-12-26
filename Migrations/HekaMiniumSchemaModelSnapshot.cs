@@ -79,6 +79,46 @@ namespace HekaMiniumApi.Migrations
                     b.ToTable("AddressInfo");
                 });
 
+            modelBuilder.Entity("HekaMiniumApi.Context.Attachment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Explanation")
+                        .HasColumnType("text");
+
+                    b.Property<byte[]>("FileContent")
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("FileExtension")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FileType")
+                        .HasColumnType("text");
+
+                    b.Property<bool?>("IsOfferDoc")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("RecordId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("RecordType")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Attachment");
+                });
+
             modelBuilder.Entity("HekaMiniumApi.Context.Brand", b =>
                 {
                     b.Property<int>("Id")
@@ -134,6 +174,58 @@ namespace HekaMiniumApi.Migrations
                     b.HasIndex("BrandId");
 
                     b.ToTable("BrandModel");
+                });
+
+            modelBuilder.Entity("HekaMiniumApi.Context.CalendarElement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Body")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CalendarId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Category")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DragBgColor")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("End")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool?>("IsAllDay")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("IsImportant")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("IsPrivate")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("IsReadOnly")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("Start")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("State")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CalendarElement");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.Firm", b =>
@@ -546,6 +638,49 @@ namespace HekaMiniumApi.Migrations
                     b.HasIndex("UnitId");
 
                     b.ToTable("ItemDemandDetail");
+                });
+
+            modelBuilder.Entity("HekaMiniumApi.Context.ItemDemandProcess", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AssignedUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Explanation")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ItemDemandDetailId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ProcessId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ProcessOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ProcessStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignedUserId");
+
+                    b.HasIndex("ItemDemandDetailId");
+
+                    b.HasIndex("ProcessId");
+
+                    b.ToTable("ItemDemandProcess");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.ItemGroup", b =>
@@ -1481,6 +1616,9 @@ namespace HekaMiniumApi.Migrations
                     b.Property<string>("ProcessName")
                         .HasColumnType("text");
 
+                    b.Property<int?>("ProcessOrder")
+                        .HasColumnType("integer");
+
                     b.Property<decimal?>("UnitPrice")
                         .HasColumnType("numeric");
 
@@ -1534,6 +1672,12 @@ namespace HekaMiniumApi.Migrations
                     b.Property<decimal?>("Budget")
                         .HasColumnType("numeric");
 
+                    b.Property<string>("CloudDocId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CloudSheetId")
+                        .HasColumnType("text");
+
                     b.Property<string>("CriticalExplanation")
                         .HasColumnType("text");
 
@@ -1563,6 +1707,9 @@ namespace HekaMiniumApi.Migrations
 
                     b.Property<decimal?>("OfferPrice")
                         .HasColumnType("numeric");
+
+                    b.Property<string>("OfferType")
+                        .HasColumnType("text");
 
                     b.Property<int?>("PlantId")
                         .HasColumnType("integer");
@@ -2478,6 +2625,27 @@ namespace HekaMiniumApi.Migrations
                     b.Navigation("ItemDemand");
 
                     b.Navigation("UnitType");
+                });
+
+            modelBuilder.Entity("HekaMiniumApi.Context.ItemDemandProcess", b =>
+                {
+                    b.HasOne("HekaMiniumApi.Context.SysUser", "SysUser")
+                        .WithMany()
+                        .HasForeignKey("AssignedUserId");
+
+                    b.HasOne("HekaMiniumApi.Context.ItemDemandDetail", "ItemDemandDetail")
+                        .WithMany()
+                        .HasForeignKey("ItemDemandDetailId");
+
+                    b.HasOne("HekaMiniumApi.Context.Process", "Process")
+                        .WithMany()
+                        .HasForeignKey("ProcessId");
+
+                    b.Navigation("ItemDemandDetail");
+
+                    b.Navigation("Process");
+
+                    b.Navigation("SysUser");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.ItemGroup", b =>

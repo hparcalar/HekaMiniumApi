@@ -21,6 +21,7 @@ namespace HekaMiniumApi.Models{
         public DateTime? CreatedDate { get; set; }
 
         #region VISUAL ELEMENTS
+        public ItemDemandProcessModel[] ProcessList { get; set; }
         public int? ProjectId { get; set; }
         public string ProjectCode { get; set; }
         public string ProjectName { get; set; }

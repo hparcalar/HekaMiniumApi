@@ -41,6 +41,9 @@ namespace HekaMiniumApi.Context{
         public int? ForexId { get; set; }
         public int? ProfitRate { get; set; }
         public decimal? OfferPrice { get; set; }
+        public string CloudDocId { get; set; }
+        public string CloudSheetId { get; set; }
+        public string OfferType { get; set; }
 
         public virtual Plant Plant { get; set; }
         public virtual Firm Firm { get; set; }

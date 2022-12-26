@@ -176,6 +176,66 @@ namespace HekaMiniumApi.Controllers{
             return data;
         }
 
+        [HttpGet]
+        [Route("Purchase/OfProject/{projectId}")]
+        [Authorize(Policy = "WebUser")]
+        public IEnumerable<ItemReceiptDetailModel> PurchaseOfProject(int projectId){
+            ItemReceiptDetailModel[] data = new ItemReceiptDetailModel[0];
+            try
+            {
+                data = _context.ItemReceiptDetail.Where(d => d.ItemDemandDetail != null && d.ItemDemandDetail.ItemDemand.ProjectId == projectId)
+                .Select(d => new ItemReceiptDetailModel{
+                    Id = d.Id,
+                    ReceiptDate = d.ItemReceipt.ReceiptDate,
+                    ReceiptNo = d.ItemReceipt.ReceiptNo,
+                    ItemReceiptId = d.ItemReceiptId,
+                    FirmCode = d.ItemReceipt.Firm != null ? d.ItemReceipt.Firm.FirmCode : "",
+                    FirmName = d.ItemReceipt.Firm != null ? d.ItemReceipt.Firm.FirmName : "",
+                    ReceiptStatus = d.ReceiptStatus,
+                    Explanation = d.Explanation,
+                    ItemId = d.ItemId,
+                    LineNumber = d.LineNumber,
+                    NetQuantity = d.NetQuantity,
+                    Quantity = d.Quantity,
+                    UnitId = d.UnitId,
+                    DiscountPrice = d.DiscountPrice,
+                    DiscountRate = d.DiscountRate,
+                    ForexDiscountPrice = d.ForexDiscountPrice,
+                    ForexId = d.ItemOrderDetail.ForexId,
+                    ForexOverallTotal = d.ItemOrderDetail.ForexOverallTotal,
+                    ForexRate = d.ItemOrderDetail.ForexRate,
+                    ForexSubTotal =d.ItemOrderDetail.ForexSubTotal,
+                    ForexTaxPrice = d.ItemOrderDetail.ForexTaxPrice,
+                    ForexUnitPrice = d.ItemOrderDetail.ForexUnitPrice,
+                    GrossQuantity = d.GrossQuantity,
+                    PartDimensions = d.ItemDemandDetail.PartDimensions,
+                    PartNo = d.ItemDemandDetail.PartNo,
+                    OverallTotal = d.ItemOrderDetail.OverallTotal,
+                    ProjectId = d.ProjectId,
+                    SubTotal = d.SubTotal,
+                    TaxIncluded = d.TaxIncluded,
+                    TaxPrice = d.TaxPrice,
+                    TaxRate =d.TaxRate,
+                    ItemExplanation = d.ItemDemandDetail.ItemExplanation,
+                    UnitPrice = d.ItemOrderDetail.UnitPrice,
+                    UsedNetQuantity = d.UsedNetQuantity,
+                    ForexCode = d.ItemOrderDetail.Forex != null ? d.ItemOrderDetail.Forex.ForexCode : "",
+                    ItemCode = d.Item != null ? d.Item.ItemCode : d.ItemDemandDetail.ItemExplanation,
+                    ItemName = d.Item != null ? d.Item.ItemName : d.ItemDemandDetail.ItemExplanation,
+                    UnitCode = d.UnitType != null ? d.UnitType.UnitTypeCode : "",
+                    UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
+                })
+                .OrderByDescending(d => d.ReceiptNo)
+                .ToArray();
+            }
+            catch
+            {
+                
+            }
+            
+            return data;
+        }
+
         private string GetNextReceiptNumber(int receiptType){
             try
             {

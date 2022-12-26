@@ -133,6 +133,7 @@ namespace HekaMiniumApi.Controllers{
 
                     foreach (var item in data.Details)
                     {
+                        // fill related offer
                         var relatedOffer = _context.ItemOfferDetailDemand.Where(d => d.ItemDemandDetailId == item.Id)
                             .Select(d => d.ItemOfferDetail.ItemOffer).FirstOrDefault();
                         if (relatedOffer != null){
@@ -140,12 +141,32 @@ namespace HekaMiniumApi.Controllers{
                             item.RelatedOfferNo = relatedOffer.ReceiptNo;
                         }
 
+                        // fill related order
                         var relatedOrder = _context.ItemDemandConsume.Where(d => d.ItemDemandDetailId == item.Id && d.ItemOrderDetailId != null)
                             .Select(d => d.ItemOrderDetail.ItemOrder).FirstOrDefault();
                         if (relatedOrder != null){
                             item.RelatedOrderId = relatedOrder.Id;
                             item.RelatedOrderNo = relatedOrder.ReceiptNo;
                         }
+
+                        // fill process list
+                        item.ProcessList = _context.ItemDemandProcess.Where(d => d.ItemDemandDetailId == item.Id)
+                            .Select(d => new ItemDemandProcessModel{
+                                Id = d.Id,
+                                AssignedUserId = d.AssignedUserId,
+                                EndDate = d.EndDate,
+                                Explanation = d.Explanation,
+                                ItemDemandDetailId = d.ItemDemandDetailId,
+                                ProcessId = d.ProcessId,
+                                ProcessOrder = d.ProcessOrder,
+                                ProcessStatus = d.ProcessStatus,
+                                StartDate = d.StartDate,
+                                UserCode = d.SysUser != null ? d.SysUser.UserCode : "",
+                                UserName = d.SysUser != null ? d.SysUser.UserName : "",
+                                ProcessCode = d.Process != null ? d.Process.ProcessCode : "",
+                                ProcessName = d.Process != null ? d.Process.ProcessName : "",
+                                StatusText = "",
+                            }).ToArray();
                     }
                 }
                 else{
@@ -562,6 +583,14 @@ namespace HekaMiniumApi.Controllers{
                     if (_context.ItemOrderDetail.Any(d => d.ItemDemandDetailId == item.Id))
                         throw new Exception((item.LineNumber ?? 0).ToString() + ". satırdaki talep siparişe dönüştürüldüğü için silinemez. Bu sipariş kalemini sildikten sonra talebi silebilirsiniz.");
 
+                    if (_context.ItemDemandProcess.Any(d => d.ItemDemandDetailId == item.Id)){
+                        var procList = _context.ItemDemandProcess.Where(d => d.ItemDemandDetailId == item.Id).ToArray();
+                        foreach (var procItem in procList)
+                        {
+                            _context.ItemDemandProcess.Remove(procItem);
+                        }
+                    }
+
                     _context.ItemDemandDetail.Remove(item);
                 }
 
@@ -581,6 +610,30 @@ namespace HekaMiniumApi.Controllers{
 
                     dbDetail.ItemDemand = dbObj;
                     dbDetail.IsContracted = dbObj.IsContracted;
+
+                    #region save process list
+                    if (item.ProcessList == null)
+                        item.ProcessList = new ItemDemandProcessModel[0];
+                    var currentProcList = _context.ItemDemandProcess.Where(d => d.ItemDemandDetailId == item.Id).ToArray();
+                    var removedProcList = currentProcList.Where(d => !item.ProcessList.Any(m => m.Id == d.Id)).ToArray();
+                    foreach (var itProc in removedProcList)
+                    {
+                        _context.ItemDemandProcess.Remove(itProc);
+                    }
+
+                    foreach (var itProc in item.ProcessList)
+                    {
+                        var dbProc = _context.ItemDemandProcess.FirstOrDefault(d => d.Id == itProc.Id);
+                        if (dbProc == null){
+                            dbProc = new ItemDemandProcess();
+                            _context.ItemDemandProcess.Add(dbProc);
+                        }
+
+                        itProc.MapTo(dbProc);
+
+                        dbProc.ItemDemandDetail = dbDetail;
+                    }
+                    #endregion
                 }
                 #endregion
 
@@ -730,6 +783,14 @@ namespace HekaMiniumApi.Controllers{
                 {
                     if (_context.ItemOrderDetail.Any(d => d.ItemDemandDetailId == item.Id))
                         throw new Exception((item.LineNumber ?? 0).ToString() + ". satırdaki talep siparişe dönüştürüldüğü için silinemez. Bu sipariş kalemini sildikten sonra talebi silebilirsiniz.");
+
+                    if (_context.ItemDemandProcess.Any(d => d.ItemDemandDetailId == item.Id)){
+                        var procList = _context.ItemDemandProcess.Where(d => d.ItemDemandDetailId == item.Id).ToArray();
+                        foreach (var procItem in procList)
+                        {
+                            _context.ItemDemandProcess.Remove(procItem);
+                        }
+                    }
 
                     _context.ItemDemandDetail.Remove(item);
                 }
