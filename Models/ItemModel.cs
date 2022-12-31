@@ -28,6 +28,7 @@ namespace HekaMiniumApi.Models{
         public string BrandName { get; set; }
         public string BrandModelCode { get; set; }
         public string BrandModelName { get; set; }
+        public string[] FileTypeList { get; set; }
         #endregion
     }
 }

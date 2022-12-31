@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HekaMiniumApi.Migrations
 {
     [DbContext(typeof(HekaMiniumSchema))]
-    [Migration("20221222125720_ItemDemandProcess")]
-    partial class ItemDemandProcess
+    [Migration("20221227142340_PartDataForCutting")]
+    partial class PartDataForCutting
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -622,8 +622,17 @@ namespace HekaMiniumApi.Migrations
                     b.Property<string>("PartDimensions")
                         .HasColumnType("text");
 
+                    b.Property<decimal?>("PartHeight")
+                        .HasColumnType("numeric");
+
                     b.Property<string>("PartNo")
                         .HasColumnType("text");
+
+                    b.Property<decimal?>("PartThickness")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("PartWidth")
+                        .HasColumnType("numeric");
 
                     b.Property<decimal?>("Quantity")
                         .HasColumnType("numeric");
@@ -1619,6 +1628,9 @@ namespace HekaMiniumApi.Migrations
                         .HasColumnType("text");
 
                     b.Property<int?>("ProcessOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ProcessType")
                         .HasColumnType("integer");
 
                     b.Property<decimal?>("UnitPrice")

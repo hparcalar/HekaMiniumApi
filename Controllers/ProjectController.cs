@@ -76,6 +76,230 @@ namespace HekaMiniumApi.Controllers{
         }
 
         [HttpGet]
+        [Route("WithDocs")]
+        public IEnumerable<ProjectModel> GetWithDocs()
+        {
+            ProjectModel[] data = new ProjectModel[0];
+            try
+            {
+                var prByPartDocs = _context.ItemDemandDetailPart.Where(d =>
+                    d.PartFile != null
+                ).Select(d => d.ItemDemandDetail.ItemDemand.ProjectId).Distinct().ToArray();
+
+                var demandByAttachments = _context.Attachment.Where(d => d.RecordType == 2)
+                    .Select(d => d.RecordId).Distinct().ToArray();
+                
+                var prByDemandDocs = _context.ItemDemandDetail.Where(d => 
+                    (demandByAttachments.Contains(d.Id) || d.ItemDemandProcesses.Any(m => m.Process.ProcessType == 1)) 
+                    && d.ItemDemand.ProjectId != null)
+                    .Select(d => d.ItemDemand.ProjectId).Distinct().ToArray();
+                var prByPrDocs = _context.Attachment.Where(d => d.RecordType == 1)
+                    .Select(d => d.RecordId).Distinct().ToArray();
+
+                int?[] prId = prByPartDocs.Concat(prByDemandDocs).Concat(prByPrDocs).ToArray();
+
+                data = _context.Project.Where(d => 
+                    prId.Contains(d.Id)
+                ).Select(d => new ProjectModel{
+                    Id = d.Id,
+                    Budget = d.Budget,
+                    FirmCode = d.Firm != null ? d.Firm.FirmCode : "",
+                    FirmId = d.FirmId,
+                    FirmName = d.Firm != null ? d.Firm.FirmName : "",
+                    Explanation = d.Explanation,
+                    FirmLocation = d.FirmLocation,
+                    PlantId = d.PlantId,
+                    StartDate = d.StartDate,
+                    DeadlineDate = d.DeadlineDate,
+                    ProjectCategoryId = d.ProjectCategoryId,
+                    ProjectCode = d.ProjectCode,
+                    ProjectName = d.ProjectName,
+                    ProjectPhaseTemplateId = d.ProjectPhaseTemplateId,
+                    CloudDocId = d.CloudDocId,
+                    ResponsibleInfo = d.ResponsibleInfo,
+                    ResponsiblePerson = d.ResponsiblePerson,
+                    ProjectCategoryCode = d.ProjectCategory != null ? d.ProjectCategory.ProjectCategoryCode : "",
+                    ProjectCategoryName = d.ProjectCategory != null ? d.ProjectCategory.ProjectCategoryName : "",
+                    ProjectStatus = d.ProjectStatus,
+                    ForexId = d.ForexId,
+                    ForexCode = d.Forex != null ? d.Forex.ForexCode : "",
+                    ForexName = d.Forex != null ? d.Forex.ForexName : "",
+                    Quantity = d.Quantity,
+                    TotalCost = d.TotalCost,
+                        TotalForexCost = d.TotalForexCost,
+                    ProfitRate = d.ProfitRate,
+                    OfferPrice = d.OfferPrice,
+                    ForexRate = d.ForexRate,
+                    OfferForexPrice = d.OfferForexPrice,
+                    ProjectStatusText = (d.ProjectStatus ?? 0) == 0 ? "Oluşturuldu" :
+                                            d.ProjectStatus == 1 ? "Teklif verilecek" :
+                                            d.ProjectStatus == 2 ? "Teklif verildi" :
+                                            d.ProjectStatus == 3 ? "Onaylandı" :
+                                            d.ProjectStatus == 4 ? "Tamamlandı" : 
+                                            d.ProjectStatus == 5 ? "İptal edildi" : ""
+                }).OrderByDescending(d => d.ProjectCode).ToArray();
+            }
+            catch (Exception ex)
+            {
+                
+            }
+            
+            return data;
+        }
+
+        [HttpGet]
+        [Route("{id}/DocumentCategories")]
+        public IEnumerable<ItemModel> GetDocumentCategories(int id){
+            ItemModel[] data = new ItemModel[0];
+
+            try
+            {
+                int?[] itByParts = _context.ItemDemandDetail
+                    .Where(d => d.ItemId != null && d.ItemDemand.ProjectId == id 
+                        && (d.ItemDemandDetailParts.Any(m => m.PartFile != null) || d.ItemDemandProcesses.Any(m => m.Process.ProcessType == 1))
+                        )
+                    .Select(d => d.ItemId).Distinct().ToArray();
+
+                int?[] demandsByProject = _context.ItemDemandDetail.Where(d => d.ItemDemand.ProjectId == id)
+                    .Select(d => (int?)d.Id).ToArray();
+
+                int?[] demandsHasDocs = _context.Attachment.Where(d => d.RecordType == 2 && demandsByProject.Contains(d.RecordId ?? 0))
+                    .Select(d => d.RecordId).ToArray();
+
+                int?[] itByDemandsWithDocs = _context.ItemDemandDetail.Where(d => d.ItemId != null && demandsHasDocs.Contains(d.Id))
+                    .Select(d => (int?)d.ItemId).ToArray();
+
+                int?[] itList = itByParts.Concat(itByDemandsWithDocs).ToArray();
+
+                data = _context.Item.Where(d => itList.Contains(d.Id))
+                    .Select(d => new ItemModel{
+                        Id = d.Id,
+                        ItemCode = d.ItemCode,
+                        ItemName = d.ItemName,
+                        ItemCategoryId = d.ItemCategoryId,
+                        ItemCategoryCode = d.ItemCategory != null ? d.ItemCategory.ItemCategoryCode : "",
+                        ItemCategoryName = d.ItemCategory != null ? d.ItemCategory.ItemCategoryName : "",
+                    }).ToArray();
+            }
+            catch (System.Exception)
+            {
+                
+            }
+
+            return data;
+        }
+
+        [HttpGet]
+        [Route("{id}/ElementsOfCategory/{itemId}")]
+        public IEnumerable<ItemDemandDetailModel> GetElementsOfCategory(int id, int itemId){
+            ItemDemandDetailModel[] data = new ItemDemandDetailModel[0];
+
+            try
+            {
+                var demandsWithCurrentId = _context.ItemDemandDetail.Where(d => d.ItemId == itemId
+                    && d.ItemDemand.ProjectId == id).Select(d => d.Id).ToArray();
+                var hasAttachmentsDemands = _context.Attachment.Where(d => d.RecordType == 2 && demandsWithCurrentId.Contains(d.RecordId ?? 0))
+                    .Select(d => d.RecordId).ToArray();
+
+                data = _context.ItemDemandDetail
+                    .Where(d => d.ItemDemand.ProjectId == id && d.ItemId == itemId 
+                        &&
+                        (
+                            d.ItemDemandProcesses.Any(m => m.Process.ProcessType == 1)
+                            ||
+                            d.ItemDemandDetailParts.Any(m => m.PartFile != null)
+                            ||
+                            hasAttachmentsDemands.Contains(d.Id)
+                        )
+                    ).Select(d => new ItemDemandDetailModel{
+                        Id = d.Id,
+                        PartNo = d.PartNo,
+                        ItemExplanation = d.ItemExplanation,
+                        PartDimensions = d.ItemDemandDetailParts.Any() ? (d.PartWidth + "x" + d.PartHeight + "x" + d.PartThickness) : d.PartDimensions,
+                        Quantity = d.Quantity,
+                    }).ToArray();
+            }
+            catch (System.Exception)
+            {
+                
+            }
+
+            return data;
+        }
+
+
+        [HttpGet]
+        [Route("{id}/Documents/{demandDetailId}")]
+        public IEnumerable<ItemDemandDetailPartModel> GetDocumentsOfElement(int id, int demandDetailId){
+            ItemDemandDetailPartModel[] data = new ItemDemandDetailPartModel[0];
+
+            try
+            {
+                var partFiles = _context.ItemDemandDetailPart.Where(d =>
+                    d.ItemDemandDetailId == demandDetailId)
+                    .Select(d => new ItemDemandDetailPartModel{
+                        Id = d.Id,
+                        PartNo = d.PartNo,
+                        PartHeight = d.PartHeight,
+                        PartQuantity = d.PartQuantity,
+                        LineNumber = d.LineNumber,
+                        PartType = d.PartType,
+                        FileType = d.FileType,
+                    }).ToArray();
+
+                var detailFiles = _context.Attachment.Where(d => d.RecordType == 2 && d.RecordId == demandDetailId)
+                    .Select(d => new ItemDemandDetailPartModel{
+                        Id = 0,
+                        AttachmentId = d.Id,
+                        // PartFile = d.FileContent,
+                        PartNo = d.Explanation != null && d.Title.Length > 0 ? d.Title : d.Explanation,
+                        FileType = d.FileType,
+                    }
+                    ).ToArray();
+                
+                data = detailFiles.Concat(partFiles).ToArray();
+            }
+            catch (System.Exception)
+            {
+                
+            }
+
+            return data;
+        }
+
+        [HttpGet]
+        [Route("{id}/PartDocument/{partId}")]
+        public ItemDemandDetailPartModel GetPartDocument(int id, int partId){
+            ItemDemandDetailPartModel data = new ItemDemandDetailPartModel();
+
+            try
+            {
+                data = _context.ItemDemandDetailPart.Where(d =>
+                    d.Id == partId)
+                    .Select(d => new ItemDemandDetailPartModel{
+                        Id = d.Id,
+                        PartNo = d.PartNo,
+                        PartHeight = d.PartHeight,
+                        PartQuantity = d.PartQuantity,
+                        LineNumber = d.LineNumber,
+                        PartType = d.PartType,
+                        FileType = d.FileType,
+                        PartFile = d.PartFile,
+                    }).FirstOrDefault();
+
+                if (data != null){
+                    data.PartBase64 = Convert.ToBase64String(data.PartFile);
+                }
+            }
+            catch (System.Exception)
+            {
+                
+            }
+
+            return data;
+        }
+
+        [HttpGet]
         [Route("AfterCreated")]
         public IEnumerable<ProjectModel> GetAfterCreated()
         {

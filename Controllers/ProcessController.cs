@@ -39,6 +39,7 @@ namespace HekaMiniumApi.Controllers{
                     ProcessName = d.ProcessName,
                     ProcessOrder = d.ProcessOrder,
                     UnitPrice = d.UnitPrice,
+                    ProcessType = d.ProcessType,
                 }
                 ).OrderBy(d => d.ProcessOrder).ToArray();
             }
@@ -68,6 +69,7 @@ namespace HekaMiniumApi.Controllers{
                         ProcessName = d.ProcessName,
                         ProcessOrder = d.ProcessOrder,
                         UnitPrice = d.UnitPrice,
+                        ProcessType = d.ProcessType,
                     }).FirstOrDefault();
             }
             catch

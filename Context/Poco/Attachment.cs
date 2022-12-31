@@ -8,6 +8,9 @@ namespace HekaMiniumApi.Context{
         public int Id { get; set; }
         public Nullable<int> RecordId { get; set; }
         public Nullable<int> RecordType { get; set; }
+
+        [ForeignKey("AttachmentCategory")]
+        public Nullable<int> AttachmentCategoryId { get; set; }
         public bool? IsOfferDoc { get; set; }
         public string FileType { get; set; }
         public string FileExtension { get; set; }
@@ -15,5 +18,9 @@ namespace HekaMiniumApi.Context{
         public string Title { get; set; }
         public string Explanation { get; set; }
         public byte[] FileContent { get; set; }
+        public string PartNo { get; set; }
+        public string SubParts { get; set; }
+
+        public virtual AttachmentCategory AttachmentCategory { get; set; }
     }
 }

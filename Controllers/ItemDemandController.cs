@@ -129,6 +129,9 @@ namespace HekaMiniumApi.Controllers{
                                     d.DemandStatus == 5 ? "Teklif bekleniyor" : 
                                     d.DemandStatus == 6 ? "Sipariş iletildi" :
                                     d.DemandStatus == 7 ? "Kısmi teslim alındı" : "",
+                            PartHeight = d.PartHeight,
+                            PartThickness = d.PartThickness,
+                            PartWidth = d.PartWidth,
                         }).ToArray();
 
                     foreach (var item in data.Details)
@@ -166,7 +169,30 @@ namespace HekaMiniumApi.Controllers{
                                 ProcessCode = d.Process != null ? d.Process.ProcessCode : "",
                                 ProcessName = d.Process != null ? d.Process.ProcessName : "",
                                 StatusText = "",
+                                ProcessType = d.Process != null ? d.Process.ProcessType : null,
                             }).ToArray();
+
+                        // fill parts list
+                        item.PartList = _context.ItemDemandDetailPart.Where(d => d.ItemDemandDetailId == item.Id)
+                            .Select(d => new ItemDemandDetailPartModel{
+                                Id = d.Id,
+                                ItemDemandDetailId = d.ItemDemandDetailId,
+                                LineNumber = d.LineNumber,
+                                PartHeight = d.PartHeight,
+                                PartNo = d.PartNo,
+                                PartQuantity = d.PartQuantity,
+                                PartFile = d.PartFile,
+                                PartType = d.PartType,
+                                FileType = d.FileType,
+                            }).ToArray();
+
+                        foreach (var partItem in item.PartList)
+                        {
+                            if (partItem.PartFile != null){
+                                partItem.PartBase64 = Convert.ToBase64String(partItem.PartFile);
+                                partItem.PartFile = null;
+                            }
+                        }
                     }
                 }
                 else{
@@ -242,6 +268,9 @@ namespace HekaMiniumApi.Controllers{
                                     d.DemandStatus == 7 ? "Kısmi teslim alındı" : "",
                     DemandDate = d.ItemDemand.ReceiptDate,
                     DeadlineDate = d.ItemDemand.DeadlineDate,
+                    PartHeight = d.PartHeight,
+                    PartThickness = d.PartThickness,
+                    PartWidth = d.PartWidth,
                 })
                 .OrderByDescending(d => d.DemandDate)
                 .ToArray();
@@ -296,6 +325,9 @@ namespace HekaMiniumApi.Controllers{
                                     d.DemandStatus == 7 ? "Kısmi teslim alındı" : "",
                     DemandDate = d.ItemDemand.ReceiptDate,
                     DeadlineDate = d.ItemDemand.DeadlineDate,
+                    PartHeight = d.PartHeight,
+                    PartThickness = d.PartThickness,
+                    PartWidth = d.PartWidth,
                 })
                 .OrderByDescending(d => d.DemandDate)
                 .ToArray();
@@ -352,6 +384,9 @@ namespace HekaMiniumApi.Controllers{
                                     d.DemandStatus == 7 ? "Kısmi teslim alındı" : "",
                     DemandDate = d.ItemDemand.ReceiptDate,
                     DeadlineDate = d.ItemDemand.DeadlineDate,
+                    PartHeight = d.PartHeight,
+                    PartThickness = d.PartThickness,
+                    PartWidth = d.PartWidth,
                 })
                 .OrderByDescending(d => d.DemandDate)
                 .ToArray();
@@ -415,6 +450,9 @@ namespace HekaMiniumApi.Controllers{
                                     d.DemandStatus == 7 ? "Kısmi teslim alındı" : "",
                     DemandDate = d.ItemDemand.ReceiptDate,
                     DeadlineDate = d.ItemDemand.DeadlineDate,
+                    PartHeight = d.PartHeight,
+                    PartThickness = d.PartThickness,
+                    PartWidth = d.PartWidth,
                 })
                 .OrderByDescending(d => d.CreatedDate)
                 .ToArray();
@@ -513,6 +551,9 @@ namespace HekaMiniumApi.Controllers{
                     ProjectId = d.ItemDemand.ProjectId,
                     ProjectCode = d.ItemDemand.Project != null ? d.ItemDemand.Project.ProjectCode : "",
                     ProjectName = d.ItemDemand.Project != null ? d.ItemDemand.Project.ProjectName : "",
+                    PartHeight = d.PartHeight,
+                    PartThickness = d.PartThickness,
+                    PartWidth = d.PartWidth,
                 })
                 .OrderByDescending(d => d.DemandDate)
                 .ToArray();
@@ -583,11 +624,21 @@ namespace HekaMiniumApi.Controllers{
                     if (_context.ItemOrderDetail.Any(d => d.ItemDemandDetailId == item.Id))
                         throw new Exception((item.LineNumber ?? 0).ToString() + ". satırdaki talep siparişe dönüştürüldüğü için silinemez. Bu sipariş kalemini sildikten sonra talebi silebilirsiniz.");
 
+                    // clear process list
                     if (_context.ItemDemandProcess.Any(d => d.ItemDemandDetailId == item.Id)){
                         var procList = _context.ItemDemandProcess.Where(d => d.ItemDemandDetailId == item.Id).ToArray();
                         foreach (var procItem in procList)
                         {
                             _context.ItemDemandProcess.Remove(procItem);
+                        }
+                    }
+
+                    // clear part list
+                    if (_context.ItemDemandDetailPart.Any(d => d.ItemDemandDetailId == item.Id)){
+                        var partList = _context.ItemDemandDetailPart.Where(d => d.ItemDemandDetailId == item.Id).ToArray();
+                        foreach (var partItem in partList)
+                        {
+                            _context.ItemDemandDetailPart.Remove(partItem);
                         }
                     }
 
@@ -632,6 +683,43 @@ namespace HekaMiniumApi.Controllers{
                         itProc.MapTo(dbProc);
 
                         dbProc.ItemDemandDetail = dbDetail;
+                    }
+                    #endregion
+
+                    #region save part list
+                    if (item.PartList == null){
+                        item.PartList = new ItemDemandDetailPartModel[0];
+                    }
+
+                    var currentPartList = _context.ItemDemandDetailPart.Where(d => d.ItemDemandDetailId == item.Id).ToArray();
+                    var removedPartList = currentPartList.Where(d => !item.PartList.Any(m => m.Id == d.Id)).ToArray();
+                    foreach (var itPart in removedPartList)
+                    {
+                        _context.ItemDemandDetailPart.Remove(itPart);
+                    }
+
+                    foreach (var itPart in item.PartList)
+                    {
+                        var dbPart = _context.ItemDemandDetailPart.FirstOrDefault(d => d.Id == itPart.Id);
+                        if (dbPart == null){
+                            dbPart = new ItemDemandDetailPart();
+                            _context.ItemDemandDetailPart.Add(dbPart);
+                        }
+
+                        // keep old file content to prevent clearing current image buffer
+                        var exFileContent = dbPart.PartFile;
+
+                        itPart.MapTo(dbPart);
+
+                        // restore file content after auto-mapping
+                        dbPart.PartFile = exFileContent;
+
+                        // upload new image to file content
+                        if (!string.IsNullOrEmpty(itPart.PartBase64)){
+                            dbPart.PartFile = Convert.FromBase64String(itPart.PartBase64);
+                        }
+
+                        dbPart.ItemDemandDetail = dbDetail;
                     }
                     #endregion
                 }
@@ -784,11 +872,21 @@ namespace HekaMiniumApi.Controllers{
                     if (_context.ItemOrderDetail.Any(d => d.ItemDemandDetailId == item.Id))
                         throw new Exception((item.LineNumber ?? 0).ToString() + ". satırdaki talep siparişe dönüştürüldüğü için silinemez. Bu sipariş kalemini sildikten sonra talebi silebilirsiniz.");
 
+                    // clear process list
                     if (_context.ItemDemandProcess.Any(d => d.ItemDemandDetailId == item.Id)){
                         var procList = _context.ItemDemandProcess.Where(d => d.ItemDemandDetailId == item.Id).ToArray();
                         foreach (var procItem in procList)
                         {
                             _context.ItemDemandProcess.Remove(procItem);
+                        }
+                    }
+
+                    // clear part list
+                    if (_context.ItemDemandDetailPart.Any(d => d.ItemDemandDetailId == item.Id)){
+                        var partList = _context.ItemDemandDetailPart.Where(d => d.ItemDemandDetailId == item.Id).ToArray();
+                        foreach (var partItem in partList)
+                        {
+                            _context.ItemDemandDetailPart.Remove(partItem);
                         }
                     }
 

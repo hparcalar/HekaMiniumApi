@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HekaMiniumApi.Migrations
 {
     [DbContext(typeof(HekaMiniumSchema))]
-    [Migration("20221222125720_ItemDemandProcess")]
-    partial class ItemDemandProcess
+    [Migration("20221227190334_ItemDemandDetail_Parts")]
+    partial class ItemDemandDetail_Parts
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -89,6 +89,9 @@ namespace HekaMiniumApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("AttachmentCategoryId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Explanation")
                         .HasColumnType("text");
 
@@ -107,18 +110,47 @@ namespace HekaMiniumApi.Migrations
                     b.Property<bool?>("IsOfferDoc")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("PartNo")
+                        .HasColumnType("text");
+
                     b.Property<int?>("RecordId")
                         .HasColumnType("integer");
 
                     b.Property<int?>("RecordType")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SubParts")
+                        .HasColumnType("text");
+
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AttachmentCategoryId");
+
                     b.ToTable("Attachment");
+                });
+
+            modelBuilder.Entity("HekaMiniumApi.Context.AttachmentCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CategoryName")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("PlantId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlantId");
+
+                    b.ToTable("AttachmentCategory");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.Brand", b =>
@@ -622,8 +654,17 @@ namespace HekaMiniumApi.Migrations
                     b.Property<string>("PartDimensions")
                         .HasColumnType("text");
 
+                    b.Property<decimal?>("PartHeight")
+                        .HasColumnType("numeric");
+
                     b.Property<string>("PartNo")
                         .HasColumnType("text");
+
+                    b.Property<decimal?>("PartThickness")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("PartWidth")
+                        .HasColumnType("numeric");
 
                     b.Property<decimal?>("Quantity")
                         .HasColumnType("numeric");
@@ -640,6 +681,39 @@ namespace HekaMiniumApi.Migrations
                     b.HasIndex("UnitId");
 
                     b.ToTable("ItemDemandDetail");
+                });
+
+            modelBuilder.Entity("HekaMiniumApi.Context.ItemDemandDetailPart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ItemDemandDetailId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("LineNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<byte[]>("PartFile")
+                        .HasColumnType("bytea");
+
+                    b.Property<decimal?>("PartHeight")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("PartNo")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("PartQuantity")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemDemandDetailId");
+
+                    b.ToTable("ItemDemandDetailPart");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.ItemDemandProcess", b =>
@@ -1621,6 +1695,9 @@ namespace HekaMiniumApi.Migrations
                     b.Property<int?>("ProcessOrder")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("ProcessType")
+                        .HasColumnType("integer");
+
                     b.Property<decimal?>("UnitPrice")
                         .HasColumnType("numeric");
 
@@ -2462,6 +2539,24 @@ namespace HekaMiniumApi.Migrations
                     b.Navigation("Plant");
                 });
 
+            modelBuilder.Entity("HekaMiniumApi.Context.Attachment", b =>
+                {
+                    b.HasOne("HekaMiniumApi.Context.AttachmentCategory", "AttachmentCategory")
+                        .WithMany()
+                        .HasForeignKey("AttachmentCategoryId");
+
+                    b.Navigation("AttachmentCategory");
+                });
+
+            modelBuilder.Entity("HekaMiniumApi.Context.AttachmentCategory", b =>
+                {
+                    b.HasOne("HekaMiniumApi.Context.Plant", "Plant")
+                        .WithMany()
+                        .HasForeignKey("PlantId");
+
+                    b.Navigation("Plant");
+                });
+
             modelBuilder.Entity("HekaMiniumApi.Context.Brand", b =>
                 {
                     b.HasOne("HekaMiniumApi.Context.Plant", "Plant")
@@ -2627,6 +2722,15 @@ namespace HekaMiniumApi.Migrations
                     b.Navigation("ItemDemand");
 
                     b.Navigation("UnitType");
+                });
+
+            modelBuilder.Entity("HekaMiniumApi.Context.ItemDemandDetailPart", b =>
+                {
+                    b.HasOne("HekaMiniumApi.Context.ItemDemandDetail", "ItemDemandDetail")
+                        .WithMany("ItemDemandDetailParts")
+                        .HasForeignKey("ItemDemandDetailId");
+
+                    b.Navigation("ItemDemandDetail");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.ItemDemandProcess", b =>
@@ -3338,6 +3442,8 @@ namespace HekaMiniumApi.Migrations
 
             modelBuilder.Entity("HekaMiniumApi.Context.ItemDemandDetail", b =>
                 {
+                    b.Navigation("ItemDemandDetailParts");
+
                     b.Navigation("ItemReceiptDetails");
                 });
 

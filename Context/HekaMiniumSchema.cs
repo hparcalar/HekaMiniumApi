@@ -57,6 +57,8 @@ namespace HekaMiniumApi.Context {
         public DbSet<Attachment> Attachment { get; set; }
         public DbSet<CalendarElement> CalendarElement { get; set; }
         public DbSet<ItemDemandProcess> ItemDemandProcess { get; set; }
+        public DbSet<AttachmentCategory> AttachmentCategory { get; set; }
+        public DbSet<ItemDemandDetailPart> ItemDemandDetailPart { get; set; }
 
         public HekaMiniumSchema() : base(){}
         public HekaMiniumSchema(Microsoft.EntityFrameworkCore.DbContextOptions options) : base(options){}

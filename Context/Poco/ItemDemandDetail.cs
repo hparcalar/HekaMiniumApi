@@ -7,6 +7,8 @@ namespace HekaMiniumApi.Context{
     public class ItemDemandDetail{
         public ItemDemandDetail(){
             this.ItemReceiptDetails = new HashSet<ItemReceiptDetail>();
+            this.ItemDemandDetailParts = new HashSet<ItemDemandDetailPart>();
+            this.ItemDemandProcesses = new HashSet<ItemDemandProcess>();
         }
         public int Id { get; set; }
 
@@ -39,8 +41,18 @@ namespace HekaMiniumApi.Context{
         public virtual Item Item { get; set; }
         public virtual UnitType UnitType { get; set; }
 
+        public decimal? PartWidth { get; set; }
+        public decimal? PartHeight { get; set; }
+        public decimal? PartThickness { get; set; }
+
         [InverseProperty("ItemDemandDetail")]
         public virtual ICollection<ItemReceiptDetail> ItemReceiptDetails { get; set; }
+
+        [InverseProperty("ItemDemandDetail")]
+        public virtual ICollection<ItemDemandDetailPart> ItemDemandDetailParts { get; set; }
+
+        [InverseProperty("ItemDemandDetail")]
+        public virtual ICollection<ItemDemandProcess> ItemDemandProcesses { get; set; }
 
     }
 }

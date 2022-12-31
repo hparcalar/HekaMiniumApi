@@ -15,6 +15,8 @@ namespace HekaMiniumApi.Context{
         public decimal? EstimatedDuration { get; set; }
         public decimal? UnitPrice { get; set; }
 
+        public int? ProcessType { get; set; }
+
         [ForeignKey("Forex")]
         public int? ForexId { get; set; }
 

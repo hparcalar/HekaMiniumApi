@@ -20,8 +20,14 @@ namespace HekaMiniumApi.Models{
         public bool? IsContracted { get; set; }
         public DateTime? CreatedDate { get; set; }
 
+        public decimal? PartWidth { get; set; }
+        public decimal? PartHeight { get; set; }
+        public decimal? PartThickness { get; set; }
+
+
         #region VISUAL ELEMENTS
         public ItemDemandProcessModel[] ProcessList { get; set; }
+        public ItemDemandDetailPartModel[] PartList { get; set; }
         public int? ProjectId { get; set; }
         public string ProjectCode { get; set; }
         public string ProjectName { get; set; }

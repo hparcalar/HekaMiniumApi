@@ -9,6 +9,11 @@ namespace HekaMiniumApi.Models{
         public decimal? UnitPrice { get; set; }
         public int? ForexId { get; set; }
 
+        /*
+        1: Cutting
+        */
+        public int? ProcessType { get; set; }
+
         public int? ProcessOrder { get; set; }
     }
 }

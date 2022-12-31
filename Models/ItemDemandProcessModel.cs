@@ -21,6 +21,7 @@ namespace HekaMiniumApi.Models{
         public string ItemDemandNo { get; set; }
         public string ItemCode { get; set; }
         public string ItemName { get; set; }
+        public int? ProcessType { get; set; }
         #endregion
     }
 }

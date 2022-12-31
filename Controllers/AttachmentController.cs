@@ -41,7 +41,52 @@ namespace HekaMiniumApi.Controllers{
                     RecordId = d.RecordId,
                     RecordType = d.RecordType,
                     Title = d.Title,
+                    PartNo = d.PartNo,
+                    SubParts = d.SubParts,
+                    AttachmentCategoryId = d.AttachmentCategoryId,
+                    CategoryName = d.AttachmentCategory != null ? d.AttachmentCategory.CategoryName : "",
                 }).ToArray();
+            }
+            catch
+            {
+                
+            }
+            
+            return data;
+        }
+
+        [HttpGet]
+        [Route("OfRecordWithContent/{recordType}/{recordId}")]
+        public IEnumerable<AttachmentModel> GetWithContent(int recordType, int recordId)
+        {
+            AttachmentModel[] data = new AttachmentModel[0];
+            try
+            {
+                data = _context.Attachment.Where(d => d.RecordType == recordType && d.RecordId == recordId)
+                .Select(d => new AttachmentModel{
+                    Id = d.Id,
+                    Explanation = d.Explanation,
+                    FileContent = d.FileContent,
+                    FileExtension = d.FileExtension,
+                    IsOfferDoc = d.IsOfferDoc,
+                    FileName = d.FileName,
+                    FileType = d.FileType,
+                    RecordId = d.RecordId,
+                    RecordType = d.RecordType,
+                    Title = d.Title,
+                    PartNo = d.PartNo,
+                    SubParts = d.SubParts,
+                    AttachmentCategoryId = d.AttachmentCategoryId,
+                    CategoryName = d.AttachmentCategory != null ? d.AttachmentCategory.CategoryName : "",
+                }).ToArray();
+
+                foreach (var item in data)
+                {
+                    if (item.FileContent != null){
+                        item.ContentBase64 = Convert.ToBase64String(item.FileContent);
+                        item.FileContent = null;
+                    }
+                }
             }
             catch
             {
@@ -70,6 +115,57 @@ namespace HekaMiniumApi.Controllers{
                         RecordId = d.RecordId,
                         RecordType = d.RecordType,
                         Title = d.Title,
+                        PartNo = d.PartNo,
+                        SubParts = d.SubParts,
+                        AttachmentCategoryId = d.AttachmentCategoryId,
+                        CategoryName = d.AttachmentCategory != null ? d.AttachmentCategory.CategoryName : "",
+                    }).FirstOrDefault();
+
+                if (data != null && data.FileContent != null){
+                    data.ContentBase64 = Convert.ToBase64String(data.FileContent);
+                }
+            }
+            catch
+            {
+                
+            }
+            
+            return data;
+        }
+
+
+        [HttpGet]
+        [Route("Category")]
+        public IEnumerable<AttachmentCategoryModel> GetCategories()
+        {
+            AttachmentCategoryModel[] data = new AttachmentCategoryModel[0];
+            try
+            {
+                data = _context.AttachmentCategory.Select(d => new AttachmentCategoryModel{
+                    Id = d.Id,
+                    PlantId = d.PlantId,
+                    CategoryName = d.CategoryName
+                }).ToArray();
+            }
+            catch
+            {
+                
+            }
+            
+            return data;
+        }
+
+        [HttpGet]
+        [Route("Category/{id}")]
+        public AttachmentCategoryModel GetCategory(int id)
+        {
+            AttachmentCategoryModel data = new AttachmentCategoryModel();
+            try
+            {
+                data = _context.AttachmentCategory.Where(d => d.Id == id).Select(d => new AttachmentCategoryModel{
+                        Id = d.Id,
+                        PlantId = d.PlantId,
+                        CategoryName = d.CategoryName
                     }).FirstOrDefault();
             }
             catch
@@ -78,6 +174,38 @@ namespace HekaMiniumApi.Controllers{
             }
             
             return data;
+        }
+
+        [Authorize(Policy = "WebUser")]
+        [Route("Category")]
+        [HttpPost]
+        public BusinessResult PostCategory(AttachmentCategoryModel model){
+            BusinessResult result = new BusinessResult();
+
+            try
+            {
+                var dbObj = _context.AttachmentCategory.FirstOrDefault(d => d.Id == model.Id);
+                if (dbObj == null){
+                    dbObj = new AttachmentCategory();
+                    _context.AttachmentCategory.Add(dbObj);
+                }
+
+                if (_context.AttachmentCategory.Any(d => d.CategoryName == model.CategoryName && d.PlantId == model.PlantId && d.Id != model.Id))
+                    throw new Exception("Bu kategori adına ait bir kayıt zaten bulunmaktadır. Lütfen başka bir kod belirtiniz.");
+
+                model.MapTo(dbObj);
+
+                _context.SaveChanges();
+                result.Result=true;
+                result.RecordId = dbObj.Id;
+            }
+            catch (System.Exception ex)
+            {
+                result.Result=false;
+                result.ErrorMessage = ex.Message;
+            }
+
+            return result;
         }
 
 
@@ -180,6 +308,34 @@ namespace HekaMiniumApi.Controllers{
 
             return result;
         }
+
+
+        [Authorize(Policy = "WebUser")]
+        [Route("Category")]
+        [HttpDelete("{id}")]
+        public BusinessResult DeleteCategory(int id){
+            BusinessResult result = new BusinessResult();
+
+            try
+            {
+                var dbObj = _context.AttachmentCategory.FirstOrDefault(d => d.Id == id);
+                if (dbObj == null)
+                    throw new Exception("");
+
+                _context.AttachmentCategory.Remove(dbObj);
+
+                _context.SaveChanges();
+                result.Result=true;
+            }
+            catch (System.Exception ex)
+            {
+                result.Result=false;
+                result.ErrorMessage = ex.Message;
+            }
+
+            return result;
+        }
+
 
     }
 
