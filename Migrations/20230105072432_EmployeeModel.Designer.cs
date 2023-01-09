@@ -3,6 +3,7 @@ using System;
 using HekaMiniumApi.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HekaMiniumApi.Migrations
 {
     [DbContext(typeof(HekaMiniumSchema))]
-    partial class HekaMiniumSchemaModelSnapshot : ModelSnapshot
+    [Migration("20230105072432_EmployeeModel")]
+    partial class EmployeeModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -260,28 +262,6 @@ namespace HekaMiniumApi.Migrations
                     b.ToTable("CalendarElement");
                 });
 
-            modelBuilder.Entity("HekaMiniumApi.Context.Department", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("DepartmentCode")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("DepartmentName")
-                        .HasColumnType("text");
-
-                    b.Property<int>("PlantId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Department");
-                });
-
             modelBuilder.Entity("HekaMiniumApi.Context.Employee", b =>
                 {
                     b.Property<int>("Id")
@@ -289,9 +269,6 @@ namespace HekaMiniumApi.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("DepartmentId")
-                        .HasColumnType("integer");
 
                     b.Property<string>("EmployeeAddress")
                         .HasColumnType("text");
@@ -313,33 +290,7 @@ namespace HekaMiniumApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DepartmentId");
-
                     b.ToTable("Employee");
-                });
-
-            modelBuilder.Entity("HekaMiniumApi.Context.EmployeeCheckIn", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("EmployeeId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("ProcessDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<int?>("ProcessType")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.ToTable("EmployeeCheckIn");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.Firm", b =>
@@ -2659,24 +2610,6 @@ namespace HekaMiniumApi.Migrations
                         .HasForeignKey("BrandId");
 
                     b.Navigation("Brand");
-                });
-
-            modelBuilder.Entity("HekaMiniumApi.Context.Employee", b =>
-                {
-                    b.HasOne("HekaMiniumApi.Context.Department", "Department")
-                        .WithMany()
-                        .HasForeignKey("DepartmentId");
-
-                    b.Navigation("Department");
-                });
-
-            modelBuilder.Entity("HekaMiniumApi.Context.EmployeeCheckIn", b =>
-                {
-                    b.HasOne("HekaMiniumApi.Context.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId");
-
-                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.Firm", b =>
