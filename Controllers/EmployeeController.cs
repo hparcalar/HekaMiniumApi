@@ -26,6 +26,7 @@ namespace HekaMiniumApi.Controllers
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public IEnumerable<EmployeeModel> Get()
     {
       EmployeeModel[] data = new EmployeeModel[0];
