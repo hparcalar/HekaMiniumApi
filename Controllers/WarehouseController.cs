@@ -146,7 +146,6 @@ namespace HekaMiniumApi.Controllers{
                         ItemName = d.Item.ItemName,
                         WarehouseCode = d.ItemReceipt.InWarehouse.WarehouseCode,
                         WarehouseName = d.ItemReceipt.InWarehouse.WarehouseName,
-                        ReceiptType = d.ItemReceipt.ReceiptType,
                         WarehouseId = d.ItemReceipt.InWarehouseId,
                     }).Select(d => new ItemStocksModel{
                         Id = d.Key.Id,

@@ -345,19 +345,21 @@ namespace HekaMiniumApi.Controllers{
                     if (!orderDetailsWillBeChecked.Contains(dbDetail.ItemOrderDetailId ?? 0)){
                         orderDetailsWillBeChecked.Add(dbDetail.ItemOrderDetailId ?? 0);
                         var dbOrderDetail = _context.ItemOrderDetail.FirstOrDefault(d => d.Id == dbDetail.ItemOrderDetailId);
-                        if (!orderHeadersWillBeChecked.Contains(dbOrderDetail.ItemOrderId ?? 0))
+                        if (dbOrderDetail != null){
+                            if (!orderHeadersWillBeChecked.Contains(dbOrderDetail.ItemOrderId ?? 0))
                             orderHeadersWillBeChecked.Add(dbOrderDetail.ItemOrderId ?? 0);
 
-                        // add demand details to check list
-                        var demandConsumes = _context.ItemDemandConsume.Where(d => d.ItemOrderDetailId == dbOrderDetail.Id).ToArray();
-                        foreach (var dCons in demandConsumes)
-                        {
-                            if (!demandDetailsWillBeChecked.Contains(dCons.ItemDemandDetailId))
+                            // add demand details to check list
+                            var demandConsumes = _context.ItemDemandConsume.Where(d => d.ItemOrderDetailId == dbOrderDetail.Id).ToArray();
+                            foreach (var dCons in demandConsumes)
                             {
-                                demandDetailsWillBeChecked.Add(dCons.ItemDemandDetailId);
-                                var dbDemandDetail = _context.ItemDemandDetail.FirstOrDefault(d => d.Id == dCons.ItemDemandDetailId);
-                                if (!demandHeadersWillBeChecked.Contains(dbDemandDetail.ItemDemandId ?? 0))
-                                    demandHeadersWillBeChecked.Add(dbDemandDetail.ItemDemandId ?? 0);
+                                if (!demandDetailsWillBeChecked.Contains(dCons.ItemDemandDetailId))
+                                {
+                                    demandDetailsWillBeChecked.Add(dCons.ItemDemandDetailId);
+                                    var dbDemandDetail = _context.ItemDemandDetail.FirstOrDefault(d => d.Id == dCons.ItemDemandDetailId);
+                                    if (!demandHeadersWillBeChecked.Contains(dbDemandDetail.ItemDemandId ?? 0))
+                                        demandHeadersWillBeChecked.Add(dbDemandDetail.ItemDemandId ?? 0);
+                                }
                             }
                         }
                     }
