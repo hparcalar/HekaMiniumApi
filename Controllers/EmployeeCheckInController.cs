@@ -32,6 +32,8 @@ namespace HekaMiniumApi.Controllers
       EmployeeCheckInModel[] data = new EmployeeCheckInModel[0];
       try
       {
+
+        // groupby - select - where
         data = _context.EmployeeCheckIn.Select(d => new EmployeeCheckInModel
         {
           Id = d.Id,
@@ -84,13 +86,50 @@ namespace HekaMiniumApi.Controllers
         var dbEmployee = _context.Employee.FirstOrDefault(d => d.EmployeeCardNo == model.CardNo);
         var dbLastCheckIn = _context.EmployeeCheckIn.Where(d => d.EmployeeId == dbEmployee.Id).OrderByDescending(d => d.ProcessDate).FirstOrDefault();
 
-        var procType = 0;
+        /* var procType = 0;
         if (!(dbLastCheckIn == null || dbLastCheckIn.ProcessType == 1))
         {
           procType = 1;
         }
         
         var dbObj = new EmployeeCheckIn{
+          EmployeeId = dbEmployee.Id,
+          ProcessDate = model.ProcessDate,
+          ProcessType = procType
+        };
+        _context.EmployeeCheckIn.Add(dbObj); */
+        var MissFlag = false;
+        var time = (model.ProcessDate - dbLastCheckIn.ProcessDate).Value.TotalHours;
+        var procType = 0;
+        if (dbLastCheckIn != null && time > 18 && dbLastCheckIn.ProcessType == 0)
+        {
+          if (!(dbLastCheckIn == null || dbLastCheckIn.ProcessType == 1))
+          {
+            procType = 1;
+          }
+
+          var dbMiss = new EmployeeCheckIn
+          {
+            EmployeeId = dbEmployee.Id,
+            ProcessDate = dbLastCheckIn.ProcessDate.Value.Date.AddHours(18),
+            ProcessType = procType
+          };
+          MissFlag = true;
+          _context.EmployeeCheckIn.Add(dbMiss);
+        }
+
+        if (!(dbLastCheckIn == null || dbLastCheckIn.ProcessType == 1))
+        {
+          procType = 1;
+        }
+
+        if (MissFlag)
+        {
+          procType = 0;
+        }
+
+        var dbObj = new EmployeeCheckIn
+        {
           EmployeeId = dbEmployee.Id,
           ProcessDate = model.ProcessDate,
           ProcessType = procType
