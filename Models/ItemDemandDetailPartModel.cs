@@ -13,6 +13,7 @@ namespace HekaMiniumApi.Models{
         public string FileType { get; set; }
 
         #region VISUAL ELEMENTS
+        public string FileName { get; set; }
         public string PartBase64 { get; set; }
         public int? AttachmentId { get; set; }
         #endregion

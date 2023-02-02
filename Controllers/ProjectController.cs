@@ -252,7 +252,7 @@ namespace HekaMiniumApi.Controllers{
                         Id = 0,
                         AttachmentId = d.Id,
                         // PartFile = d.FileContent,
-                        PartNo = d.Explanation != null && d.Title.Length > 0 ? d.Title : d.Explanation,
+                        PartNo = d.PartNo + " " + d.Title + " / " + d.Explanation,
                         FileType = d.FileType,
                     }
                     ).ToArray();
