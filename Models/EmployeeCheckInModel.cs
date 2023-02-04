@@ -10,6 +10,7 @@ namespace HekaMiniumApi.Models{
         #region  VISUAL ELEMENTS
         public DateTime? ExitDate { get; set; }
         public int AutoCheckOut { get; set; }
+        public double? TotalHour { get; set; }
         #endregion
     }
 }
