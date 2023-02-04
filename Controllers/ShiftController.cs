@@ -57,11 +57,21 @@ namespace HekaMiniumApi.Controllers
               && m.EmployeeId == d.EmployeeId && m.ProcessDate > d.ProcessDate).Select(m => m.ProcessDate)
               .OrderBy(m => m)
               .FirstOrDefault(),
-            TotalHour = (_context.EmployeeCheckIn.Where(m => m.ProcessType == 1
+            /* TotalHour = (_context.EmployeeCheckIn.Where(m => m.ProcessType == 1
               && m.EmployeeId == d.EmployeeId && m.ProcessDate > d.ProcessDate).Select(m => m.ProcessDate)
               .OrderBy(m => m)
-              .FirstOrDefault() - d.ProcessDate).Value.TotalMinutes,
+              .FirstOrDefault() - d.ProcessDate).Value.TotalMinutes, */
           }).ToArray();
+        foreach(var item in data){
+          if(item.ExitDate != null){
+            item.TotalHour = (item.ExitDate.Value.TimeOfDay > new TimeSpan(17,45,00) && 
+            item.ExitDate.Value.TimeOfDay < new TimeSpan(18,20,00)) &&
+            (item.ProcessDate.Value.TimeOfDay > new TimeSpan(08,35,00) &&
+            item.ProcessDate.Value.TimeOfDay < new TimeSpan(09,15,00)) ?
+            (new TimeSpan(18,00,00) - new TimeSpan(09,00,00)).TotalMinutes :
+            (item.ExitDate - item.ProcessDate).Value.TotalMinutes;
+          }
+        }
       }
       catch
       {
