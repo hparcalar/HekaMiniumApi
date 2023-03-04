@@ -58,6 +58,7 @@ namespace HekaMiniumApi.Context{
         public int? ReceiptStatus { get; set; }
         public string PartNo { get; set; }
         public string PartDimensions { get; set; }
+        public bool? IsInvoiced { get; set; }
 
         public virtual ItemReceipt ItemReceipt { get; set; }
         public virtual Item Item { get; set; }

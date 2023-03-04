@@ -36,6 +36,7 @@ namespace HekaMiniumApi.Models{
         public int? ItemOrderDetailId { get; set; }
         public int? ItemDemandDetailId { get; set; }
         public string ItemExplanation { get; set; }
+        public bool? IsInvoiced { get; set; }
 
         #region VISUAL ELEMENTS
         public string ItemCode { get; set; }
