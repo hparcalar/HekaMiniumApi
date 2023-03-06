@@ -50,6 +50,7 @@ namespace HekaMiniumApi.Controllers{
                     TaxOffice = d.TaxOffice,
                     FirmCategoryCode = d.FirmCategory != null ? d.FirmCategory.FirmCategoryCode : "",
                     FirmCategoryName = d.FirmCategory != null ? d.FirmCategory.FirmCategoryName : "",
+                    AuthorText = d.FirmAuthors.Select(m => m.AuthorName).FirstOrDefault(),
                 }).ToArray();
             }
             catch

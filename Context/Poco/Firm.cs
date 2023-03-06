@@ -5,6 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HekaMiniumApi.Context{
     public class Firm{
+        public Firm(){
+            this.FirmAuthors = new HashSet<FirmAuthor>();
+        }
         public int Id { get; set; }
         public string FirmCode { get; set; }
         public string FirmName { get; set; }
@@ -36,5 +39,8 @@ namespace HekaMiniumApi.Context{
         public virtual Plant Plant { get; set; }
         public virtual FirmCategory FirmCategory { get; set; }
         public virtual AddressInfo AddressInfo { get; set; }
+
+        [InverseProperty("Firm")]
+        public virtual ICollection<FirmAuthor> FirmAuthors { get; set; }
     }
 }
