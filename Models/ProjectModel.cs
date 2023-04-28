@@ -22,15 +22,18 @@ namespace HekaMiniumApi.Models{
         public decimal? OfferPrice { get; set; }
         public decimal? ForexRate { get; set; }
         public decimal? OfferForexPrice { get; set; }
-         public decimal? TotalCost { get; set; }
+        public decimal? TotalCost { get; set; }
         public decimal? TotalForexCost { get; set; }
-
-
         public int? Quantity { get; set; }
         public int? ForexId { get; set; }
         public string CloudDocId { get; set; }
         public string CloudSheetId { get; set; }
         public string OfferType { get; set; }
+        public Boolean IsInvoiced { get; set;}
+        public string ExpiryExplanation {get; set;}
+        public DateTime? ExpiryStartDate {get; set;}
+        public DateTime? ExpiryEndDate {get; set;}
+        public int? ExpiryTime {get; set;}
 
         #region VISUAL ELEMENTS
         public string FirmCode { get; set; }

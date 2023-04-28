@@ -8,6 +8,7 @@ namespace HekaMiniumApi.Models.Constants{
                     new ReceiptTypeModel{ TypeNo = 1, TypeText = "Alış İrsaliyesi" },
                     new ReceiptTypeModel{ TypeNo = 2, TypeText = "Satıştan İade İrsaliyesi" },
                     new ReceiptTypeModel{ TypeNo = 3, TypeText = "Üretimden Giriş İrsaliyesi" },
+                    new ReceiptTypeModel{ TypeNo = 4, TypeText = "Stok Sayım Giriş İrsaliyesi" },
                 };
             }
         }
@@ -18,6 +19,7 @@ namespace HekaMiniumApi.Models.Constants{
                     new ReceiptTypeModel{ TypeNo = 105, TypeText = "Satış İrsaliyesi" },
                     new ReceiptTypeModel{ TypeNo = 106, TypeText = "Alıştan İade İrsaliyesi" },
                     new ReceiptTypeModel{ TypeNo = 107, TypeText = "Sarf Fişi" },
+                    new ReceiptTypeModel{ TypeNo = 108, TypeText = "Stok Sayım Çıkış İrsaliyesi" },
                 };
             }
         }

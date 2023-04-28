@@ -381,7 +381,6 @@ C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\bin\Release\net6.0
 C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\bin\Release\net6.0\win-x64\hostfxr.dll
 C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\bin\Release\net6.0\win-x64\hostpolicy.dll
 C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\bin\Release\net6.0\win-x64\mscordaccore.dll
-C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\bin\Release\net6.0\win-x64\mscordaccore_amd64_amd64_6.0.822.36306.dll
 C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\bin\Release\net6.0\win-x64\mscordbi.dll
 C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\bin\Release\net6.0\win-x64\mscorrc.dll
 C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\bin\Release\net6.0\win-x64\msquic.dll
@@ -401,3 +400,4 @@ C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Release\net6.0
 C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Release\net6.0\win-x64\HekaMiniumApi.pdb
 C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Release\net6.0\win-x64\HekaMiniumApi.genruntimeconfig.cache
 C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Release\net6.0\win-x64\ref\HekaMiniumApi.dll
+C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\bin\Release\net6.0\win-x64\mscordaccore_amd64_amd64_6.0.822.36306.dll

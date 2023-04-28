@@ -80,6 +80,11 @@ namespace HekaMiniumApi.Controllers
           EmployeeId = d.EmployeeId,
           ProcessDate = d.ProcessDate,
           ProcessType = d.ProcessType,
+          EmployeeName = d.Employee.EmployeeName,
+          ExitDate = _context.EmployeeCheckIn.Where(m => m.ProcessType == 1 
+            && m.EmployeeId == d.EmployeeId && m.ProcessDate > d.ProcessDate).Select(m => m.ProcessDate)
+            .OrderBy(m => m)
+            .FirstOrDefault(),
         }).FirstOrDefault();
       }
       catch
@@ -115,7 +120,11 @@ namespace HekaMiniumApi.Controllers
         };
         _context.EmployeeCheckIn.Add(dbObj); */
         var MissFlag = false;
-        var time = (model.ProcessDate - dbLastCheckIn.ProcessDate).Value.TotalHours;
+        var time = 0.0;
+        if (dbLastCheckIn != null)
+        {
+          time = (model.ProcessDate - dbLastCheckIn.ProcessDate).Value.TotalHours;
+        }
         var procType = 0;
         if (dbLastCheckIn != null && time > 18 && dbLastCheckIn.ProcessType == 0)
         {
@@ -166,6 +175,56 @@ namespace HekaMiniumApi.Controllers
     }
 
     [Authorize(Policy = "WebUser")]
+    [HttpPost]
+    [Route("Edit")]
+    [AllowAnonymous]
+    public BusinessResult Edit(EmployeeCheckInModel model)
+    {
+      BusinessResult result = new BusinessResult();
+
+      if (model.ProcessDate != null)
+        model.ProcessDate = model.ProcessDate.Value.AddHours(3);
+      if (model.ExitDate != null)
+        model.ExitDate = model.ExitDate.Value.AddHours(3);
+
+      try
+      {
+        var dbObj = _context.EmployeeCheckIn.FirstOrDefault(d => d.Id == model.Id);
+        if (dbObj == null){
+          dbObj = new EmployeeCheckIn();
+          dbObj.EmployeeId = model.EmployeeId;
+          dbObj.ProcessDate = model.ProcessDate;
+          dbObj.ProcessType = model.ProcessType;
+          _context.EmployeeCheckIn.Add(dbObj);
+        }
+        else {
+          var exitObj = _context.EmployeeCheckIn.Where(m => m.ProcessType == 1 
+            && m.EmployeeId == dbObj.EmployeeId && m.ProcessDate > dbObj.ProcessDate)
+            .FirstOrDefault();
+          if(exitObj == null){
+            exitObj = new EmployeeCheckIn();
+            exitObj.EmployeeId = dbObj.EmployeeId;
+            exitObj.ProcessType = 1;
+            _context.EmployeeCheckIn.Add(exitObj);
+          }
+          dbObj.ProcessDate = model.ProcessDate;
+          dbObj.ProcessType = model.ProcessType;
+          exitObj.ProcessDate = model.ExitDate;
+        }
+        _context.SaveChanges();
+        result.Result=true;
+        result.RecordId = dbObj.Id;
+      }
+      catch (System.Exception ex)
+      {
+        result.Result = false;
+        result.ErrorMessage = ex.Message;
+      }
+
+      return result;
+    }
+
+    [Authorize(Policy = "WebUser")]
     [HttpDelete("{id}")]
     public BusinessResult Delete(int id)
     {
@@ -174,8 +233,15 @@ namespace HekaMiniumApi.Controllers
       try
       {
         var dbObj = _context.EmployeeCheckIn.FirstOrDefault(d => d.Id == id);
+        var exitObj = _context.EmployeeCheckIn.Where(m => m.ProcessType == 1 
+            && m.EmployeeId == dbObj.EmployeeId && m.ProcessDate > dbObj.ProcessDate)
+            .FirstOrDefault();
         if (dbObj == null)
           throw new Exception("");
+
+        if (exitObj != null){
+          _context.EmployeeCheckIn.Remove(exitObj);
+        }
 
         _context.EmployeeCheckIn.Remove(dbObj);
 

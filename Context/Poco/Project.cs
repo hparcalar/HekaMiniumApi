@@ -44,7 +44,11 @@ namespace HekaMiniumApi.Context{
         public string CloudDocId { get; set; }
         public string CloudSheetId { get; set; }
         public string OfferType { get; set; }
-
+        public Boolean IsInvoiced { get; set;}
+        public string ExpiryExplanation {get; set;}
+        public DateTime? ExpiryStartDate {get; set;}
+        public DateTime? ExpiryEndDate {get; set;}
+        public int? ExpiryTime {get; set;}
         public virtual Plant Plant { get; set; }
         public virtual Firm Firm { get; set; }
         public virtual ProjectCategory ProjectCategory { get; set; }

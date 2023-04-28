@@ -59,6 +59,11 @@ namespace HekaMiniumApi.Controllers{
                     OfferPrice = d.OfferPrice,
                     ForexRate = d.ForexRate,
                     OfferForexPrice = d.OfferForexPrice,
+                    IsInvoiced = d.IsInvoiced,
+                    ExpiryExplanation = d.ExpiryExplanation,
+                    ExpiryStartDate = d.ExpiryStartDate,
+                    ExpiryTime = d.ExpiryTime,
+                    ExpiryEndDate = d.ExpiryEndDate,
                     ProjectStatusText = (d.ProjectStatus ?? 0) == 0 ? "Oluşturuldu" :
                                             d.ProjectStatus == 1 ? "Teklif verilecek" :
                                             d.ProjectStatus == 2 ? "Teklif verildi" :
@@ -491,6 +496,11 @@ namespace HekaMiniumApi.Controllers{
                         OfferForexPrice = d.OfferForexPrice,
                         TotalCost = d.TotalCost,
                         TotalForexCost = d.TotalForexCost,
+                        IsInvoiced = d.IsInvoiced,
+                        ExpiryExplanation = d.ExpiryExplanation,
+                        ExpiryStartDate = d.ExpiryStartDate,
+                        ExpiryTime = d.ExpiryTime,
+                        ExpiryEndDate = d.ExpiryEndDate,
                         ProjectStatusText = (d.ProjectStatus ?? 0) == 0 ? "Teklif verilecek" :
                                             d.ProjectStatus == 1 ? "Teklif verildi" :
                                             d.ProjectStatus == 2 ? "Onaylandı" :
@@ -698,6 +708,70 @@ namespace HekaMiniumApi.Controllers{
             return result;
         }
 
+        [Authorize(Policy = "WebUser")]
+        [HttpPost]
+        [Route("ExpiryEdit")]
+        [AllowAnonymous]
+        public BusinessResult ExpiryEdit(ProjectModel model)
+        {
+        BusinessResult result = new BusinessResult();
+
+        try
+        {
+            var dbObj = _context.Project.FirstOrDefault(d => d.Id == model.Id);
+            if (dbObj == null){
+                throw new Exception("Bu koda ait proje bulunamadı.");
+            }
+            else {
+                dbObj.ExpiryExplanation = model.ExpiryExplanation;
+                dbObj.ExpiryStartDate = model.ExpiryStartDate;
+                dbObj.ExpiryEndDate = model.ExpiryEndDate;
+                dbObj.ExpiryTime = model.ExpiryTime;
+                dbObj.IsInvoiced = model.IsInvoiced;
+            
+                _context.SaveChanges();
+                result.Result=true;
+                result.RecordId = dbObj.Id;
+            }
+        }
+        catch (System.Exception ex)
+        {
+            result.Result = false;
+            result.ErrorMessage = ex.Message;
+        }
+
+        return result;
+        }
+
+        [Authorize(Policy = "WebUser")]
+        [HttpPost]
+        [Route("ChangeInvoiceStatus")]
+        [AllowAnonymous]
+        public BusinessResult ChangeInvoiceStatus(ProjectModel model)
+        {
+        BusinessResult result = new BusinessResult();
+
+        try
+        {
+            var dbObj = _context.Project.FirstOrDefault(d => d.Id == model.Id);
+            if (dbObj == null){
+                throw new Exception("Bu koda ait proje bulunamadı.");
+            }
+            else {
+                dbObj.IsInvoiced = model.IsInvoiced;
+                _context.SaveChanges();
+                result.Result=true;
+                result.RecordId = dbObj.Id;
+            }
+        }
+        catch (System.Exception ex)
+        {
+            result.Result = false;
+            result.ErrorMessage = ex.Message;
+        }
+
+        return result;
+        }
 
         [Authorize(Policy = "WebUser")]
         [HttpDelete("{id}")]

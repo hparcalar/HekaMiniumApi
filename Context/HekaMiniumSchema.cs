@@ -69,6 +69,8 @@ namespace HekaMiniumApi.Context {
         public DbSet<CurrentAccountReceiptDetail> CurrentAccountReceiptDetail { get; set;}
         public DbSet<Invoice> Invoice { get; set;}
         public DbSet<InvoiceReceiptDetail> InvoiceReceiptDetail { get; set;}
+        public DbSet<Stocktaking> Stocktaking {get; set;}
+        public DbSet<StocktakingDetail> StocktakingDetail {get; set;}
 
         public HekaMiniumSchema() : base(){}
         public HekaMiniumSchema(Microsoft.EntityFrameworkCore.DbContextOptions options) : base(options){}

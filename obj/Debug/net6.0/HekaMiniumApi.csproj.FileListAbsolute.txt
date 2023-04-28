@@ -99,11 +99,6 @@ C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Debug\net6.0\H
 C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Debug\net6.0\HekaMiniumApi.csproj.CoreCompileInputs.cache
 C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Debug\net6.0\HekaMiniumApi.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Debug\net6.0\HekaMiniumApi.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Debug\net6.0\staticwebassets\msbuild.HekaMiniumApi.Microsoft.AspNetCore.StaticWebAssets.props
-C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Debug\net6.0\staticwebassets\msbuild.build.HekaMiniumApi.props
-C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Debug\net6.0\staticwebassets\msbuild.buildMultiTargeting.HekaMiniumApi.props
-C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Debug\net6.0\staticwebassets\msbuild.buildTransitive.HekaMiniumApi.props
-C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Debug\net6.0\staticwebassets.pack.json
 C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Debug\net6.0\staticwebassets.build.json
 C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Debug\net6.0\staticwebassets.development.json
 C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Debug\net6.0\scopedcss\bundle\HekaMiniumApi.styles.css

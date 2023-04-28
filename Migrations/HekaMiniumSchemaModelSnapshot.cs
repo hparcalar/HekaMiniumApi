@@ -2045,6 +2045,18 @@ namespace HekaMiniumApi.Migrations
                     b.Property<DateTime?>("DeadlineDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<DateTime?>("ExpiryEndDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("ExpiryExplanation")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ExpiryStartDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("ExpiryTime")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Explanation")
                         .HasColumnType("text");
 
@@ -2059,6 +2071,9 @@ namespace HekaMiniumApi.Migrations
 
                     b.Property<decimal?>("ForexRate")
                         .HasColumnType("numeric");
+
+                    b.Property<bool>("IsInvoiced")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("MeetingExplanation")
                         .HasColumnType("text");
@@ -2596,6 +2611,169 @@ namespace HekaMiniumApi.Migrations
                     b.ToTable("StaffPermit");
                 });
 
+            modelBuilder.Entity("HekaMiniumApi.Context.Stocktaking", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Explanation")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("InWarehouseId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("OutWarehouseId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("PlantId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("StocktakingDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("StocktakingNo")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("StocktakingStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StocktakingType")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("SysUserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InWarehouseId");
+
+                    b.HasIndex("OutWarehouseId");
+
+                    b.HasIndex("PlantId");
+
+                    b.HasIndex("SysUserId");
+
+                    b.ToTable("Stocktaking");
+                });
+
+            modelBuilder.Entity("HekaMiniumApi.Context.StocktakingDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("AlternatingQuantity")
+                        .HasColumnType("numeric");
+
+                    b.Property<int?>("BrandId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("BrandModelId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("DiscountPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("DiscountRate")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Explanation")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("ForexDiscountPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<int?>("ForexId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("ForexOverallTotal")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("ForexRate")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("ForexSubTotal")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("ForexTaxPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("ForexUnitPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("GrossQuantity")
+                        .HasColumnType("numeric");
+
+                    b.Property<int?>("ItemId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("LineNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("NetQuantity")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("OverallTotal")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("PartDimensions")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PartNo")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("Quantity")
+                        .HasColumnType("numeric");
+
+                    b.Property<int?>("StocktakingId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("StocktakingStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("SubTotal")
+                        .HasColumnType("numeric");
+
+                    b.Property<bool?>("TaxIncluded")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal?>("TaxPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<int?>("TaxRate")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("UnitId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("UnitPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("UsedNetQuantity")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BrandId");
+
+                    b.HasIndex("BrandModelId");
+
+                    b.HasIndex("ForexId");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("StocktakingId");
+
+                    b.HasIndex("UnitId");
+
+                    b.ToTable("StocktakingDetail");
+                });
+
             modelBuilder.Entity("HekaMiniumApi.Context.SysRole", b =>
                 {
                     b.Property<int>("Id")
@@ -2948,7 +3126,7 @@ namespace HekaMiniumApi.Migrations
             modelBuilder.Entity("HekaMiniumApi.Context.FirmAuthor", b =>
                 {
                     b.HasOne("HekaMiniumApi.Context.Firm", "Firm")
-                        .WithMany()
+                        .WithMany("FirmAuthors")
                         .HasForeignKey("FirmId");
 
                     b.Navigation("Firm");
@@ -3763,6 +3941,72 @@ namespace HekaMiniumApi.Migrations
                     b.Navigation("Staff");
                 });
 
+            modelBuilder.Entity("HekaMiniumApi.Context.Stocktaking", b =>
+                {
+                    b.HasOne("HekaMiniumApi.Context.Warehouse", "InWarehouse")
+                        .WithMany()
+                        .HasForeignKey("InWarehouseId");
+
+                    b.HasOne("HekaMiniumApi.Context.Warehouse", "OutWarehouse")
+                        .WithMany()
+                        .HasForeignKey("OutWarehouseId");
+
+                    b.HasOne("HekaMiniumApi.Context.Plant", "Plant")
+                        .WithMany()
+                        .HasForeignKey("PlantId");
+
+                    b.HasOne("HekaMiniumApi.Context.SysUser", "SysUser")
+                        .WithMany()
+                        .HasForeignKey("SysUserId");
+
+                    b.Navigation("InWarehouse");
+
+                    b.Navigation("OutWarehouse");
+
+                    b.Navigation("Plant");
+
+                    b.Navigation("SysUser");
+                });
+
+            modelBuilder.Entity("HekaMiniumApi.Context.StocktakingDetail", b =>
+                {
+                    b.HasOne("HekaMiniumApi.Context.Brand", "Brand")
+                        .WithMany()
+                        .HasForeignKey("BrandId");
+
+                    b.HasOne("HekaMiniumApi.Context.BrandModel", "BrandModel")
+                        .WithMany()
+                        .HasForeignKey("BrandModelId");
+
+                    b.HasOne("HekaMiniumApi.Context.Forex", "Forex")
+                        .WithMany()
+                        .HasForeignKey("ForexId");
+
+                    b.HasOne("HekaMiniumApi.Context.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId");
+
+                    b.HasOne("HekaMiniumApi.Context.Stocktaking", "Stocktaking")
+                        .WithMany()
+                        .HasForeignKey("StocktakingId");
+
+                    b.HasOne("HekaMiniumApi.Context.UnitType", "UnitType")
+                        .WithMany()
+                        .HasForeignKey("UnitId");
+
+                    b.Navigation("Brand");
+
+                    b.Navigation("BrandModel");
+
+                    b.Navigation("Forex");
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Stocktaking");
+
+                    b.Navigation("UnitType");
+                });
+
             modelBuilder.Entity("HekaMiniumApi.Context.SysRole", b =>
                 {
                     b.HasOne("HekaMiniumApi.Context.Plant", "Plant")
@@ -3842,6 +4086,11 @@ namespace HekaMiniumApi.Migrations
                         .HasForeignKey("PlantId");
 
                     b.Navigation("Plant");
+                });
+
+            modelBuilder.Entity("HekaMiniumApi.Context.Firm", b =>
+                {
+                    b.Navigation("FirmAuthors");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.ItemDemandDetail", b =>

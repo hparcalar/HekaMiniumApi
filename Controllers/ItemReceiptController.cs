@@ -257,8 +257,15 @@ namespace HekaMiniumApi.Controllers{
 
         [Authorize(Policy = "WebUser")]
         [HttpPost]
-        public BusinessResult Post(ItemReceiptModel model){
-            BusinessResult result = new BusinessResult();
+        public BusinessResult Post(ItemReceiptModel model){     
+            BusinessResult result = null;   
+            using (ReceiptManagementBO bObj = new ReceiptManagementBO(_context)){
+                result = bObj.SaveItemReceipt(model);
+            }   
+            return result;
+        }
+            
+            /* BusinessResult result = new BusinessResult();
 
             try
             {
@@ -499,7 +506,7 @@ namespace HekaMiniumApi.Controllers{
 
 
                 result.Result=true;
-                result.RecordId = dbObj.Id;
+                result.RecordId = dbObj.Id; 
             }
             catch (System.Exception ex)
             {
@@ -507,8 +514,8 @@ namespace HekaMiniumApi.Controllers{
                 result.ErrorMessage = ex.Message;
             }
 
-            return result;
-        }
+            return result; 
+        } */
 
         [Authorize(Policy = "WebUser")]
         [HttpDelete("{id}")]

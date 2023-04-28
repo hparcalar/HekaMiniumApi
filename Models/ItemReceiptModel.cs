@@ -16,6 +16,8 @@ namespace HekaMiniumApi.Models{
 
         #region VISUAL ELEMENTS
         public ItemReceiptDetailModel[] Details { get; set; }
+        public ItemReceiptDetailModel[] inItems { get; set; }
+        public ItemReceiptDetailModel[] outItems { get; set; }
         public ReceiptTypeModel[] ReceiptTypeList { get; set; }
         public string StatusText { get; set; }
         public string FirmCode { get; set; }

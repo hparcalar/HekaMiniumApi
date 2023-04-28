@@ -69,7 +69,7 @@ namespace HekaMiniumApi.Controllers
 
     [HttpGet]
     [Route("{id}/{invoiceType}")]
-    public InvoiceModel GetById(int id, int receiptType)
+    public InvoiceModel GetById(int id, int invoiceType)
     {
       InvoiceModel data = new InvoiceModel();
       try
@@ -97,7 +97,7 @@ namespace HekaMiniumApi.Controllers
 
         if (data != null && data.Id > 0)
         {
-          data.InvoiceTypeList = receiptType > 100 ? ConstInvoiceType.Sales : ConstInvoiceType.Purchasing;
+          data.InvoiceTypeList = invoiceType > 100 ? ConstInvoiceType.Sales : ConstInvoiceType.Purchasing;
           data.Details = _context.InvoiceReceiptDetail.Where(d => d.InvoiceId == data.Id)
               .Select(d => new InvoiceReceiptDetailModel
               {
@@ -151,11 +151,92 @@ namespace HekaMiniumApi.Controllers
           if (data == null)
             data = new InvoiceModel();
 
-          data.ReceiptType = receiptType;
-          data.InvoiceTypeList = receiptType > 100 ? ConstInvoiceType.Sales : ConstInvoiceType.Purchasing;
-          data.ReceiptNo = GetNextInvoiceNumber(receiptType);
+          data.ReceiptType = invoiceType;
+          data.InvoiceTypeList = invoiceType > 100 ? ConstInvoiceType.Sales : ConstInvoiceType.Purchasing;
+          data.ReceiptNo = GetNextInvoiceNumber(invoiceType);
           data.Details = new InvoiceReceiptDetailModel[0];
         }
+      }
+      catch
+      {
+
+      }
+
+      return data;
+    }
+
+    [HttpGet]
+    [Route("OpenDetails")]
+    [Authorize(Policy = "WebUser")]
+    public IEnumerable<ItemReceiptDetailModel> GetReceiptOpenDetails()
+    {
+      ItemReceiptDetailModel[] data = new ItemReceiptDetailModel[0];
+      try
+      {
+        data = _context.ItemReceiptDetail.Select(d => new ItemReceiptDetailModel
+        {
+          Id = d.Id,
+          ReceiptDate = d.ItemReceipt.ReceiptDate,
+          ReceiptNo = d.ItemReceipt.ReceiptNo,
+          FirmCode = d.ItemReceipt.Firm != null ? d.ItemReceipt.Firm.FirmCode : "",
+          FirmName = d.ItemReceipt.Firm != null ? d.ItemReceipt.Firm.FirmName : "",
+          ReceiptStatus = d.ReceiptStatus,
+          Explanation = d.Explanation,
+          //ItemOrderId = d.ItemOrderId,
+          ItemId = d.ItemId,
+          LineNumber = d.LineNumber,
+          NetQuantity = d.NetQuantity,
+          Quantity = d.Quantity,
+          //IsContracted = d.IsContracted,
+          UnitId = d.UnitId,
+          AlternatingQuantity = d.AlternatingQuantity,
+          BrandId = d.BrandId,
+          BrandModelId = d.BrandModelId,
+          DiscountPrice = d.DiscountPrice,
+          DiscountRate = d.DiscountRate,
+          ForexDiscountPrice = d.ForexDiscountPrice,
+          ForexId = d.ForexId,
+          ForexOverallTotal = d.ForexOverallTotal,
+          ForexRate = d.ForexRate,
+          ForexSubTotal = d.ForexSubTotal,
+          ForexTaxPrice = d.ForexTaxPrice,
+          ForexUnitPrice = d.ForexUnitPrice,
+          GrossQuantity = d.GrossQuantity,
+          PartDimensions = d.PartDimensions,
+          PartNo = d.PartNo,
+          //FirmId = d.ItemOrder.FirmId,
+          ItemDemandDetailId = d.ItemDemandDetailId,
+          OverallTotal = d.OverallTotal,
+          ProjectId = d.ProjectId,
+          SubTotal = d.SubTotal,
+          TaxIncluded = d.TaxIncluded,
+          TaxPrice = d.TaxPrice,
+          TaxRate = d.TaxRate,
+          //ItemExplanation = d.ItemExplanation,
+          UnitPrice = d.UnitPrice,
+          UsedNetQuantity = d.UsedNetQuantity,
+          //DenialExplanation = d.DenialExplanation,
+          BrandCode = d.Brand != null ? d.Brand.BrandCode : "",
+          BrandName = d.Brand != null ? d.Brand.BrandName : "",
+          BrandModelCode = d.BrandModel != null ? d.BrandModel.BrandModelCode : "",
+          BrandModelName = d.BrandModel != null ? d.BrandModel.BrandModelName : "",
+          //DeadlineDate = d.ItemOrder.DeadlineDate,
+          ForexCode = d.Forex != null ? d.Forex.ForexCode : "",
+          ProjectCode = d.Project != null ? d.Project.ProjectCode : "",
+          ProjectName = d.Project != null ? d.Project.ProjectName : "",
+          ItemCode = d.Item != null ? d.Item.ItemCode : "",
+          ItemName = d.Item != null ? d.Item.ItemName : "",
+          UnitCode = d.UnitType != null ? d.UnitType.UnitTypeCode : "",
+          UnitName = d.UnitType != null ? d.UnitType.UnitTypeName : "",
+          /* StatusText = d.ReceiptStatus == 0 ? "Sipariş oluşturuldu" :
+                            d.ReceiptStatus == 1 ? "Sipariş onaylandı" :
+                            d.ReceiptStatus == 2 ? "Sipariş iletildi" :
+                            d.ReceiptStatus == 3 ? "Sipariş tamamlandı" :
+                            d.ReceiptStatus == 4 ? "İptal edildi" :
+                            d.ReceiptStatus == 5 ? "Kısmi teslim alındı" : "", */
+        })
+        .OrderByDescending(d => d.ReceiptNo)
+        .ToArray();
       }
       catch
       {
