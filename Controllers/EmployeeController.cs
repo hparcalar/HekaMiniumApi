@@ -42,6 +42,13 @@ namespace HekaMiniumApi.Controllers
           EmployeePhone = d.EmployeePhone,
           EmployeeAddress = d.EmployeeAddress,
           DepartmentId = d.DepartmentId,
+          DateOfStart = d.DateOfStart,
+          DateOfEnd = d.DateOfEnd,
+          IsActive = d.DateOfEnd == null ? "Aktif" : "Ayrıldı",
+          SeverancePay = d.DateOfEnd == null ? (d.EmployeeHourlyWage > 0 ? 
+            (d.EmployeeHourlyWage * 225 <= 19980 ? 
+            (( (d.EmployeeHourlyWage * 225) * Math.Floor((((decimal)((DateTime.Now.Date - d.DateOfStart.Value.Date)).TotalDays) / 365)))) :
+            19980 * Math.Floor((((decimal)((DateTime.Now.Date - d.DateOfStart.Value.Date)).TotalDays) / 365))) : 0) : 0
         }).ToArray();
       }
       catch
@@ -69,6 +76,13 @@ namespace HekaMiniumApi.Controllers
           EmployeePhone = d.EmployeePhone,
           EmployeeAddress = d.EmployeeAddress,
           DepartmentId = d.DepartmentId,
+          DateOfStart = d.DateOfStart,
+          DateOfEnd = d.DateOfEnd,
+          IsActive = d.DateOfEnd == null ? "Aktif" : "Ayrıldı",
+          SeverancePay = d.DateOfEnd == null ? (d.EmployeeHourlyWage > 0 ? 
+            (d.EmployeeHourlyWage * 225 <= 19980 ? 
+            (( (d.EmployeeHourlyWage * 225) * Math.Floor((((decimal)((DateTime.Now.Date - d.DateOfStart.Value.Date)).TotalDays) / 365)))) :
+            19980 * Math.Floor((((decimal)((DateTime.Now.Date - d.DateOfStart.Value.Date)).TotalDays) / 365))) : 0) : 0
         }).FirstOrDefault();
 
         if (data == null)

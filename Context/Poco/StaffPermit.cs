@@ -12,6 +12,7 @@ namespace HekaMiniumApi.Context{
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public int? PermitStatus { get; set; }
+        public int? PermitType { get; set; }
         public string StatusText { get; set; }
 
         public virtual SysUser Staff { get; set;}

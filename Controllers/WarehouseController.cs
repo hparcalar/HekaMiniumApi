@@ -206,20 +206,50 @@ namespace HekaMiniumApi.Controllers{
                         item.MapTo(dbItem);
                         dbItem.StocktakingId = dbObj.Id;
                     }
+
+                ItemReceiptDetailModel[] allItems = new ItemReceiptDetailModel[0];
+                allItems = _context.ItemReceiptDetail.Where(d => d.ItemId != null && d.ItemReceipt.InWarehouseId != null)
+                    .GroupBy(d => new ItemReceiptDetailModel {
+                        Id = (d.ItemId ?? 0) * (d.ItemReceipt.InWarehouseId ?? 0),
+                        ItemId = d.ItemId ?? 0,
+                        ItemCode = d.Item.ItemCode,
+                        ItemName = d.Item.ItemName,
+                    }).Select(d => new ItemReceiptDetailModel{
+                        Id = d.Key.Id,
+                        ItemId = d.Key.ItemId,
+                        ItemCode = d.Key.ItemCode,
+                        ItemName = d.Key.ItemName,
+                        Quantity = (d.Where(m => m.ItemReceipt.ReceiptType < 100).Sum(m => m.Quantity) ?? 0) - (d.Where(m => m.ItemReceipt.ReceiptType > 100).Sum(m => m.Quantity) ?? 0)
+                    }).ToArray();
+
+                var unSelected = allItems.Where(d => model.Details.Any(x => x.ItemId != d.ItemId)).ToArray();
+
+                if(unSelected != null){
+                    model.Details = unSelected;
+                    model.ReceiptType = 108;
+                    using (ReceiptManagementBO botherObj = new ReceiptManagementBO(SchemaFactory.CreateContext())){
+                        //result = botherObj.SaveItemReceipt(model);
+                        var otherRes = botherObj.SaveItemReceipt(model);
+                    } 
+                }
                 if(model.inItems != null){
                     model.Details = model.inItems;
                     model.ReceiptType = 4;
-                    using (ReceiptManagementBO bObj = new ReceiptManagementBO(_context)){
-                        result = bObj.SaveItemReceipt(model);
+                    using (ReceiptManagementBO binObj = new ReceiptManagementBO(SchemaFactory.CreateContext())){ //new ReceiptManagementBO(_context)){
+                        //result = binObj.SaveItemReceipt(model);
+                        var inRes = binObj.SaveItemReceipt(model);
                     }   
                 }
                 if(model.outItems != null){
                     model.Details = model.outItems;
                     model.ReceiptType = 108;
-                    using (ReceiptManagementBO bObj = new ReceiptManagementBO(SchemaFactory.CreateContext())){
-                        result = bObj.SaveItemReceipt(model);
+                    using (ReceiptManagementBO boutObj = new ReceiptManagementBO(SchemaFactory.CreateContext())){
+                        //result = boutObj.SaveItemReceipt(model);
+                        var outRes = boutObj.SaveItemReceipt(model);
                     } 
                 }
+                
+                
 
                 _context.SaveChanges();
                 result.Result=true;

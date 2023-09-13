@@ -49,6 +49,8 @@ namespace HekaMiniumApi.Context{
         public DateTime? ExpiryStartDate {get; set;}
         public DateTime? ExpiryEndDate {get; set;}
         public int? ExpiryTime {get; set;}
+        public decimal? InvoicePrice {get; set;}
+        public decimal? InvoiceForexPrice {get; set;}
         public virtual Plant Plant { get; set; }
         public virtual Firm Firm { get; set; }
         public virtual ProjectCategory ProjectCategory { get; set; }

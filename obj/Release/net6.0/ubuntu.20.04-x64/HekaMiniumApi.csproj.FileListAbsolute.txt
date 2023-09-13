@@ -714,3 +714,10 @@ C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Release\net6.0
 C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Release\net6.0\ubuntu.20.04-x64\HekaMiniumApi.pdb
 C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Release\net6.0\ubuntu.20.04-x64\HekaMiniumApi.genruntimeconfig.cache
 C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Release\net6.0\ubuntu.20.04-x64\ref\HekaMiniumApi.dll
+C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Release\net6.0\ubuntu.20.04-x64\staticwebassets\msbuild.HekaMiniumApi.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Release\net6.0\ubuntu.20.04-x64\staticwebassets\msbuild.build.HekaMiniumApi.props
+C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Release\net6.0\ubuntu.20.04-x64\staticwebassets\msbuild.buildMultiTargeting.HekaMiniumApi.props
+C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Release\net6.0\ubuntu.20.04-x64\staticwebassets\msbuild.buildTransitive.HekaMiniumApi.props
+C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Release\net6.0\ubuntu.20.04-x64\staticwebassets.pack.json
+C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Release\net6.0\ubuntu.20.04-x64\staticwebassets.build.json
+C:\Users\USER\Desktop\ButanMakina\HekaminiumWeb\HekaMiniumApi\obj\Release\net6.0\ubuntu.20.04-x64\staticwebassets.development.json

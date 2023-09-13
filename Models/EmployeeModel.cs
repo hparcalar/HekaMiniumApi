@@ -8,5 +8,9 @@ namespace HekaMiniumApi.Models{
         public string EmployeePhone { get; set; }
         public string EmployeeAddress { get; set; }
         public int? DepartmentId { get; set; }
+        public DateTime? DateOfStart { get; set; }
+        public DateTime? DateOfEnd { get; set; }
+        public decimal? SeverancePay { get; set; }
+        public string IsActive { get; set; }
     }
 }

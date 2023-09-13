@@ -40,6 +40,10 @@ namespace HekaMiniumApi.Controllers{
                     PermitStatus = d.PermitStatus,
                     StatusText = d.PermitStatus == 0 ? "Onay bekleniyor" : 
                                     d.PermitStatus == 1 ? "Onaylandı" : "",
+                    PermitType = d.PermitType,
+                    PermitTypeText = d.PermitType == 1 ? "Mazeret İzni" :
+                                    d.PermitType == 2 ? "Yıllık İzin" :
+                                    d.PermitType == 3 ? "Raporlu İzin" : ""
                 }).ToArray();
             }
             catch
@@ -67,13 +71,78 @@ namespace HekaMiniumApi.Controllers{
                     PermitStatus = d.PermitStatus,
                     StatusText = d.PermitStatus == 0 ? "Onay bekleniyor" : 
                                     d.PermitStatus == 1 ? "Onaylandı" : "",
+                    PermitType = d.PermitType,
+                    PermitTypeText = d.PermitType == 1 ? "Mazeret İzni" :
+                                    d.PermitType == 2 ? "Yıllık İzin" :
+                                    d.PermitType == 3 ? "Raporlu İzin" : ""
                     }).FirstOrDefault();
+
+                var dbEmp = _context.StaffPermit.Where(d => d.Id == id);
+                var dbPermit = _context.StaffPermit.Where(d=> d.StaffId == dbEmp.FirstOrDefault().StaffId && d.StartDate.Value.Year == DateTime.Now.Year);
+                var diffAnnual = 0;
+                var diffReport = 0;
+                var diffExcuse = 0;
+                foreach (var item in dbPermit)
+                {
+                    if(item.PermitType == 1){
+                        var day = (int)(item.EndDate.Value - item.StartDate.Value).TotalDays + 1;
+                        diffExcuse = diffExcuse + day;
+                    }
+                    else if (item.PermitType == 2){
+                        var day = (int)(item.EndDate.Value - item.StartDate.Value).TotalDays + 1;
+                        diffAnnual = diffAnnual + day;
+                    }
+                    else{
+                        var day = (int)(item.EndDate.Value - item.StartDate.Value).TotalDays + 1;
+                        diffReport = diffReport + day;
+                    }
+                }
+                data.AnnualPermitCount = diffAnnual;
+                data.ReportPermitCount = diffReport;
+                data.ExcusePermitCount = diffExcuse;
             }
             catch
             {
                 
+            }   
+            return data;
+        }
+
+        [HttpGet]
+        [Route("getTotal/{name}")]
+        public StaffPermitModel GetTotal(string name)
+        {
+            StaffPermitModel data = new StaffPermitModel();
+            try
+            {
+                var dbEmp = _context.StaffPermit.Where(d => d.Staff.UserName == name);
+                var dbPermit = _context.StaffPermit.Where(d=> d.StaffId == dbEmp.FirstOrDefault().StaffId && d.StartDate.Value.Year == DateTime.Now.Year);
+                var diffAnnual = 0;
+                var diffReport = 0;
+                var diffExcuse = 0;
+                foreach (var item in dbPermit)
+                {
+                    if(item.PermitType == 1){
+                        var day = (int)(item.EndDate.Value - item.StartDate.Value).TotalDays + 1;
+                        diffExcuse = diffExcuse + day;
+                    }
+                    else if (item.PermitType == 2){
+                        var day = (int)(item.EndDate.Value - item.StartDate.Value).TotalDays + 1;
+                        diffAnnual = diffAnnual + day;
+                    }
+                    else{
+                        var day = (int)(item.EndDate.Value - item.StartDate.Value).TotalDays + 1;
+                        diffReport = diffReport + day;
+                    }
+                }
+                data.AnnualPermitCount = diffAnnual;
+                data.ReportPermitCount = diffReport;
+                data.ExcusePermitCount = diffExcuse;
             }
-            
+            catch
+            {
+                
+            }         
             return data;
         }
 
@@ -94,7 +163,11 @@ namespace HekaMiniumApi.Controllers{
                     EndDate = d.EndDate,
                     PermitStatus = d.PermitStatus,
                     StatusText = d.PermitStatus == 0 ? "Onay bekleniyor" : 
-                                    d.PermitStatus == 1 ? "Onaylandı" : "",
+                                d.PermitStatus == 1 ? "Onaylandı" : "",
+                    PermitType = d.PermitType,
+                    PermitTypeText = d.PermitType == 1 ? "Mazeret İzni" :
+                                    d.PermitType == 2 ? "Yıllık İzin" :
+                                    d.PermitType == 3 ? "Raporlu İzin" : ""
                 })
                 .OrderByDescending(d => d.Id)
                 .ToArray();
@@ -124,8 +197,8 @@ namespace HekaMiniumApi.Controllers{
                     _context.StaffPermit.Add(dbObj);
                 }
 
-                if (_context.StaffPermit.Any(d => d.StaffId == model.StaffId && d.StaffPermitExplanation == model.StaffPermitExplanation && d.Id != model.Id))
-                    throw new Exception("Bu personel için aynı açıklamayla izin isteği zaten mevcut. Farklı bir açıklama giriniz.");
+                //if (_context.StaffPermit.Any(d => d.StaffId == model.StaffId && d.StaffPermitExplanation == model.StaffPermitExplanation && d.Id != model.Id))
+                //    throw new Exception("Bu personel için aynı açıklamayla izin isteği zaten mevcut. Farklı bir açıklama giriniz.");
 
                 model.MapTo(dbObj);
 

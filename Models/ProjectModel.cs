@@ -34,6 +34,8 @@ namespace HekaMiniumApi.Models{
         public DateTime? ExpiryStartDate {get; set;}
         public DateTime? ExpiryEndDate {get; set;}
         public int? ExpiryTime {get; set;}
+        public decimal? InvoicePrice {get; set;}
+        public decimal? InvoiceForexPrice {get; set;}
 
         #region VISUAL ELEMENTS
         public string FirmCode { get; set; }

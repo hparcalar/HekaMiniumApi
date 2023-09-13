@@ -201,15 +201,15 @@ namespace HekaMiniumApi.Controllers
           var exitObj = _context.EmployeeCheckIn.Where(m => m.ProcessType == 1 
             && m.EmployeeId == dbObj.EmployeeId && m.ProcessDate > dbObj.ProcessDate)
             .FirstOrDefault();
-          if(exitObj == null){
+          if(exitObj == null && model.ExitDate != null){
             exitObj = new EmployeeCheckIn();
             exitObj.EmployeeId = dbObj.EmployeeId;
             exitObj.ProcessType = 1;
+            exitObj.ProcessDate = model.ExitDate;
             _context.EmployeeCheckIn.Add(exitObj);
           }
           dbObj.ProcessDate = model.ProcessDate;
           dbObj.ProcessType = model.ProcessType;
-          exitObj.ProcessDate = model.ExitDate;
         }
         _context.SaveChanges();
         result.Result=true;

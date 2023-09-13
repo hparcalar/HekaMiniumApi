@@ -35,7 +35,7 @@ namespace HekaMiniumApi.Controllers
       try
       {
         data = _context.Invoice.Where(d =>
-            (invoiceType == 100 && d.ReceiptType > 100) || (invoiceType == 0 && d.ReceiptType < 100)
+            (invoiceType == 100 && d.ReceiptType > 100) || (invoiceType == 1 && d.ReceiptType < 100)
         ).Select(d => new InvoiceModel
         {
           Id = d.Id,
@@ -178,6 +178,7 @@ namespace HekaMiniumApi.Controllers
           Id = d.Id,
           ReceiptDate = d.ItemReceipt.ReceiptDate,
           ReceiptNo = d.ItemReceipt.ReceiptNo,
+          FirmId = d.ItemReceipt.Firm != null ? d.ItemReceipt.Firm.Id : 0,
           FirmCode = d.ItemReceipt.Firm != null ? d.ItemReceipt.Firm.FirmCode : "",
           FirmName = d.ItemReceipt.Firm != null ? d.ItemReceipt.Firm.FirmName : "",
           ReceiptStatus = d.ReceiptStatus,
@@ -195,9 +196,9 @@ namespace HekaMiniumApi.Controllers
           DiscountPrice = d.DiscountPrice,
           DiscountRate = d.DiscountRate,
           ForexDiscountPrice = d.ForexDiscountPrice,
-          ForexId = d.ForexId,
+          ForexId = d.ItemOrderDetail.ForexId,
           ForexOverallTotal = d.ForexOverallTotal,
-          ForexRate = d.ForexRate,
+          ForexRate = d.ItemOrderDetail.ForexRate,
           ForexSubTotal = d.ForexSubTotal,
           ForexTaxPrice = d.ForexTaxPrice,
           ForexUnitPrice = d.ForexUnitPrice,
@@ -206,14 +207,14 @@ namespace HekaMiniumApi.Controllers
           PartNo = d.PartNo,
           //FirmId = d.ItemOrder.FirmId,
           ItemDemandDetailId = d.ItemDemandDetailId,
-          OverallTotal = d.OverallTotal,
+          OverallTotal = d.ItemOrderDetail.OverallTotal,
           ProjectId = d.ProjectId,
           SubTotal = d.SubTotal,
           TaxIncluded = d.TaxIncluded,
           TaxPrice = d.TaxPrice,
-          TaxRate = d.TaxRate,
+          TaxRate = d.ItemOrderDetail.TaxRate,
           //ItemExplanation = d.ItemExplanation,
-          UnitPrice = d.UnitPrice,
+          UnitPrice = d.ItemOrderDetail.UnitPrice,
           UsedNetQuantity = d.UsedNetQuantity,
           //DenialExplanation = d.DenialExplanation,
           BrandCode = d.Brand != null ? d.Brand.BrandCode : "",
@@ -221,9 +222,9 @@ namespace HekaMiniumApi.Controllers
           BrandModelCode = d.BrandModel != null ? d.BrandModel.BrandModelCode : "",
           BrandModelName = d.BrandModel != null ? d.BrandModel.BrandModelName : "",
           //DeadlineDate = d.ItemOrder.DeadlineDate,
-          ForexCode = d.Forex != null ? d.Forex.ForexCode : "",
-          ProjectCode = d.Project != null ? d.Project.ProjectCode : "",
-          ProjectName = d.Project != null ? d.Project.ProjectName : "",
+          ForexCode = d.ItemOrderDetail.Forex != null ? d.ItemOrderDetail.Forex.ForexCode : "",
+          /* ProjectCode = d.ItemOrderDetail.Project != null ? d.ItemOrderDetail.Project.ProjectCode : "",
+          ProjectName = d.ItemOrderDetail.Project != null ? d.ItemOrderDetail.Project.ProjectName : "", */
           ItemCode = d.Item != null ? d.Item.ItemCode : "",
           ItemName = d.Item != null ? d.Item.ItemName : "",
           UnitCode = d.UnitType != null ? d.UnitType.UnitTypeCode : "",
@@ -264,6 +265,62 @@ namespace HekaMiniumApi.Controllers
       }
 
       return string.Empty;
+    }
+
+    [Authorize(Policy = "WebUser")]
+    [HttpPost]
+    public BusinessResult Post(InvoiceModel model){
+      BusinessResult result = new BusinessResult();
+
+      try
+      {
+        var dbObj = _context.Invoice.FirstOrDefault(d => d.Id == model.Id);
+        if (dbObj == null){
+          dbObj = new Invoice();
+          dbObj.ReceiptNo = GetNextInvoiceNumber(model.ReceiptType ?? 0);
+          _context.Invoice.Add(dbObj);
+        }
+        model.MapTo(dbObj);
+        _context.SaveChanges();
+        foreach (var item in model.Details)
+          {
+            var dbItem = _context.InvoiceReceiptDetail.FirstOrDefault(d => d.Id == item.Id);
+            if (dbItem == null){
+              dbItem = new InvoiceReceiptDetail();
+              _context.InvoiceReceiptDetail.Add(dbItem);
+            }
+            item.MapTo(dbItem);
+            dbItem.InvoiceId = dbObj.Id;
+          }
+        
+        var caReceipt = _context.CurrentAccountReceipt.FirstOrDefault(d => d.Id == model.Id);
+        if (caReceipt == null){
+          caReceipt = new CurrentAccountReceipt();
+          _context.CurrentAccountReceipt.Add(caReceipt);
+        }
+        model.MapTo(caReceipt);
+        _context.SaveChanges();
+        foreach (var item in model.Details){
+          var caItem = _context.CurrentAccountReceiptDetail.FirstOrDefault(d => d.Id == item.Id);
+          if (caItem == null){
+            caItem = new CurrentAccountReceiptDetail();
+            _context.CurrentAccountReceiptDetail.Add(caItem);
+          }
+          item.MapTo(caItem);
+          caItem.CurrentAccountReceiptId = dbObj.Id;
+        }
+
+        _context.SaveChanges();
+        result.Result=true;
+        result.RecordId = dbObj.Id;
+      }
+      catch (System.Exception ex)
+      {
+        result.Result=false;
+        result.ErrorMessage = ex.Message;
+      }
+
+      return result;
     }
   }
 }

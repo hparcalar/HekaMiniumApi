@@ -12,7 +12,9 @@ namespace HekaMiniumApi.Context{
         public decimal? EmployeeHourlyWage { get; set; }
         public string EmployeePhone { get; set; }
         public string EmployeeAddress { get; set; }
-
+        public DateTime? DateOfStart { get; set; }
+        public DateTime? DateOfEnd { get; set; }
+        
         [ForeignKey("Department")]
         public int? DepartmentId { get; set; }
 

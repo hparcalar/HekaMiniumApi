@@ -260,6 +260,58 @@ namespace HekaMiniumApi.Migrations
                     b.ToTable("CalendarElement");
                 });
 
+            modelBuilder.Entity("HekaMiniumApi.Context.Car", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Model")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ModelYear")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PlateNo")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Car");
+                });
+
+            modelBuilder.Entity("HekaMiniumApi.Context.CarDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CarId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CostExplanation")
+                        .HasColumnType("text");
+
+                    b.Property<int>("DetailCode")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("DetailDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CarId");
+
+                    b.ToTable("CarDetail");
+                });
+
             modelBuilder.Entity("HekaMiniumApi.Context.CurrentAccountReceipt", b =>
                 {
                     b.Property<int>("Id")
@@ -353,6 +405,12 @@ namespace HekaMiniumApi.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("DateOfEnd")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("DateOfStart")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int?>("DepartmentId")
                         .HasColumnType("integer");
@@ -2072,6 +2130,12 @@ namespace HekaMiniumApi.Migrations
                     b.Property<decimal?>("ForexRate")
                         .HasColumnType("numeric");
 
+                    b.Property<decimal?>("InvoiceForexPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("InvoicePrice")
+                        .HasColumnType("numeric");
+
                     b.Property<bool>("IsInvoiced")
                         .HasColumnType("boolean");
 
@@ -2592,6 +2656,9 @@ namespace HekaMiniumApi.Migrations
                     b.Property<int?>("PermitStatus")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("PermitType")
+                        .HasColumnType("integer");
+
                     b.Property<int>("StaffId")
                         .HasColumnType("integer");
 
@@ -3052,6 +3119,17 @@ namespace HekaMiniumApi.Migrations
                         .HasForeignKey("BrandId");
 
                     b.Navigation("Brand");
+                });
+
+            modelBuilder.Entity("HekaMiniumApi.Context.CarDetail", b =>
+                {
+                    b.HasOne("HekaMiniumApi.Context.Car", "Car")
+                        .WithMany("CarDetails")
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Car");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.CurrentAccountReceipt", b =>
@@ -4086,6 +4164,11 @@ namespace HekaMiniumApi.Migrations
                         .HasForeignKey("PlantId");
 
                     b.Navigation("Plant");
+                });
+
+            modelBuilder.Entity("HekaMiniumApi.Context.Car", b =>
+                {
+                    b.Navigation("CarDetails");
                 });
 
             modelBuilder.Entity("HekaMiniumApi.Context.Firm", b =>

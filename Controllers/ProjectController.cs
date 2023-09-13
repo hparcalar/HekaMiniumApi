@@ -53,7 +53,7 @@ namespace HekaMiniumApi.Controllers{
                     ForexCode = d.Forex != null ? d.Forex.ForexCode : "",
                     ForexName = d.Forex != null ? d.Forex.ForexName : "",
                     TotalCost = d.TotalCost,
-                        TotalForexCost = d.TotalForexCost,
+                    TotalForexCost = d.TotalForexCost,
                     Quantity = d.Quantity,
                     ProfitRate = d.ProfitRate,
                     OfferPrice = d.OfferPrice,
@@ -64,6 +64,8 @@ namespace HekaMiniumApi.Controllers{
                     ExpiryStartDate = d.ExpiryStartDate,
                     ExpiryTime = d.ExpiryTime,
                     ExpiryEndDate = d.ExpiryEndDate,
+                    InvoicePrice = d.InvoicePrice,
+                    InvoiceForexPrice = d.InvoiceForexPrice,
                     ProjectStatusText = (d.ProjectStatus ?? 0) == 0 ? "Oluşturuldu" :
                                             d.ProjectStatus == 1 ? "Teklif verilecek" :
                                             d.ProjectStatus == 2 ? "Teklif verildi" :
@@ -501,6 +503,8 @@ namespace HekaMiniumApi.Controllers{
                         ExpiryStartDate = d.ExpiryStartDate,
                         ExpiryTime = d.ExpiryTime,
                         ExpiryEndDate = d.ExpiryEndDate,
+                        InvoicePrice = d.InvoicePrice,
+                        InvoiceForexPrice = d.InvoiceForexPrice,
                         ProjectStatusText = (d.ProjectStatus ?? 0) == 0 ? "Teklif verilecek" :
                                             d.ProjectStatus == 1 ? "Teklif verildi" :
                                             d.ProjectStatus == 2 ? "Onaylandı" :
@@ -728,6 +732,8 @@ namespace HekaMiniumApi.Controllers{
                 dbObj.ExpiryEndDate = model.ExpiryEndDate;
                 dbObj.ExpiryTime = model.ExpiryTime;
                 dbObj.IsInvoiced = model.IsInvoiced;
+                dbObj.InvoicePrice = model.InvoicePrice;
+                dbObj.InvoiceForexPrice = model.InvoiceForexPrice;
             
                 _context.SaveChanges();
                 result.Result=true;

@@ -312,7 +312,7 @@ namespace HekaMiniumApi.Controllers{
 
         [Authorize(Policy = "WebUser")]
         [Route("Category")]
-        [HttpDelete("{id}")]
+        [HttpDelete("Category/{id}")]
         public BusinessResult DeleteCategory(int id){
             BusinessResult result = new BusinessResult();
 

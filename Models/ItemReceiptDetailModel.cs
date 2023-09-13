@@ -46,6 +46,7 @@ namespace HekaMiniumApi.Models{
         public string BrandModelCode { get; set; }
         public string BrandModelName { get; set; }
         public string UnitCode { get; set; }
+        public int FirmId { get; set; }
         public string FirmCode { get; set; }
         public string FirmName { get; set; }
         public string UnitName { get; set; }
