@@ -2604,6 +2604,43 @@ namespace HekaMiniumApi.Migrations
                     b.ToTable("ProjectTask");
                 });
 
+            modelBuilder.Entity("HekaMiniumApi.Context.RemoteOffice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Out0")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Out1")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Out2")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Out3")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Out4")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Out5")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Out6")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Out7")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RemoteOffice");
+                });
+
             modelBuilder.Entity("HekaMiniumApi.Context.Route", b =>
                 {
                     b.Property<int>("Id")

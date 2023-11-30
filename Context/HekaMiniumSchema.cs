@@ -73,6 +73,7 @@ namespace HekaMiniumApi.Context {
         public DbSet<StocktakingDetail> StocktakingDetail {get; set;}
         public DbSet<Car> Car {get; set;}
         public DbSet<CarDetail> CarDetail {get; set;}
+        public DbSet<RemoteOffice> RemoteOffice {get; set;}
 
         public HekaMiniumSchema() : base(){}
         public HekaMiniumSchema(Microsoft.EntityFrameworkCore.DbContextOptions options) : base(options){}
